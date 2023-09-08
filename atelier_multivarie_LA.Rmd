@@ -4,7 +4,7 @@ author: "BIA-3010 ÉTÉ 2023"
 date: "06/09/2023 - Hélène Dion-Phénix, Laurie Auclair et Jocelyn Lauzon"
 output: html_document
 ---
-# Analyses multivariées - quelques bases! laurielaurie
+# Analyses multivariées - quelques bases! laurielaurielaurie
 
 ## Que sont les analyses multivariées?
 
