@@ -4,7 +4,7 @@ author: "BIA-3010 ÉTÉ 2023"
 date: "06/09/2023 - Hélène Dion-Phénix, Laurie Auclair et Jocelyn Lauzon"
 output: html_document
 ---
-# Analyses multivariées - quelques bases!
+# Analyses multivariées - quelques bases! laurie
 
 ## Que sont les analyses multivariées?
 
@@ -69,7 +69,7 @@ Pour chacun de ces types de prédictions, nous verrons une méthode différente.
 ## 1- Tester si les différences en composition d'espèces dans vos sites sont corrélées à des gradients environnementaux
 
 Lorsqu'on s'intéresse à des communautés à différents sites, on est souvent intéressé à visualiser quels sites sont plus semblables ou plus différents en termes de composition d'espèce. Pour ce faire, on utilise souvent les ordinations. 
-Nos objets (sites) peuvent être ordonnés dans un espace multidimensionnel en fonction de leur ressemblance. Les sites situés plus proches l'un de l'autre dans cet espace sont plus similaires dans leur composition en espèces que les sites situés plus loin. Cet espace comporte autant de dimension que de descripteurs (espèces). Il est donc très difficile de visualiser cet espace: comment représenter un espace qui a plus de 3 dimensions!
+Nos objets (sites) peuvent être ordonnés dans un espace multidimensionnel en fonction de leur ressemblance. Les sites situés plus proches l'un de l'autre dans cet espace sont plus similaires dans leur composition en espèces que les sites situés plus loin. Cet espace comporte autant de dimensions que de descripteurs (espèces). Il est donc très difficile de visualiser cet espace: comment représenter un espace qui a plus de 3 dimensions!
 L'ordination permet de trouver les deux ou trois axes de notre espace qui explique le plus de variation entre nos sites. On peut donc faire une représentation 2D de cet espace.
 
 Note: Similairement, les ordinations permettent aussi d'ordonner les descripteurs (espèces) entre eux dans l'espace. Ainsi, deux espèces proches dans l'ordination se retrouvent plus souvent dans les mêmes sites que deux espèces éloignées. Ici, nous allons nous concentrer sur l'ordination des objets (sites), mais le principe est similaire avec les descripteurs (espèces).
