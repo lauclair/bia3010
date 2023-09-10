@@ -160,6 +160,18 @@ La longueur du vecteur renseigne sur la force de la corrélation (r2). Par exemp
 Ce type de figures recèle d'informations, qui est parfois difficile à interpréter. Il s'agit souvent d'une façon d'explorer et/ou de visualiser nos données. 
 
 
+
+
+# Résumé des différences entre les méthodes d'ordination
+
+
+
+
+
+
+
+
+
 ## 2-Tester si la composition en espèces diffère entre des groupes de sites?
 
 # L'analyse permutationnelle de variance multivariées (PERMANOVA)
