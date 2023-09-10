@@ -53,30 +53,40 @@ class(varesepc.matrix)
 
 <br>
 
-## Différents types d'analyses pour différentes questions
+# Questions nécessitant des analyses multivariées
 
-Tout comme pour les statistiques univariées, vous devrez choisir le bon test pour répondre à vos prédictions. 
-
-Voulez-vous:
+Deux questions de recherche fréquentes:
 
 1- Tester si les différences en composition d'espèces dans vos sites sont corrélées à des gradients environnementaux?
 
 2- Tester si la composition en espèces diffère entre des groupes de sites? 
 
-Pour chacun de ces types de prédictions, nous verrons une méthode différente. Il existe différentes questions nécessitant différentes méthodes. 
+Différents types d'analyses existent pour différentes questions. Tout comme pour les statistiques univariées, vous devrez choisir le bon test (parmi toutes les méthodes qui existent) pour répondre à vos prédictions!
  
-Vous pourriez aussi vouloir tester si deux matrices d'abondances aux mêmes sites (ex. plantes et arthropodes) sont corrélées. Dans ce cas, vous pourriez faire des tests Procrustes. 
-Nous ne verrons pas en détails ces tests ici, mais nous pourrons l'expliquer aux équipes intéressées.
+Autre exemple de question :
+Tester si deux matrices d'abondances aux mêmes sites (ex. plantes et arthropodes) sont corrélées. Dans ce cas, vous pourriez faire des tests Procrustes. Nous ne verrons pas en détails ces tests ici, mais nous pourrons l'expliquer aux équipes intéressées.
 
-## 1- Tester si les différences en composition d'espèces dans vos sites sont corrélées à des gradients environnementaux
+Mais avant de répondre à nos questions, explorons visuellement nos données de composition des communautés!
+
+# Les ordinations
 
 Lorsqu'on s'intéresse à des communautés à différents sites, on est souvent intéressé à visualiser quels sites sont plus semblables ou plus différents en termes de composition d'espèce. Pour ce faire, on utilise souvent les ordinations. 
-Nos objets (sites) peuvent être ordonnés dans un espace multidimensionnel en fonction de leur ressemblance. Les sites situés plus proches l'un de l'autre dans cet espace sont plus similaires dans leur composition en espèces que les sites situés plus loin. Cet espace comporte autant de dimensions que de descripteurs (espèces). Il est donc très difficile de visualiser cet espace: comment représenter un espace qui a plus de 3 dimensions!
-L'ordination permet de trouver les deux ou trois axes de notre espace qui explique le plus de variation entre nos sites. On peut donc faire une représentation 2D de cet espace.
+
+Nos objets (sites, parcelles) peuvent être "ordonnés" en fonction de leur ressemblance, dans un espace multidimensionnel, où chaque axe (dimension) représente un descripteur (ex. une espèce).
+
+Les sites situés plus proches l'un de l'autre dans cet espace multidimensionel sont plus similaires dans leur composition en espèces que les sites situés plus loin. 
+
+Or, cet espace comporte autant de dimensions que de descripteurs (espèces) et il est très difficile de représenter ou de visualiser un espace à plus de 3 dimensions!
+
+--> L'ordination permet de trouver les deux (ou trois) axes de notre espace qui explique le plus de variation entre nos sites. L'ordination permet de visualiser cet espace multidimensionel en 2D.
 
 Note: Similairement, les ordinations permettent aussi d'ordonner les descripteurs (espèces) entre eux dans l'espace. Ainsi, deux espèces proches dans l'ordination se retrouvent plus souvent dans les mêmes sites que deux espèces éloignées. Ici, nous allons nous concentrer sur l'ordination des objets (sites), mais le principe est similaire avec les descripteurs (espèces).
 
-Il existe différentes méthodes d'ordination: l'analyse en composantes principales (PCA), l'analyse de correspondance (CA), l'analyse en coordonnées principales (PCoA) et la mise à l'échelle multidimensionnelle (nMDS). Ici, nous verrons seulement l'analyse de correspondance puisqu'elle est bien adaptée aux données d'abondances.
+Il existe différentes méthodes d'ordination: 
+- l'analyse de correspondance (CA);
+- l'analyse en composantes principales (PCA);
+- l'analyse en coordonnées principales (PCoA);
+- la mise à l'échelle multidimensionnelle non-métrique (nMDS; non présentée ici).
 
 # L'analyse de correspondance (CA)
 
@@ -116,6 +126,9 @@ plot(ca.varespec, display = c("sites", "species"))
 ```
 L'espèce "icmaeric" par exemple, est plus abondante dans les sites qui sont proches dans l'ordination (6,13,7,5,14) que dans les sites plus loin (10,9,21,28).
 Il ne s'agit toutefois pas d'un test statistique. Les ordinations nous permettent de visualiser certaines tendances dans nos données. Ce n'est donc pas très approprié pour tester directement des hypothèses.
+
+
+# 1- Tester si les différences en composition d'espèces dans vos sites sont corrélées à des gradients environnementaux
 
 # La fonction envfit
 
