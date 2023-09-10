@@ -64,7 +64,7 @@ Deux questions de recherche fréquentes:
 Différents types d'analyses existent pour différentes questions. Tout comme pour les statistiques univariées, vous devrez choisir le bon test (parmi toutes les méthodes qui existent) pour répondre à vos prédictions!
  
 Autre exemple de question :
-Tester si deux matrices d'abondances aux mêmes sites (ex. plantes et arthropodes) sont corrélées. Dans ce cas, vous pourriez faire des tests Procrustes. Nous ne verrons pas en détails ces tests ici, mais nous pourrons l'expliquer aux équipes intéressées.
+Tester si deux matrices d'abondances aux mêmes sites (ex. plantes et arthropodes) sont corrélées. Dans ce cas, vous pourriez faire des **tests Procrustes**. Nous ne verrons pas en détails ces tests ici, mais nous pourrons l'expliquer aux équipes intéressées.
 
 Mais avant de répondre à nos questions, explorons visuellement nos données de composition des communautés!
 
@@ -78,7 +78,8 @@ Les sites situés plus proches l'un de l'autre dans cet espace multidimensionel 
 
 Or, cet espace comporte autant de dimensions que de descripteurs (espèces) et il est très difficile de représenter ou de visualiser un espace à plus de 3 dimensions!
 
---> L'ordination permet de trouver les deux (ou trois) axes de notre espace qui explique le plus de variation entre nos sites. L'ordination permet de visualiser cet espace multidimensionel en 2D.
+--> L'ordination permet de trouver les deux ou trois axes de notre espace qui explique le plus de variation entre nos sites. Ces axes représentent une "combinaison de variables". L'ordination permet de visualiser l'espace multidimensionel en 2D et simplifie l'interprétation des données multivariées.
+
 
 ![Source : Michael W. Palmer; https://ordination.okstate.edu/overview.htm](ordinations.png)
 
@@ -90,19 +91,24 @@ Il existe différentes méthodes d'ordination:
 - l'analyse en coordonnées principales (PCoA);
 - la mise à l'échelle multidimensionnelle non-métrique (nMDS; non présentée ici).
 
+
 # L'analyse de correspondance (CA)
 
-Pour faire une ordination de type CA, il faut avoir une matrice d'abondance et toutes les données doivent être dans la même dimension physique (même unité) et ne pas contenir de données négatives, ni de NA.
+La CA s'emploi avec des données d'abondances brutes (sans pré-transformation) ou des données de présence-absence.
+
+Pour faire une ordination de type CA, toutes les données doivent être dans la même dimension physique (même unité) et ne pas contenir de données négatives, ni de NA.
+
 Elle s'effectue en trois étapes dont voici le résumé (nous n'entrerons pas dans tous les détails ici):
 
-1-Conversion de la matrice d'abondance en matrice de contributions de Pearson. 
-(Cela permet notamment de diminuer le problème du double zéro: si vous avez deux sites qui ne possèdent pas une espèce de lichens A, cette absence d'espèce A ne contribuera pas autant à la ressemblance entre les 2 sites que la présence commune de l'espèce B aux 2 sites. La table de contribution de Pearson contient l'information pour ordonner les sites dans l'espace multidimensionnel.)
-2-Décomposition de la table de contributions de Pearson en valeurs propres et en vecteurs propres. (Les vecteurs propres sont ce qui permet de réduire l'espace multidimensionnel en quelques axes qui expliquent le mieux la variation entre les sites.)
+1-Conversion de la matrice d'abondance (données brutes) en matrice Q de contributions de Pearson (calcul des distances Chi2 entre objets). Cela permet notamment de *diminuer le problème du double zéro* : si vous avez deux sites qui ne possèdent pas une espèce de lichens A, cette absence d'espèce A ne contribuera pas autant à la ressemblance entre les 2 sites que la présence commune de l'espèce B aux 2 sites. La table de contribution de Pearson contient l'information pour ordonner les sites dans l'espace multidimensionnel.)
+
+2-Décomposition de la table de contributions de Pearson en valeurs propres (eigenvalues) et en vecteurs propres (eigenvectors). Les vecteurs propres sont ce qui permet de réduire l'espace multidimensionnel en quelques axes qui expliquent le mieux la variation entre les sites.
+
 3-Visualisation en deux dimensions.
 
-# Essayons
+## Essayons
 
-Avec le package vegan, on peut utiliser la fonction cca pour calculer une ordination CA.
+Avec le package vegan, on peut utiliser la fonction **cca** pour calculer une ordination CA. Cette fonction exécute les étapes 1 et 2. Le premier argument (le seul ici) est notre matrice d'abondance brute.
 
 ```{r}
 ca.varespec<-cca(varespec)
@@ -114,7 +120,14 @@ Voyons voir ce que ça donne!
 summary(ca.varespec)
 ```
 La fonction cca de vegan est aussi utilisée pour d'autres types d'analyses, alors certaines des sorties de la fonction ne sont pas très utiles dans le cas d'une CA. Notamment, ici l'inertie ne permet pas de tirer de conclusions sur vos données.
-Les eigenvalues (valeurs propres) représentent les axes de votre ordination. La première explique 25% de la variation dans vos données, la deuxième 17%, etc.(voir proportion explained). Ensuite, vous avez la position de vos objets et de vos descripteurs dans l'espace multidimensionnel à la manière d'une coordonnées (x,y,z,etc).
+
+Les eigenvalues (valeurs propres) représentent les axes de votre ordination. 
+
+"Proportion explained" : Cette valeur représente la proportion dans la variation de la composition des communautés qui est expliqué par un axe donné. Ici, le premier axe explique 25% de la variation dans vos données, le deuxième 17%, etc. 
+
+"Cumulative proportion" : Proportion cumulative d'une axe donné et des précédents.
+
+Ensuite, vous avez la position de vos objets et de vos descripteurs dans l'espace multidimensionnel à la manière d'une coordonnées (x,y,z,etc).
 
 On peut ensuite visualiser les objets le long des deux premiers axes.
 ```{r}
@@ -122,30 +135,40 @@ plot(ca.varespec, display = "sites")
 ```
 L'axe 1 et 2 explique ensemble 42% de la variation dans nos données. En observant cette ordination, on peut voir par exemple que les sites 20 et 23 ou encore 9 et 10 sont similaires dans leur composition en espèce de lichens en comparaison au reste des sites. Les sites 5 et 28 sont très différents en comparaison des autres.
 
+
+
+
+On peut aussi visualiser l'axe 1 et 3 ....
+
+
+
+
+
+
 On peut aussi afficher les espèces sur notre ordination pour nous permettre de voir à quels sites ou groupe de sites elles sont associées.
 ```{r}
 plot(ca.varespec, display = c("sites", "species"))
 ```
 L'espèce "icmaeric" par exemple, est plus abondante dans les sites qui sont proches dans l'ordination (6,13,7,5,14) que dans les sites plus loin (10,9,21,28).
-Il ne s'agit toutefois pas d'un test statistique. Les ordinations nous permettent de visualiser certaines tendances dans nos données. Ce n'est donc pas très approprié pour tester directement des hypothèses.
+**Il ne s'agit toutefois pas d'un test statistique**. Les ordinations nous permettent de visualiser certaines tendances dans nos données. Ce n'est donc pas très approprié pour tester directement des hypothèses.
 
 
-# 1- Tester si les différences en composition d'espèces dans vos sites sont corrélées à des gradients environnementaux
+## Q1- Tester si les différences en composition d'espèces dans vos sites sont corrélées à des gradients environnementaux
 
-# La fonction envfit
+## La fonction envfit
 
 Pour l'exemple, nous allons télécharger des données environnementales de caractéristiques du sol sur les sites associés aux données d'abondances de lichens
 ```{r}
 (data(varechem))
 ```
 
-La fonction envfit permet de tester la corrélation entre les axes d'une ordination et des gradients environnementaux. Chaque vecteur environnemental est aussi associé à une valeur P déterminée par permutation.
 Attention! Vos variables environnementales ne sont souvent pas dans les mêmes dimensions physiques (unités). C'est donc une bonne idée de centrer et réduire nos variables environnementales pour pouvoir comparer les corrélations (même si envfit le fait automatiquement).
 ```{r}
 #centrer-réduire
 varechem<-scale(varechem)
 ```
 
+--> La fonction **envfit** permet de tester la corrélation entre les axes d'une ordination et des gradients environnementaux. Chaque vecteur environnemental est aussi associé à une valeur P déterminée par permutation.
 
 ```{r}
 (envfit.varechem<-envfit(ca.varespec, varechem))
@@ -161,6 +184,30 @@ plot(envfit.varechem, p.max = 0.05, col = "red")#Les correlations significatives
 La longueur du vecteur renseigne sur la force de la corrélation (r2). Par exemple, la quantité d'aluminium dans le sol est corrélée avec des différences en compositions d'espèces entre les sites. Les sites dans le cadran en bas à gauche ont une composition en espèces plus similaires et ont plus d'aluminium que les sites en haut à droite.
 Ce type de figures recèle d'informations, qui est parfois difficile à interpréter. Il s'agit souvent d'une façon d'explorer et/ou de visualiser nos données. 
 
+# L'analyse en composantes principales (PCA)
+
+La PCA est une autre méthode d'ordination fréquemment utilisée....
+
+Contrairement à la CA, la PCA peut être utilisée avec des données d'abondance seuelemtn, (pas avec des données de présence-absence).
+
+La PCA se base sur la distance euclidienne...
+
+
+...Jocelyn
+
+
+# L'analyse en coordonnées principales (PCoA)
+
+...La 
+
+...Jocelyn
+
+
+## Matrice de distance
+
+
+
+... voir texte explicatif dans serction PERMANOVA .... Jocelyn
 
 
 
@@ -168,9 +215,7 @@ Ce type de figures recèle d'informations, qui est parfois difficile à interpr�
 
 
 
-
-
-
+... Jocelyn...
 
 
 
@@ -207,7 +252,7 @@ Si on repense à un nuage de points multidimensionnel où chaque point représen
 Par contre, la pseudo-statistique F ne se calcul pas sur une ordination comme l'ordination CA, mais sur une ordination de type PCoA qui est construite à partir d'une matrice de distance...
 
 ### Matrice de distance
-Les matrices de distance sont très utilisées en statistiques multivariées. On peut passer facilement d'une matrice d'abondance d'espèces à une matrice de distance. Le format d'une matrice de distance est différent puisque les lignes et les colonnes représentent les objets (sites) et les cellules contiennent l'information sur la différence entre nos descripteurs pour chaque paire de sites. La matrice d'abondance est rectangulaire, mais la matrice de distance est carrée. Pour passer de l'une à l'autre, il faut calculer un indice de distance entre chaque paire de sites. Tout comme pour des indices de biodiversité, il existe plusieurs types de mesures de distance: distance euclidienne, distance de corde, distance d'Hellinger, distance de chi-carré, etc. Le choix de la bonne mesure est fonction de nos types de données et de nos questions. Ici, nous utiliserons la distance Hellinger qui est appropriée pour les données d'abondance d'espèces notamment parce qu'elle n'est pas sensible au problème du double zéro discuté plus tôt. Pour calculer cette distance, il faut effectuer une transformation de Hellinger, puis calculer la distance euclidienne: voici la fonction.
+Les matrices de distance sont très utilisées en statistiques multivariées. On peut passer facilement d'une matrice d'abondance d'espèces à une matrice de distance. Le format d'une matrice de distance est différent puisque les lignes et les colonnes représentent les objets (sites) et les cellules contiennent l'information sur la différence (la distance) entre nos descripteurs pour chaque paire de sites. La matrice d'abondance est rectangulaire, mais la matrice de distance est carrée. Pour passer de l'une à l'autre, il faut calculer un indice de distance entre chaque paire de sites. Tout comme pour des indices de biodiversité, il existe plusieurs types de mesures de distance: distance euclidienne, distance de corde, distance d'Hellinger, distance de chi-carré, etc. Le choix de la bonne mesure est fonction de nos types de données et de nos questions. Ici, nous utiliserons la distance Hellinger qui est appropriée pour les données d'abondance d'espèces notamment parce qu'elle n'est pas sensible au problème du double zéro discuté plus tôt. Pour calculer cette distance, il faut effectuer une transformation de Hellinger, puis calculer la distance euclidienne: voici la fonction.
 
 ```{r}
 dune.dist<-vegdist(decostand(dune ,method='hellinger'), method='euclid')
