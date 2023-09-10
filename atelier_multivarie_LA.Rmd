@@ -80,6 +80,8 @@ Or, cet espace comporte autant de dimensions que de descripteurs (espèces) et i
 
 --> L'ordination permet de trouver les deux (ou trois) axes de notre espace qui explique le plus de variation entre nos sites. L'ordination permet de visualiser cet espace multidimensionel en 2D.
 
+![alt text here](ordinations.png)
+
 Note: Similairement, les ordinations permettent aussi d'ordonner les descripteurs (espèces) entre eux dans l'espace. Ainsi, deux espèces proches dans l'ordination se retrouvent plus souvent dans les mêmes sites que deux espèces éloignées. Ici, nous allons nous concentrer sur l'ordination des objets (sites), mais le principe est similaire avec les descripteurs (espèces).
 
 Il existe différentes méthodes d'ordination: 
