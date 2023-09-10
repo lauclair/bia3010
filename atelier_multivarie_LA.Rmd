@@ -4,7 +4,7 @@ author: "BIA-3010 ÉTÉ 2023"
 date: "06/09/2023 - Hélène Dion-Phénix, Laurie Auclair et Jocelyn Lauzon"
 output: html_document
 ---
-# Analyses multivariées - quelques bases! laurielaurielaurie jocelyn
+# Analyses multivariées - quelques bases!
 
 ## Que sont les analyses multivariées?
 
@@ -53,7 +53,7 @@ class(varesepc.matrix)
 
 <br>
 
-## Différents types d'analyse pour différentes questions
+## Différents types d'analyses pour différentes questions
 
 Tout comme pour les statistiques univariées, vous devrez choisir le bon test pour répondre à vos prédictions. 
 
@@ -63,8 +63,10 @@ Voulez-vous:
 
 2- Tester si la composition en espèces diffère entre des groupes de sites? 
 
-Pour chacun de ces types de prédictions, nous verrons une méthode différente. Il existe différentes questions nécessitant différentes méthodes. Par exemple, vous pourriez vouloir tester si deux matrices d'abondances aux mêmes sites sont corrélées. Nous ne verrons pas de méthode pour répondre à cette question ici, mais sachez qu'elles existent.
-
+Pour chacun de ces types de prédictions, nous verrons une méthode différente. Il existe différentes questions nécessitant différentes méthodes. 
+ 
+Vous pourriez aussi vouloir tester si deux matrices d'abondances aux mêmes sites (ex. plantes et arthropodes) sont corrélées. Dans ce cas, vous pourriez faire des tests Procrustes. 
+Nous ne verrons pas en détails ces tests ici, mais nous pourrons l'expliquer aux équipes intéressées.
 
 ## 1- Tester si les différences en composition d'espèces dans vos sites sont corrélées à des gradients environnementaux
 
