@@ -1,0 +1,44 @@
+---
+title: "Visualisation des résultats : tableaux et graphiques"
+author: "Laurie Auclair & Jocelyn Lauzon"
+date: "10/09/2023"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Info générales (Laurie)
+
+Comment présenter ses résultats.
+
+
+# Coder des graphiques
+
+
+# ANOVA
+
+
+
+# Régression linéaire
+
+
+
+# Autres modèles univariés...
+
+
+
+# Ordinations
+
+--> afficher d'autres axes que 1 et 2....
+--> envfit
+
+
+plot
+
+ordiplot
+
+biplot
+
+ggplot
