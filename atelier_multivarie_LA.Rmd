@@ -107,6 +107,8 @@ Or, cet espace comporte autant de dimensions que de descripteurs (espèces) et i
 
 ![Source : Michael W. Palmer; https://ordination.okstate.edu/overview.htm. Sur la figure, les points sont les objets (les sites) et les axes sur la figure du milieu sont les descripteurs (les espèces).](ordinations.png)
 
+Le premier axe sera toujours calculé pour représenter la plus grande variation dans l'espace multidimensionnel. Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la variance entre les points, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant.
+
 Note: Similairement, les ordinations permettent aussi d'ordonner les descripteurs (espèces) entre eux dans l'espace. Ainsi, deux espèces proches dans l'ordination se retrouvent plus souvent dans les mêmes sites que deux espèces éloignées. Ici, nous allons nous concentrer sur l'ordination des objets (sites), mais le principe est similaire avec les descripteurs (espèces).
 
 Il existe différentes méthodes d'ordination: 
@@ -148,18 +150,15 @@ summary(ca.varespec)
 ```
 La fonction cca de vegan est aussi utilisée pour d'autres types d'analyses, alors certaines des sorties de la fonction ne sont pas très utiles dans le cas d'une CA. Notamment, ici l'inertie ne permet pas de tirer de conclusions sur vos données. 
 
-Chaque axe de l'ordination est un eigenvector (vecteur propre), qui est associé à une eigenvalue (valeur propre). Dans la CA, les valeurs propres correspondent à "l'inertie extraite" (or equivalently, correlation coefficients).
+Chaque axe de l'ordination est un eigenvector (vecteur propre), qui est associé à une eigenvalue (valeur propre). 
 
+"Proportion explained" : Cette valeur représente la proportion de la variation totale dans la composition des communautés qui est expliqué par un axe donné. Dans la CA, la proportion expliquée d'un axe correspond à la valeur propre divisée par l'inertie.
 
-
-
-
-
-"Proportion explained" : Cette valeur représente la proportion de la variation totale dans la composition des communautés qui est expliqué par un axe donné. Ici, le premier axe explique 25% de la variation dans vos données, le deuxième 17%, etc. Rappel : les axes ne représente pas une variable biologique/écologique déterminée, mais peuvent être vu comme une "combinaison de variables".
+Ici, le premier axe explique 25% de la variation dans vos données, le deuxième 17%, etc. Rappel : les axes/vecteurs ne représente pas une variable biologique/écologique déterminée, mais peuvent être vu comme une "combinaison de variables".
 
 "Cumulative proportion" : Proportion cumulative d'une axe donné et des précédents.
 
-Ensuite, vous avez les coordonnées (la position) de vos objets ("**site scores**") et de vos descripteurs ("**species scores**") dans l'espace multidimensionnel.
+Les "**site scores**" et "**species scores**" correspondent aux coordonnées (position) des objets et des espèces dans l'espace multidimensionnel.
 
 On peut ensuite visualiser avec la fonction **plot** les objets le long des deux premiers axes. (étape 3)
 ```{r}
@@ -168,7 +167,7 @@ plot(ca.varespec, display = "sites")
 
 Comme vu dans la sortie de la CA, l'axe 1 et 2 explique ensemble 42% de la variation dans nos données compositionnelles. En observant cette ordination, on peut voir par exemple que les sites 20 et 23 ou encore 9 et 10 sont similaires dans leur composition en espèce de lichens en comparaison au reste des sites. Les sites 5 et 28 sont très différents en comparaison des autres.
 
-"**Biplot**"On peut aussi afficher les espèces sur notre ordination pour nous permettre de voir à quels sites ou groupe de sites elles sont associées.
+"**Biplot**" : En plus des *sites*, on peut aussi afficher les *espèces* sur notre ordination pour nous permettre de voir à quels sites ou groupe de sites elles sont associées.
 ```{r}
 plot(ca.varespec, display = c("sites", "species"))
 ```
@@ -200,15 +199,15 @@ varechem <- scale(varechem)
 --> La fonction **envfit** permet de tester la corrélation entre les axes d'une ordination et des gradients environnementaux. Chaque vecteur environnemental est aussi associé à une valeur p déterminée par permutation.
 
 ```{r}
-envfit.varechem <- envfit(ca.varespec, varechem)
+envfit.ca <- envfit(ca.varespec, varechem)
 ```
 Les valeurs **CA1 et CA2** représentent la *direction des vecteurs* le long des deux axes de l'ordination, le **r2** donne la *force de la corrélation* entre les variables environnementales et la position des sites dans l'ordination et la **valeur P** [Pr(>r)] donne la *signification statistique*.
 
 Il est aussi possible de visualiser les résultats statistiques du tableau, en incorporant les vecteurs des gradients environnementaux sur vos ordinations!
 ```{r}
 plot(ca.varespec, display = "sites")
-plot(envfit.varechem)
-plot(envfit.varechem, p.max = 0.05, col = "red") # Les correlations significatives apparaissent en rouge
+plot(envfit.ca)
+plot(envfit.ca, p.max = 0.05, col = "red") # Les correlations significatives apparaissent en rouge
 ```
 
 La longueur d'un vecteur renseigne sur la force de la corrélation (r2) entre la variable environnementale et les axes de l'ordination, tandis que la direction du vecteur fait pointer celui-ci vers les objets (sites) ayant des valeurs plus élevés pour cette variable.
@@ -217,26 +216,50 @@ Par exemple, la quantité d'aluminium et de fer dans le sol est corrélée avec 
 
 Ce type de figure contient beaucoup d'informations, mais est parfois difficile à interpréter. Il s'agit souvent d'une façon d'explorer et/ou de visualiser nos données. 
 
-
-
 # L'analyse en composantes principales (PCA)
 
-La PCA est une autre méthode d'ordination fréquemment utilisée....
-
+La PCA est une autre méthode d'ordination fréquemment utilisée.
 
 Comme la CA, les données qu'on fournit pour une PCA sont sous forme de *matrice de communautés*. Mais, contrairement à la CA, la PCA peut être utilisée avec des **données d'abondance seulement**, (pas avec des données de présence-absence).
 
-La PCA se base sur la **distance euclidienne**...mais pour éviter le problème des doubles zéros, on doit effectuer une **transformation Hellinger** sur les données. La **distance Hellinger** est donc la distance euclidienne calculée sur les données pré-transformées par Hellinger.
+"En général, il est préférable d'avoir un plus grand nombre de sites que de variables dans le jeu de données (plus de lignes que de colonnes)." (réf : CSBQ atelier)
+
+La PCA se base sur la **distance euclidienne**. Mais pour éviter le problème des doubles zéros, on doit effectuer une **transformation Hellinger** sur les données. La **distance Hellinger** est donc la distance euclidienne calculée sur les données pré-transformées par Hellinger.
+
+## Faire une PCA dans R
+
+```{r}
+
+```
 
 
-In principal components analysis, eigenvalues are ‘variance extracted’. 
+Allons inspecter en détails l'objet        qu'on vient de créer.
+```{r}
 
-...Jocelyn
+```
 
+
+L'inertie représente la variance totale de l'ordination qui est expliquée par les descripteurs (les espèces).
+La proportion de la variance expliquée par un axe correspond à sa valeur propre divisé par l'inertie.
+
+
+## envfit
+
+```{r}
+
+```
 
 
 
 # L'analyse en coordonnées principales (PCoA)
+
+
+
+
+
+
+
+"La PCoA est aussi particulièrement adaptées pour les jeux de données présentant plus de colonnes que de lignes." (réf : CSBQ atelier)
 
 
 ```{r}
@@ -254,15 +277,27 @@ Une PCoA avec distance Chi-carré = CA
 ...Jocelyn
 
 
+
+
+
+
+
 ## Matrice de distance
 
 
 
 ... voir texte explicatif dans serction PERMANOVA .... Jocelyn
 
+
+
+
+
+
 <br>
 
 # Résumé des différences entre les méthodes d'ordination
+
+Il peut être difficile de choisir quelle méthode d'ordination pour répondre à vos questions de recherche. De manière générale, pour le genre de données que vous avez récoltées (données d'abondances, peu de sites, beaucoup d'espèces, beaucoup de zéros), l'analyse de correspondance (CA) s'avère une méthode très puissante. Or, rien de mieux que de s'amuser à explorer et comparer les différentes méthodes.
 
 ## CA
 données : quantitatives d'abondances ou binaires (présence-absence)
@@ -270,13 +305,11 @@ fonction : cca
 input : matrice de communautés
 distance : Chi-carré
 
-
 ##PCA
 données : quantitatives d'abondances
 fonction :
 input : matrice de communautés
 distance : euclidienne (pour régler prob de double-0, transformation Hellinger)
-
 
 ## PCoA
 données : quantitatives, qualitatives, mixtes
@@ -286,7 +319,12 @@ distance : au choix (ex. bray-curtis)
 
 
 
-... Jocelyn...
+... 
+
+
+
+
+
 
 <br>
 
@@ -372,6 +410,6 @@ Jari Oksanen, F. Guillaume Blanchet, Michael Friendly, Roeland Kindt, Pierre Leg
 
 Legendre, P., & Legendre, L. (1998). Numerical ecology (2nd Edition). Elsevier.
 
-Palmer..
+Palmer, M. W. Ordination Methods - an overview (https://ordination.okstate.edu/overview.htm#Direct_gradient_analysis)
 
 Väre, H., Ohtonen, R. and Oksanen, J. (1995) Effects of reindeer grazing on understorey vegetation in dry Pinus sylvestris forests. Journal of Vegetation Science 6, 523--530.
