@@ -60,7 +60,7 @@ varespec <- sample2matrix(varespec_long)
 ```
 
 De plus, les données d'abondances peuvent aussi être transformées en données binaires (présence-absence).
-La fonction **decostand** permet de standardiser et de transformer les données compositionnelles de communautés. Nous reviendrons à cette fonction plus loin...
+La fonction **decostand** de la librairie vegan permet de standardiser et de transformer les données compositionnelles de communautés. Nous reviendrons à cette fonction plus loin...
 ```{r}
 varespec.pa<-decostand(varesepc.matrix, method="pa")
 ```
@@ -138,17 +138,15 @@ La distance de Chi2 exclut les **doubles zéros**, ces derniers sont souvent pr�
 ## Faire une CA dans R
 
 Avec le package vegan, on peut utiliser la fonction **cca** pour calculer une ordination CA. Cette fonction exécute les étapes 1 et 2. Le premier argument (le seul ici) est notre matrice d'abondance brute.
-
 ```{r}
 ca.varespec<-cca(varespec)
 ```
 
 Allons inspecter en détails l'objet cca qu'on vient de créer.
-
 ```{r}
 summary(ca.varespec)
 ```
-La fonction cca de vegan est aussi utilisée pour d'autres types d'analyses, alors certaines des sorties de la fonction ne sont pas très utiles dans le cas d'une CA. Notamment, ici l'inertie ne permet pas de tirer de conclusions sur vos données. 
+Beaucoup d'info! La fonction cca de vegan est aussi utilisée pour d'autres types d'analyses, alors certaines des sorties de la fonction ne sont pas très utiles dans le cas d'une CA. Notamment, ici l'inertie ne permet pas de tirer de conclusions sur vos données. 
 
 Chaque axe de l'ordination est un eigenvector (vecteur propre), qui est associé à une eigenvalue (valeur propre). 
 
@@ -167,7 +165,7 @@ plot(ca.varespec, display = "sites")
 
 Comme vu dans la sortie de la CA, l'axe 1 et 2 explique ensemble 42% de la variation dans nos données compositionnelles. En observant cette ordination, on peut voir par exemple que les sites 20 et 23 ou encore 9 et 10 sont similaires dans leur composition en espèce de lichens en comparaison au reste des sites. Les sites 5 et 28 sont très différents en comparaison des autres.
 
-"**Biplot**" : En plus des *sites*, on peut aussi afficher les *espèces* sur notre ordination pour nous permettre de voir à quels sites ou groupe de sites elles sont associées.
+En plus des *sites*, on peut aussi afficher les *espèces* sur notre graphique d'ordination (**biplot**) pour nous permettre de voir à quels sites ou groupe de sites elles sont associées.
 ```{r}
 plot(ca.varespec, display = c("sites", "species"))
 ```
@@ -175,6 +173,12 @@ plot(ca.varespec, display = c("sites", "species"))
 L'espèce "icmaeric" par exemple, est plus abondante dans les sites qui sont proches dans l'ordination (6,13,7,5,14) que dans les sites plus loin (10,9,21,28).
 
 **Il ne s'agit toutefois pas d'un test statistique**. Les ordinations nous permettent de visualiser certaines tendances dans nos données. Ce n'est donc pas très approprié pour tester directement des hypothèses.
+
+#### Scaling (quelques mots pour faciliter l'interprétation des graphiques)
+
+La fonction plot effectue un scaling = 2 par défaut. Ce type de scaling conserve la corrélation entre les descripteurs (espèces) et l'angle entre ceux-ci représente leur corrélation (90° : aucune corrélation, 180° : forte corrélation négative)
+
+Sur un biplot avec un scaling = 1, la distance entre les objets (sites) reflète approximativement leur distance euclidienne (ou chi-carré), mais l'angle entre les descripteurs (espcèces) ne reflètent pas leur corrélation.
 
 <br>
 
@@ -185,8 +189,6 @@ L'espèce "icmaeric" par exemple, est plus abondante dans les sites qui sont pro
 Pour l'exemple, nous allons télécharger des données environnementales de caractéristiques du sol sur les sites associés aux données d'abondances de lichens
 ```{r}
 data(varechem)
-```
-```{r}
 head(varechem)
 ```
 
@@ -199,7 +201,7 @@ varechem <- scale(varechem)
 --> La fonction **envfit** permet de tester la corrélation entre les axes d'une ordination et des gradients environnementaux. Chaque vecteur environnemental est aussi associé à une valeur p déterminée par permutation.
 
 ```{r}
-envfit.ca <- envfit(ca.varespec, varechem)
+(envfit.ca <- envfit(ca.varespec, varechem))
 ```
 Les valeurs **CA1 et CA2** représentent la *direction des vecteurs* le long des deux axes de l'ordination, le **r2** donne la *force de la corrélation* entre les variables environnementales et la position des sites dans l'ordination et la **valeur P** [Pr(>r)] donne la *signification statistique*.
 
@@ -222,73 +224,92 @@ La PCA est une autre méthode d'ordination fréquemment utilisée.
 
 Comme la CA, les données qu'on fournit pour une PCA sont sous forme de *matrice de communautés*. Mais, contrairement à la CA, la PCA peut être utilisée avec des **données d'abondance seulement**, (pas avec des données de présence-absence).
 
-"En général, il est préférable d'avoir un plus grand nombre de sites que de variables dans le jeu de données (plus de lignes que de colonnes)." (réf : CSBQ atelier)
+Pour effectuer une PCA, il est mieux que nos données contiennent plus de sites (lignes) que d'espèces (colonnes). 
 
-La PCA se base sur la **distance euclidienne**. Mais pour éviter le problème des doubles zéros, on doit effectuer une **transformation Hellinger** sur les données. La **distance Hellinger** est donc la distance euclidienne calculée sur les données pré-transformées par Hellinger.
+La PCA préserve la **distance euclidienne**. Mais pour éviter le problème des doubles zéros, on doit effectuer une **transformation Hellinger** sur les données. La **distance Hellinger** est donc la distance euclidienne calculée sur les données pré-transformées par Hellinger.
+
+De plus, cette méthode (distance hellinger) accorde moins d'importance aux espèces rares que la CA (distance chi-carré).
 
 ## Faire une PCA dans R
+```{r}
+# Tranformation des données
+varespec.hel <- decostand(varespec, method="hellinger")
+# PCA
+pca.varespec <- rda(varespec.hel)
+summary(pca.varespec)
+```
+Encore une fois, ce qui nous intéresse surtout ici c'est la proportion de la variance expliquée par chaque axe.
+
+Dans la PCA, l'inertie représente la variance totale de l'ordination qui est expliquée par les descripteurs (les espèces). On peut voir que la proportion de la variance expliquée par un axe correspond à sa valeur propre divisé par l'inertie.
 
 ```{r}
-
+plot(pca.varespec)
+#OU
+biplot(pca.varespec)
 ```
-
-
-Allons inspecter en détails l'objet        qu'on vient de créer.
-```{r}
-
-```
-
-
-L'inertie représente la variance totale de l'ordination qui est expliquée par les descripteurs (les espèces).
-La proportion de la variance expliquée par un axe correspond à sa valeur propre divisé par l'inertie.
-
 
 ## envfit
-
 ```{r}
-
+(envfit.pca <- envfit(pca.varespec, varechem))
 ```
 
-
+```{r}
+plot(pca.varespec)
+plot(envfit.pca)
+plot(envfit.pca, p.max = 0.05, col = "red")
+```
 
 # L'analyse en coordonnées principales (PCoA)
 
+La PCoA est une autre méthode d'ordination fréquemment utilisée. Elle se démarque surtout par la possibilité d'utiliser n'importe quelle mesure de distance au choix (ex. distance Bray-Curtis).
+
+La PCoA est une méthode adaptée aux jeux de données comportant plus d'espèces que de sites.
+
+Contrairement aux CA et PCA, on doit d'abord créer une **matrice de distance**, puis donner cette matrice de distance à la fonction pour que celle-ci exécute l'ordination.
+
+## Matrices de distance
+
+Les matrices de distance sont très utilisées en statistiques multivariées. On peut passer facilement d'une matrice d'abondance d'espèces à une matrice de distance. Le format d'une matrice de distance est différent puisque les lignes et les colonnes représentent les objets (sites) et les cellules contiennent l'information sur la différence (la distance) entre nos descripteurs pour chaque paire de sites. La matrice d'abondance est rectangulaire, mais la matrice de distance est carrée. Pour passer de l'une à l'autre, il faut calculer un indice de distance entre chaque paire de sites. Tout comme pour des indices de biodiversité, il existe plusieurs types de mesures de distance: distance euclidienne, distance de chord, distance d'Hellinger, distance de chi-carré, etc. Le choix de la bonne mesure est fonction de nos types de données et de nos questions. 
+
+### Matrice de distance hellinger
+
+Pour calculer la distance hellinger, il faut d'abord transformer nos données avec la fonction **decostand** vu précédemment.
+```{r}
+#La transformation Hellinger
+varespec.hellinger<-decostand(varespec, method="hellinger") 
+head(varespec)
+head(varespec.hellinger)
+```
+Mais on a toujours une matrice de communautés et non de distance.
+La fonction **vegdist** de vegan permet de créer une matrice de distance à partir d'une matrice de communauté.
+```{r}
+varespec.hel <- vegdist(varespec.hellinger, method='euclid')
+```
+
+Ces deux étapes (transformation hellinger + matrice de distance) peuvent être combinée en une seul ligne de code!
+```{r}
+varespec.hel <- vegdist(decostand(varespec, method='hellinger'), method='euclid')
+```
+
+Comparer le format des deux matrices. Noter que la matrice de distance est carrée avec les sites à la fois en lignes et en colonnes.
+```{r}
+head(varespec)
+varespec.hel
+```
+
+Il ne sert à rien de faire une PCoA avec une matrice de distance hellinger ou de distance chi-carré, car cela revient pratiquement à faire un PCA ou un CA, respectivement.
+
+Prenons avantage de la PCoA pour utiliser la distance de Bray-Curtis.
 
 
 
 
-
-
-"La PCoA est aussi particulièrement adaptées pour les jeux de données présentant plus de colonnes que de lignes." (réf : CSBQ atelier)
+.... avantages....
 
 
 ```{r}
-#La transformation Hellinger
-spe.hel<-decostand(spe, method="hellinger") # vous pouvez aussi simplement écrire "hel"
- 
-#Transformation de chi-carré
-spe.chi<-decostand(spe, method="chi.square")
+varespec.bray <- vegdist(varespec, method='bray')
 ```
-
-
-Une PCoA avec distance Hellinger = PCA
-Une PCoA avec distance Chi-carré = CA
-
-...Jocelyn
-
-
-
-
-
-
-
-## Matrice de distance
-
-
-
-... voir texte explicatif dans serction PERMANOVA .... Jocelyn
-
-
 
 
 
@@ -304,23 +325,25 @@ données : quantitatives d'abondances ou binaires (présence-absence)
 fonction : cca
 input : matrice de communautés
 distance : Chi-carré
+à utiliser si : Nos données sont de type présence-absence. 
 
-##PCA
+## PCA
 données : quantitatives d'abondances
-fonction :
+fonction : rda
 input : matrice de communautés
-distance : euclidienne (pour régler prob de double-0, transformation Hellinger)
+distance : euclidienne (mais pour régler prob de double-0, transformation Hellinger)
+à utiliser si : On veut donner moins de poids aux espèces rares dans la distinction de nos communautés; nos données contiennent plus de sites que d'espèces
 
 ## PCoA
 données : quantitatives, qualitatives, mixtes
 fonction : 
 input : matrice de distance
 distance : au choix (ex. bray-curtis)
+à utiliser si : Nos données contiennent plus d'espèces que de sites; on veut utiliser une des nombreuses autres distances que euclidienne et chi-carré; on a des données qualitatives.
 
 
 
-... 
-
+....
 
 
 
@@ -358,16 +381,14 @@ Nous pourrions faire la prédiction qu'il y a une différence en composition d'e
 
 Si on repense à un nuage de points multidimensionnel où chaque point représente un site, on peut s'imaginer que chacun de nos groupes (ici l'aménagement), est constitué par un groupe de points. La PERMANOVA teste si le centroide de chaque groupe est différent en comparant la somme des distances entre chaque point et le centroide de son groupe avec la somme des distances entre chaque point et le centroide de tous nos sites; il s'agit de la pseudo-statistique F.
 
+///NOTE JOCELYN: C'EST CE PETIT PARAGRAPHE QUE JE TROUVE CONFONDANT.
 Par contre, la pseudo-statistique F ne se calcul pas sur une ordination comme l'ordination CA, mais sur une ordination de type PCoA qui est construite à partir d'une matrice de distance...
+///
 
-### Matrice de distance
- (Jocelyn, à toi de voir ce que tu gardes et ce que tu laisses)
-Les matrices de distance sont très utilisées en statistiques multivariées. On peut passer facilement d'une matrice d'abondance d'espèces à une matrice de distance. Le format d'une matrice de distance est différent puisque les lignes et les colonnes représentent les objets (sites) et les cellules contiennent l'information sur la différence (la distance) entre nos descripteurs pour chaque paire de sites. La matrice d'abondance est rectangulaire, mais la matrice de distance est carrée. Pour passer de l'une à l'autre, il faut calculer un indice de distance entre chaque paire de sites. Tout comme pour des indices de biodiversité, il existe plusieurs types de mesures de distance: distance euclidienne, distance de corde, distance d'Hellinger, distance de chi-carré, etc. Le choix de la bonne mesure est fonction de nos types de données et de nos questions. Ici, nous utiliserons la distance Hellinger qui est appropriée pour les données d'abondance d'espèces notamment parce qu'elle n'est pas sensible au problème du double zéro discuté plus tôt. Pour calculer cette distance, il faut effectuer une transformation de Hellinger, puis calculer la distance euclidienne: voici la fonction.
-
+### Matrice de distance hellinger
 ```{r}
 dune.dist<-vegdist(decostand(dune ,method='hellinger'), method='euclid')
 ```
-
 Comparer le format des deux matrices. Noter que la matrice de distance est carrée avec les sites en lignes et en colonnes.
 
 Donc, reprenons...
@@ -407,6 +428,8 @@ Bourgeois, B., Giroux-Bougard, X., Winegardner, A., Chrétien, E., Granados, M. 
 Jongman R.H., Ter Braak C.J.F. & van Tongeren O.F.R. (eds) (1995): Data analysis in community and landscape ecology. Cambridge University Press.
 
 Jari Oksanen, F. Guillaume Blanchet, Michael Friendly, Roeland Kindt, Pierre Legendre, Dan McGlinn, Peter R. Minchin, R. B. O'Hara, Gavin L. Simpson, Peter Solymos, M. Henry H. Stevens, Eduard Szoecs and Helene Wagner (2020). vegan: Community Ecology Package. R package version 2.5-7. https://CRAN.R-project.org/package=vegan
+
+Legendre, P., & Gallagher, E. D. (2001). Ecologically meaningful transformations for ordination of species data. Oecologia, 129, 271-280.
 
 Legendre, P., & Legendre, L. (1998). Numerical ecology (2nd Edition). Elsevier.
 
