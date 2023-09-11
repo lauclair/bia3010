@@ -146,24 +146,20 @@ Allons inspecter en détails l'objet cca qu'on vient de créer.
 ```{r}
 summary(ca.varespec)
 ```
-La fonction cca de vegan est aussi utilisée pour d'autres types d'analyses, alors certaines des sorties de la fonction ne sont pas très utiles dans le cas d'une CA. Notamment, ici l'inertie ne permet pas de tirer de conclusions sur vos données.
+La fonction cca de vegan est aussi utilisée pour d'autres types d'analyses, alors certaines des sorties de la fonction ne sont pas très utiles dans le cas d'une CA. Notamment, ici l'inertie ne permet pas de tirer de conclusions sur vos données. 
 
-Les eigenvalues (valeurs propres) représentent les axes de votre ordination. 
-
-... à élaborer...
+Chaque axe de l'ordination est un eigenvector (vecteur propre), qui est associé à une eigenvalue (valeur propre). Dans la CA, les valeurs propres correspondent à "l'inertie extraite" (or equivalently, correlation coefficients).
 
 
 
 
-"Proportion explained" : Cette valeur représente la proportion de la variation dans la composition des communautés qui est expliqué par un axe donné. Ici, le premier axe explique 25% de la variation dans vos données, le deuxième 17%, etc. Rappel : les axes ne représente pas une variable biologique/écologique déterminée, mais peuvent être vu comme une "combinaison de variables".
+
+
+"Proportion explained" : Cette valeur représente la proportion de la variation totale dans la composition des communautés qui est expliqué par un axe donné. Ici, le premier axe explique 25% de la variation dans vos données, le deuxième 17%, etc. Rappel : les axes ne représente pas une variable biologique/écologique déterminée, mais peuvent être vu comme une "combinaison de variables".
 
 "Cumulative proportion" : Proportion cumulative d'une axe donné et des précédents.
 
-Ensuite, vous avez la position de vos objets ("**site scores**") et de vos descripteurs ("**species scores**") dans l'espace multidimensionnel à la manière de coordonnées (x,y,z,etc).
-
-
-... à élaborer...
-
+Ensuite, vous avez les coordonnées (la position) de vos objets ("**site scores**") et de vos descripteurs ("**species scores**") dans l'espace multidimensionnel.
 
 On peut ensuite visualiser avec la fonction **plot** les objets le long des deux premiers axes. (étape 3)
 ```{r}
@@ -172,7 +168,7 @@ plot(ca.varespec, display = "sites")
 
 Comme vu dans la sortie de la CA, l'axe 1 et 2 explique ensemble 42% de la variation dans nos données compositionnelles. En observant cette ordination, on peut voir par exemple que les sites 20 et 23 ou encore 9 et 10 sont similaires dans leur composition en espèce de lichens en comparaison au reste des sites. Les sites 5 et 28 sont très différents en comparaison des autres.
 
-On peut aussi afficher les espèces sur notre ordination pour nous permettre de voir à quels sites ou groupe de sites elles sont associées.
+"**Biplot**"On peut aussi afficher les espèces sur notre ordination pour nous permettre de voir à quels sites ou groupe de sites elles sont associées.
 ```{r}
 plot(ca.varespec, display = c("sites", "species"))
 ```
@@ -183,7 +179,7 @@ L'espèce "icmaeric" par exemple, est plus abondante dans les sites qui sont pro
 
 <br>
 
-# Q1- Tester si les différences en composition d'espèces dans vos sites sont corrélées à des gradients environnementaux
+## Q1- Tester si les différences en composition d'espèces dans vos sites sont corrélées à des gradients environnementaux
 
 ## La fonction envfit
 
@@ -223,7 +219,7 @@ Ce type de figure contient beaucoup d'informations, mais est parfois difficile �
 
 
 
-## L'analyse en composantes principales (PCA)
+# L'analyse en composantes principales (PCA)
 
 La PCA est une autre méthode d'ordination fréquemment utilisée....
 
@@ -233,12 +229,14 @@ Comme la CA, les données qu'on fournit pour une PCA sont sous forme de *matrice
 La PCA se base sur la **distance euclidienne**...mais pour éviter le problème des doubles zéros, on doit effectuer une **transformation Hellinger** sur les données. La **distance Hellinger** est donc la distance euclidienne calculée sur les données pré-transformées par Hellinger.
 
 
+In principal components analysis, eigenvalues are ‘variance extracted’. 
+
 ...Jocelyn
 
 
 
 
-## L'analyse en coordonnées principales (PCoA)
+# L'analyse en coordonnées principales (PCoA)
 
 
 ```{r}
@@ -373,5 +371,7 @@ Jongman R.H., Ter Braak C.J.F. & van Tongeren O.F.R. (eds) (1995): Data analysis
 Jari Oksanen, F. Guillaume Blanchet, Michael Friendly, Roeland Kindt, Pierre Legendre, Dan McGlinn, Peter R. Minchin, R. B. O'Hara, Gavin L. Simpson, Peter Solymos, M. Henry H. Stevens, Eduard Szoecs and Helene Wagner (2020). vegan: Community Ecology Package. R package version 2.5-7. https://CRAN.R-project.org/package=vegan
 
 Legendre, P., & Legendre, L. (1998). Numerical ecology (2nd Edition). Elsevier.
+
+Palmer..
 
 Väre, H., Ohtonen, R. and Oksanen, J. (1995) Effects of reindeer grazing on understorey vegetation in dry Pinus sylvestris forests. Journal of Vegetation Science 6, 523--530.
