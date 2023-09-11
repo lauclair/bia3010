@@ -221,6 +221,7 @@ La PCA se base sur la **distance euclidienne**...mais pour éviter le problème 
 
 # L'analyse en coordonnées principales (PCoA)
 
+
 ```{r}
 #La transformation Hellinger
 spe.hel<-decostand(spe, method="hellinger") # vous pouvez aussi simplement écrire "hel"
@@ -264,7 +265,7 @@ distance : euclidienne (pour régler prob de double-0, transformation Hellinger)
 données : quantitatives, qualitatives, mixtes
 fonction : 
 input : matrice de distance
-distance : au choix!
+distance : au choix (ex. bray-curtis)
 
 
 

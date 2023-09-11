@@ -13,8 +13,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Comment présenter ses résultats.
 
+# Tableaux (Laurie)
 
-# Coder des graphiques
+
+
+# Coder des graphiques (Jocelyn)
 
 
 # ANOVA
