@@ -10,7 +10,26 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
  
 
- 
+
+À AJOUTER DANS ATELIER MULTIVARIÉES
+
+Quelques manipulations de matrice. Dans la librarie picante, la fonction **matrix2sample** converti une matrice de communautés en un tableau de données format "long" (chaque ligne est une observation). La fonction **sample2matrix** fait le contraire.
+```{r}
+library(picante)
+varespec_long <- matrix2sample(varespec)
+varespec <- sample2matrix(varespec_long)
+```
+
+Calculs de diversité
+```{r}
+richesse <- specnumber(varespec)
+shannon <- diversity(varespec, index = "shannon")
+```
+
+
+
+
+
 # Info générales (Laurie)
 
 Comment présenter ses résultats.
@@ -19,8 +38,14 @@ Comment présenter ses résultats.
 
 
 
-# Coder des graphiques (Jocelyn)
+# Coder des graphiques (Jocelyn+Sabrina?)
 
+## Importer les données
+```{r}
+library(datasets)
+data(iris)
+summary(iris)
+```
 
 # ANOVA
 
@@ -36,14 +61,64 @@ Comment présenter ses résultats.
 
 # Ordinations
 
+## Importer les données
+```{r}
+data(varespec) # matrice de communautés
+data(varechem) # données environnementales
+varechem <- scale(varechem) # centrer-réduire
+```
+
+## CA (Analyse de correspondance)
+
+Faire l'ordination
+```{r}
+ca.varespec<-cca(varespec)
+```
+Tests statistiques avec la fonction **envfit**
+```{r}
+envfit.varechem<-envfit(ca.varespec, varechem)
+```
+
+### Fonction plot
+
+```{r}
+plot(ca.varespec, display = "sites")
+```
+
+```{r}
+plot(ca.varespec, display = c("sites", "species"))
+```
+
+Incorporer les vecteurs environnementaux à la figure d'ordination
+```{r}
+plot(ca.varespec, display = "sites")
+plot(envfit.varechem)
+plot(envfit.varechem, p.max = 0.05, col = "red")#Les correlations significatives apparaissent en rouge
+```
+
+
+### Fonction ordiplot
+
+```{r}
+ordiplot(ca.varespec)
+```
+
+
+
+## PCA
+
+### Fonction biplot
+
+La fonction biplot ne peut être qu'utilisée avec ordination linéaire comme PCA.
+
+
+
+
 --> afficher d'autres axes que 1 et 2....
 --> envfit
 
 
-plot
 
-ordiplot
 
-biplot
 
 ggplot
