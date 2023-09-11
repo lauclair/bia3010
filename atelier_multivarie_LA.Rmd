@@ -76,6 +76,8 @@ Tester si deux matrices d'abondances aux mêmes sites (ex. plantes et arthropode
 
 Mais avant de répondre à nos questions, explorons visuellement nos données de composition des communautés!
 
+<br>
+
 # Les ordinations
 
 Lorsqu'on s'intéresse à des communautés à différents sites, on est souvent intéressé à visualiser quels sites sont plus semblables ou plus différents en termes de composition d'espèce. Pour ce faire, on utilise souvent les ordinations. 
@@ -97,6 +99,8 @@ Il existe différentes méthodes d'ordination:
 - l'analyse en composantes principales (PCA);
 - l'analyse en coordonnées principales (PCoA);
 - la mise à l'échelle multidimensionnelle non-métrique (nMDS; non présentée ici).
+
+<br>
 
 # L'analyse de correspondance (CA)
 
@@ -162,25 +166,30 @@ L'espèce "icmaeric" par exemple, est plus abondante dans les sites qui sont pro
 
 **Il ne s'agit toutefois pas d'un test statistique**. Les ordinations nous permettent de visualiser certaines tendances dans nos données. Ce n'est donc pas très approprié pour tester directement des hypothèses.
 
-## Q1- Tester si les différences en composition d'espèces dans vos sites sont corrélées à des gradients environnementaux
+<br>
+
+# Q1- Tester si les différences en composition d'espèces dans vos sites sont corrélées à des gradients environnementaux
 
 ## La fonction envfit
 
 Pour l'exemple, nous allons télécharger des données environnementales de caractéristiques du sol sur les sites associés aux données d'abondances de lichens
 ```{r}
-(data(varechem))
+data(varechem)
+```
+```{r}
+head(varechem)
 ```
 
 Attention! Vos variables environnementales ne sont souvent pas dans les mêmes dimensions physiques (unités). C'est donc une bonne idée de centrer et réduire nos variables environnementales pour pouvoir comparer les corrélations (même si envfit le fait automatiquement!).
 ```{r}
-#centrer-réduire
-varechem<-scale(varechem)
+# centrer-réduire
+varechem <- scale(varechem)
 ```
 
 --> La fonction **envfit** permet de tester la corrélation entre les axes d'une ordination et des gradients environnementaux. Chaque vecteur environnemental est aussi associé à une valeur p déterminée par permutation.
 
 ```{r}
-(envfit.varechem<-envfit(ca.varespec, varechem))
+envfit.varechem <- envfit(ca.varespec, varechem)
 ```
 Les valeurs **CA1 et CA2** représentent la *direction des vecteurs* le long des deux axes de l'ordination, le **r2** donne la *force de la corrélation* entre les variables environnementales et la position des sites dans l'ordination et la **valeur P** [Pr(>r)] donne la *signification statistique*.
 
@@ -188,10 +197,10 @@ Il est aussi possible de visualiser les résultats statistiques du tableau, en i
 ```{r}
 plot(ca.varespec, display = "sites")
 plot(envfit.varechem)
-plot(envfit.varechem, p.max = 0.05, col = "red")#Les correlations significatives apparaissent en rouge
+plot(envfit.varechem, p.max = 0.05, col = "red") # Les correlations significatives apparaissent en rouge
 ```
 
-La longueur d' vecteur renseigne sur la force de la corrélation (r2) entre la variable environnementale et les axes de l'ordination, tandis que la direction du vecteur fait pointer celui-ci vers les objets (sites) ayant des valeurs plus élevés pour cette variable.
+La longueur d'un vecteur renseigne sur la force de la corrélation (r2) entre la variable environnementale et les axes de l'ordination, tandis que la direction du vecteur fait pointer celui-ci vers les objets (sites) ayant des valeurs plus élevés pour cette variable.
 
 Par exemple, la quantité d'aluminium et de fer dans le sol est corrélée avec des différences dans la composition en espèces de lichens entre les sites. Les sites dans le cadran en bas à gauche ont une composition en espèces plus similaire et leur sol contiennent plus d'aluminium et de fer que les sites en haut à droite.
 
@@ -199,9 +208,7 @@ Ce type de figure contient beaucoup d'informations, mais est parfois difficile �
 
 
 
-
-
-# L'analyse en composantes principales (PCA)
+## L'analyse en composantes principales (PCA)
 
 La PCA est une autre méthode d'ordination fréquemment utilisée....
 
@@ -216,9 +223,7 @@ La PCA se base sur la **distance euclidienne**...mais pour éviter le problème 
 
 
 
-
-
-# L'analyse en coordonnées principales (PCoA)
+## L'analyse en coordonnées principales (PCoA)
 
 
 ```{r}
@@ -242,7 +247,7 @@ Une PCoA avec distance Chi-carré = CA
 
 ... voir texte explicatif dans serction PERMANOVA .... Jocelyn
 
-
+<br>
 
 # Résumé des différences entre les méthodes d'ordination
 
@@ -270,25 +275,25 @@ distance : au choix (ex. bray-curtis)
 
 ... Jocelyn...
 
+<br>
 
+# Q2- Tester si la composition en espèces diffère entre des groupes de sites?
 
-## 2-Tester si la composition en espèces diffère entre des groupes de sites?
-
-# L'analyse permutationnelle de variance multivariées (PERMANOVA)
+## L'analyse permutationnelle de variance multivariées (PERMANOVA)
 
 La PERMANOVA est l'analogue multivarié de l'ANOVA.
 Rappel sur l'ANOVA:
--Elle est appropriée pour tester des hypothèses de structures écologiques complexes comme de la variabilité spatiale.
--Les variances intra et intergroupes sont comparées pour fournir une statistique F.
--L’hypothèse nulle stipule que la statistique F n’est pas significativement différente de 0, ce qui se traduit par une absence de différence entre les groupes. La signification de cette statistique est évaluée par comparaison à une distribution théorique. Elle est donc paramétrique.
+- Elle est appropriée pour tester des hypothèses de structures écologiques complexes comme de la variabilité spatiale.
+- Les variances intra et intergroupes sont comparées pour fournir une statistique F.
+- L’hypothèse nulle stipule que la statistique F n’est pas significativement différente de 0, ce qui se traduit par une absence de différence entre les groupes. La signification de cette statistique est évaluée par comparaison à une distribution théorique. Elle est donc paramétrique.
 
 La PERMANOVA (Anderson, 2001):
--Analyse de variance de données multivariées basée sur le calcul d'une pseudo-statistique F.
--Test non paramétrique en testant la signification des pseudo-statistiques F par un test de permutations. 
--La pseudo-statistique F est calculée d’après une matrice de distance (nous y reviendrons!). 
+- Analyse de variance de données multivariées basée sur le calcul d'une pseudo-statistique F.
+- Test non paramétrique en testant la signification des pseudo-statistiques F par un test de permutations. 
+- La pseudo-statistique F est calculée d’après une matrice de distance (nous y reviendrons!). 
 MAIS ATTENTION:
--Suppose l'indépendance des données
--Est sensible aux différences de dispersion des points entre les groupes.
+- Suppose l'indépendance des données
+- Est sensible aux différences de dispersion des points entre les groupes.
 
 Une différence significative entre groupe peut donc être due à une différence de position centrale (moyenne) ou à une différence de dispersion des points (variance). Pour départager ces deux effets, un test basé sur les distances d’homogénéité de dispersions multivariées peut être réalisé (Anderson, 2006). Nous y reviendrons.
 
@@ -305,6 +310,7 @@ Si on repense à un nuage de points multidimensionnel où chaque point représen
 Par contre, la pseudo-statistique F ne se calcul pas sur une ordination comme l'ordination CA, mais sur une ordination de type PCoA qui est construite à partir d'une matrice de distance...
 
 ### Matrice de distance
+ (Jocelyn, à toi de voir ce que tu gardes et ce que tu laisses)
 Les matrices de distance sont très utilisées en statistiques multivariées. On peut passer facilement d'une matrice d'abondance d'espèces à une matrice de distance. Le format d'une matrice de distance est différent puisque les lignes et les colonnes représentent les objets (sites) et les cellules contiennent l'information sur la différence (la distance) entre nos descripteurs pour chaque paire de sites. La matrice d'abondance est rectangulaire, mais la matrice de distance est carrée. Pour passer de l'une à l'autre, il faut calculer un indice de distance entre chaque paire de sites. Tout comme pour des indices de biodiversité, il existe plusieurs types de mesures de distance: distance euclidienne, distance de corde, distance d'Hellinger, distance de chi-carré, etc. Le choix de la bonne mesure est fonction de nos types de données et de nos questions. Ici, nous utiliserons la distance Hellinger qui est appropriée pour les données d'abondance d'espèces notamment parce qu'elle n'est pas sensible au problème du double zéro discuté plus tôt. Pour calculer cette distance, il faut effectuer une transformation de Hellinger, puis calculer la distance euclidienne: voici la fonction.
 
 ```{r}
@@ -322,12 +328,12 @@ La PERMANOVA teste si le centroide de chaque groupe est différent. Toutefois, i
 Nous allons utiliser la fonction betadisper de vegan pour tester si la variance multivariée est différence entre les groupes d'aménagement.
 ```{r}
 disper.dune<-betadisper(dune.dist, dune.env$Management)
-anova(disper.dune)#pour effectuer un test de signification
+anova(disper.dune) # pour effectuer un test de signification
 ```
 L'hypothèse nulle est qu'il n'y a pas de différence de dispersion entre nos groupes et l'hypothèse alternative est qu'il y a une différence. Ici, comme la valeur P est supérieure à un seuil 0.05, on ne peut pas rejeter l'hypothèse nulle. Nos groupes sont donc suffisamment homogènes dans leur dispersion pour faire notre PERMANOVA.
 
 ```{r}
-(permanova.dune<-adonis2(dune.dist ~ Management, data = dune.env))
+permanova.dune <- adonis2(dune.dist ~ Management, data = dune.env)
 ```
 Donc, interprétons la sortie de la PERMANOVA. On peut voir que la pseudo-statistique F est de 2.2842 et que cette valeur se retrouve à l'extrémité de notre distribution de pseudo-statistique F générée par permutation. Seul 0.3% des pseudo-statistiques F issues des permutations est plus grand que notre vraie pseudo-statistique. On peut donc dire que la composition végétale est significativement différente entre les différents types d'aménagement. De plus, le R2 nous dit que l'aménagement explique environ 30% de la variation en espèce entre nos sites.
 
