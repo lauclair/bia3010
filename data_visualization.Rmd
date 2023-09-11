@@ -10,26 +10,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
  
 
-
-À AJOUTER DANS ATELIER MULTIVARIÉES
-
-Quelques manipulations de matrice. Dans la librarie picante, la fonction **matrix2sample** converti une matrice de communautés en un tableau de données format "long" (chaque ligne est une observation). La fonction **sample2matrix** fait le contraire.
-```{r}
-library(picante)
-varespec_long <- matrix2sample(varespec)
-varespec <- sample2matrix(varespec_long)
-```
-
-Calculs de diversité
-```{r}
-richesse <- specnumber(varespec)
-shannon <- diversity(varespec, index = "shannon")
-```
-
-
-
-
-
 # Info générales (Laurie)
 
 Comment présenter ses résultats.

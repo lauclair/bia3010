@@ -59,19 +59,20 @@ varespec_long <- matrix2sample(varespec)
 varespec <- sample2matrix(varespec_long)
 ```
 
-
 De plus, les données d'abondances peuvent aussi être transformées en données binaires (présence-absence).
 La fonction **decostand** permet de standardiser et de transformer les données compositionnelles de communautés. Nous reviendrons à cette fonction plus loin...
 ```{r}
 varespec.pa<-decostand(varesepc.matrix, method="pa")
 ```
 
-À partir dune matrice de communauté, on peut aussi calculer des mesures de diversité alpha.
+À partir dune matrice de communauté, on peut aussi calculer des mesures de diversité alpha pour chaque site.
 ```{r}
 richesse <- specnumber(varespec)
 shannon <- diversity(varespec, index = "shannon")
+# Mettre en tableau
+diversite <- cbind(richesse, shannon)
 ```
-
+On peut maintenant tester, par exemple, si les différentes mesures de diversité alpha diffèrent entre des groupes de communautés ou si elles sont corrélés à des variables environnementales... mais ça ce sont des analyses univariées...
 
 <br>
 
