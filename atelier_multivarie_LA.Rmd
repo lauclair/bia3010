@@ -52,10 +52,24 @@ varesepc.matrix <- as.matrix(varespec)
 class(varesepc.matrix)
 ```
 
-Les données d'abondances peuvent aussi être transformées en données binaires (présence-absence).
+Parfois, on aura besoin de remanipuler nos tableaux de données. Dans la librarie picante, la fonction **matrix2sample** converti une matrice de communautés en un tableau de données format "long" (chaque ligne est une observation). La fonction **sample2matrix** fait le contraire.
+```{r}
+library(picante)
+varespec_long <- matrix2sample(varespec)
+varespec <- sample2matrix(varespec_long)
+```
+
+
+De plus, les données d'abondances peuvent aussi être transformées en données binaires (présence-absence).
 La fonction **decostand** permet de standardiser et de transformer les données compositionnelles de communautés. Nous reviendrons à cette fonction plus loin...
 ```{r}
 varespec.pa<-decostand(varesepc.matrix, method="pa")
+```
+
+À partir dune matrice de communauté, on peut aussi calculer des mesures de diversité alpha.
+```{r}
+richesse <- specnumber(varespec)
+shannon <- diversity(varespec, index = "shannon")
 ```
 
 
