@@ -10,9 +10,14 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
  
 
-# Info générales (Laurie)
+# Exploration de données: graphiques de base
 
-Comment présenter ses résultats.
+Avant de débuter des analayses, il est important de se familisariser avec son
+jeu de données afin d'avoir une idée de sa structure. Cette étape permet
+d'identifier des motifs, des tendances ou des relations préalablement aux tests 
+statistiques, puis de vérifier la qualité de vos données. Elle permet aussi d'évaluer
+si les données ont besoin d'être transformées avant de procéder aux analyses.
+
 
 # Tableaux (Laurie)
 
