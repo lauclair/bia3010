@@ -53,6 +53,13 @@ varesepc.matrix <- as.matrix(varespec)
 class(varesepc.matrix)
 ```
 
+Les données d'abondances peuvent aussi être transformées en données binaires (présence-absence).
+La fonction **decostand** permet de standardiser et de transformer les données compositionnelles de communautés. Nous reviendrons à cette fonction plus loin...
+```{r}
+varespec.pa<-decostand(varesepc.matrix, method="pa")
+```
+
+
 <br>
 
 # Questions nécessitant des analyses multivariées
@@ -94,13 +101,15 @@ Il existe différentes méthodes d'ordination:
 
 # L'analyse de correspondance (CA)
 
-La CA s'emploi avec des **données d'abondances** brutes (sans pré-transformation) ou des **données binaires de présence-absence**.
+Les données qu'on fourni pour une CA sont sous forme de *matrice de communautés*, soit avec des **données d'abondances** brutes (sans pré-transformation) ou des **données binaires de présence-absence**.
 
 Pour faire une ordination de type CA, toutes les données doivent être dans la même dimension physique (même unité) et ne pas contenir de données négatives, ni de NA.
 
 Elle s'effectue en trois étapes dont voici le résumé (nous n'entrerons pas dans tous les détails ici):
 
-1- Conversion de la matrice d'abondance (données brutes) en matrice Q de contributions de Pearson (calcul des distances Chi2 entre objets). Cela permet notamment de *diminuer le problème du double zéro* : si vous avez deux sites qui ne possèdent pas une espèce de lichens A, cette absence d'espèce A ne contribuera pas autant à la ressemblance entre les 2 sites que la présence commune de l'espèce B aux 2 sites. La table de contribution de Pearson contient l'information pour ordonner les sites dans l'espace multidimensionnel.)
+1- Conversion de la matrice d'abondance (données brutes) en matrice Q de contributions de Pearson (calcul des **distances Chi2** entre objets). La table de contribution de Pearson contient l'information pour ordonner les sites dans l'espace multidimensionnel.
+
+La distance de Chi2 exclut les **doubles zéros**, ces derniers sont souvent présents dans les données de communautés et peuvent poser problème. Avec la CA, si vous avez deux sites qui ne possèdent pas une espèce de lichens A, cette absence d'espèce A ne contribuera pas autant à la ressemblance entre les 2 sites que la présence commune de l'espèce B aux 2 sites. 
 
 2- Décomposition de la table de contributions de Pearson en valeurs propres (eigenvalues) et en vecteurs propres (eigenvectors). Les vecteurs propres sont ce qui permet de réduire l'espace multidimensionnel en quelques axes qui expliquent le mieux la variation entre les sites.
 
@@ -189,21 +198,40 @@ Par exemple, la quantité d'aluminium et de fer dans le sol est corrélée avec 
 
 Ce type de figure contient beaucoup d'informations, mais est parfois difficile à interpréter. Il s'agit souvent d'une façon d'explorer et/ou de visualiser nos données. 
 
+
+
+
+
 # L'analyse en composantes principales (PCA)
 
 La PCA est une autre méthode d'ordination fréquemment utilisée....
 
-Contrairement à la CA, la PCA peut être utilisée avec des données d'abondance seuelemtn, (pas avec des données de présence-absence).
 
-La PCA se base sur la distance euclidienne...
+Comme la CA, les données qu'on fournit pour une PCA sont sous forme de *matrice de communautés*. Mais, contrairement à la CA, la PCA peut être utilisée avec des **données d'abondance seulement**, (pas avec des données de présence-absence).
+
+La PCA se base sur la **distance euclidienne**...mais pour éviter le problème des doubles zéros, on doit effectuer une **transformation Hellinger** sur les données. La **distance Hellinger** est donc la distance euclidienne calculée sur les données pré-transformées par Hellinger.
 
 
 ...Jocelyn
 
 
+
+
+
+
 # L'analyse en coordonnées principales (PCoA)
 
-...La 
+```{r}
+#La transformation Hellinger
+spe.hel<-decostand(spe, method="hellinger") # vous pouvez aussi simplement écrire "hel"
+ 
+#Transformation de chi-carré
+spe.chi<-decostand(spe, method="chi.square")
+```
+
+
+Une PCoA avec distance Hellinger = PCA
+Une PCoA avec distance Chi-carré = CA
 
 ...Jocelyn
 
@@ -217,6 +245,26 @@ La PCA se base sur la distance euclidienne...
 
 
 # Résumé des différences entre les méthodes d'ordination
+
+## CA
+données : quantitatives d'abondances ou binaires (présence-absence)
+fonction : cca
+input : matrice de communautés
+distance : Chi-carré
+
+
+##PCA
+données : quantitatives d'abondances
+fonction :
+input : matrice de communautés
+distance : euclidienne (pour régler prob de double-0, transformation Hellinger)
+
+
+## PCoA
+données : quantitatives, qualitatives, mixtes
+fonction : 
+input : matrice de distance
+distance : au choix!
 
 
 
@@ -291,16 +339,18 @@ plot(disper.dune)
 
 Voilà! c'était un aperçu du vaste monde des statistiques multivariées! Amusez-vous, mais soyez prudents!
 
-Références:
+# Références:
 
 Anderson, M. J. (2001). A new method for non-parametric multivariate analysis of variance. Austral Ecology, 26 (1), 32–46. doi: 10.1080/13645700903062353
 
 Anderson, M. J. (2006). Distance-based tests for homogeneity of multivariate dispersions. Biometrics, 62 (1), 245‑253. doi: 10.1111/j.1541-0420.2005.00440.x
 
+Bourgeois, B., Giroux-Bougard, X., Winegardner, A., Chrétien, E., Granados, M. et Centre de la science de la biodiversité du Québec [CSBQ]. (2012). Atelier 9: Analyses multivariées. https://wiki.qcbs.ca/r_atelier9
+
 Jongman R.H., Ter Braak C.J.F. & van Tongeren O.F.R. (eds) (1995): Data analysis in community and landscape ecology. Cambridge University Press.
 
 Jari Oksanen, F. Guillaume Blanchet, Michael Friendly, Roeland Kindt, Pierre Legendre, Dan McGlinn, Peter R. Minchin, R. B. O'Hara, Gavin L. Simpson, Peter Solymos, M. Henry H. Stevens, Eduard Szoecs and Helene Wagner (2020). vegan: Community Ecology Package. R package version 2.5-7. https://CRAN.R-project.org/package=vegan
 
-Väre, H., Ohtonen, R. and Oksanen, J. (1995) Effects of reindeer grazing on understorey vegetation in dry Pinus sylvestris forests. Journal of Vegetation Science 6, 523--530.
+Legendre, P., & Legendre, L. (1998). Numerical ecology (2nd Edition). Elsevier.
 
-Bourgeois, B., Giroux-Bougard, X., Winegardner, A., Chrétien, E., Granados, M. et Centre de la science de la biodiversité du Québec [CSBQ]. (2012). Atelier 9: Analyses multivariées. https://wiki.qcbs.ca/r_atelier9
+Väre, H., Ohtonen, R. and Oksanen, J. (1995) Effects of reindeer grazing on understorey vegetation in dry Pinus sylvestris forests. Journal of Vegetation Science 6, 523--530.
