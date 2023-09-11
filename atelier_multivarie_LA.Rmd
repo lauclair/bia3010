@@ -82,7 +82,7 @@ Or, cet espace comporte autant de dimensions que de descripteurs (espèces) et i
 
 --> L'ordination permet de trouver les deux ou trois axes de notre espace qui explique le plus de variation entre nos sites. Ces axes représentent une "combinaison de variables". L'ordination permet de visualiser l'espace multidimensionel en 2D et simplifie l'interprétation des données multivariées.
 
-![Source : Michael W. Palmer; https://ordination.okstate.edu/overview.htm. Sur la figure, les points sont les objets (les sites) et les axes sur la figure du milieu sont les descripteurs (les espèceS)](ordinations.png)
+![Source : Michael W. Palmer; https://ordination.okstate.edu/overview.htm. Sur la figure, les points sont les objets (les sites) et les axes sur la figure du milieu sont les descripteurs (les espèces).](ordinations.png)
 
 Note: Similairement, les ordinations permettent aussi d'ordonner les descripteurs (espèces) entre eux dans l'espace. Ainsi, deux espèces proches dans l'ordination se retrouvent plus souvent dans les mêmes sites que deux espèces éloignées. Ici, nous allons nous concentrer sur l'ordination des objets (sites), mais le principe est similaire avec les descripteurs (espèces).
 
@@ -94,7 +94,7 @@ Il existe différentes méthodes d'ordination:
 
 # L'analyse de correspondance (CA)
 
-La CA s'emploi avec des données d'abondances brutes (sans pré-transformation) ou des données de présence-absence.
+La CA s'emploi avec des **données d'abondances** brutes (sans pré-transformation) ou des **données binaires de présence-absence**.
 
 Pour faire une ordination de type CA, toutes les données doivent être dans la même dimension physique (même unité) et ne pas contenir de données négatives, ni de NA.
 
@@ -142,12 +142,14 @@ On peut ensuite visualiser avec la fonction **plot** les objets le long des deux
 ```{r}
 plot(ca.varespec, display = "sites")
 ```
+
 Comme vu dans la sortie de la CA, l'axe 1 et 2 explique ensemble 42% de la variation dans nos données compositionnelles. En observant cette ordination, on peut voir par exemple que les sites 20 et 23 ou encore 9 et 10 sont similaires dans leur composition en espèce de lichens en comparaison au reste des sites. Les sites 5 et 28 sont très différents en comparaison des autres.
 
 On peut aussi afficher les espèces sur notre ordination pour nous permettre de voir à quels sites ou groupe de sites elles sont associées.
 ```{r}
 plot(ca.varespec, display = c("sites", "species"))
 ```
+
 L'espèce "icmaeric" par exemple, est plus abondante dans les sites qui sont proches dans l'ordination (6,13,7,5,14) que dans les sites plus loin (10,9,21,28).
 
 **Il ne s'agit toutefois pas d'un test statistique**. Les ordinations nous permettent de visualiser certaines tendances dans nos données. Ce n'est donc pas très approprié pour tester directement des hypothèses.
@@ -180,6 +182,7 @@ plot(ca.varespec, display = "sites")
 plot(envfit.varechem)
 plot(envfit.varechem, p.max = 0.05, col = "red")#Les correlations significatives apparaissent en rouge
 ```
+
 La longueur d' vecteur renseigne sur la force de la corrélation (r2) entre la variable environnementale et les axes de l'ordination, tandis que la direction du vecteur fait pointer celui-ci vers les objets (sites) ayant des valeurs plus élevés pour cette variable.
 
 Par exemple, la quantité d'aluminium et de fer dans le sol est corrélée avec des différences dans la composition en espèces de lichens entre les sites. Les sites dans le cadran en bas à gauche ont une composition en espèces plus similaire et leur sol contiennent plus d'aluminium et de fer que les sites en haut à droite.
