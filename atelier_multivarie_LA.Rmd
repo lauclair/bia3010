@@ -6,7 +6,7 @@ output: html_document
 ---
 # Analyses multivariées - quelques bases!
 
-
+bloup bloup bloup
   
 ## Que sont les analyses multivariées?
 
