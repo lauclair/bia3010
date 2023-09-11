@@ -9,6 +9,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
  
+
+ 
 # Info générales (Laurie)
 
 Comment présenter ses résultats.

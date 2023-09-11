@@ -6,13 +6,15 @@ output: html_document
 ---
 # Analyses multivariées - quelques bases!
 
- 
+
   
 ## Que sont les analyses multivariées?
 
 On utilise les analyses multivariées pour tester des prédictions dont la variable réponse (y) est composée de plusieurs vecteurs de données (plusieurs colonnes d'une matrice).
 
 Tout comme pour les statistiques univariées où on retrouve notamment les régressions linéaires, les tests de t, les ANOVAs, etc., il existe plusieurs types d'analyses multivariées. Dans ce document, nous en verrons seulement quelques-unes qui devraient vous permettre de tester la plupart de vos prédictions lorsque les analyses univariées ne sont pas suffisantes.
+
+BLIP BLIP BLIP
 
 <br>
 
