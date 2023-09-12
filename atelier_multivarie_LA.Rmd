@@ -226,7 +226,7 @@ La PCA est une autre méthode d'ordination fréquemment utilisée, qui assume la
 
 Comme la CA, les données qu'on fournit pour une PCA sont sous forme de *matrice de communautés*. Mais, contrairement à la CA, la PCA peut être utilisée avec des **données d'abondance seulement** (pas avec des données de présence-absence).
 
-Dans une PCA, le premier axe sera toujours calculé pour représenter la plus grande variation dans l'espace multidimensionnel (contrairement à la CA qui maximise la corrélation entre les coordonnées des sites et des espèces). Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la variance entre les points, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant.
+Dans une PCA, le premier axe (correspondant à une combinaison linéaire des descripteurs) sera toujours calculé pour représenter la plus grande variation dans l'espace multidimensionnel (contrairement à la CA qui maximise la corrélation entre les coordonnées des sites et des espèces). Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la variance entre les points, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant.
 
 Pour effectuer une PCA, il est mieux que nos données contiennent plus de sites (lignes) que d'espèces (colonnes). 
 
@@ -295,7 +295,7 @@ Ces deux étapes (transformation hellinger + matrice de distance) peuvent être 
 varespec.hel <- vegdist(decostand(varespec, method='hellinger'), method='euclid')
 ```
 
-Comparer le format des deux matrices. Noter que la matrice de distance est carrée avec les sites à la fois en lignes et en colonnes.
+Comparer le format des deux matrices. Noter que la matrice de distance est carrée, avec les sites à la fois en lignes et en colonnes.
 ```{r}
 head(varespec)
 varespec.hel
@@ -304,45 +304,47 @@ varespec.hel
 Il ne sert à rien de faire une PCoA avec une matrice de distance hellinger ou de distance chi-carré, car cela revient pratiquement à faire un PCA ou un CA, respectivement.
 
 Prenons avantage de la PCoA pour utiliser la distance de Bray-Curtis.
-
-
-
-
-.... avantages....
-
-
 ```{r}
 varespec.bray <- vegdist(varespec, method='bray')
 ```
 
+## Faire une PCoA dans R
+```{r}
+varespec.pcoa<-pcoa(varespec.bray)
+varespec.pcoa
+```
 
-
+```{r}
+biplot.pcoa(varespec.pcoa, varespec)
+```
 
 <br>
 
 # Résumé des différences entre les méthodes d'ordination
 
-Il peut être difficile de choisir quelle méthode d'ordination pour répondre à vos questions de recherche. De manière générale, pour le genre de données que vous avez récoltées (données d'abondances, peu de sites, beaucoup d'espèces, beaucoup de zéros), l'analyse de correspondance (CA) s'avère une méthode très puissante. Or, rien de mieux que de s'amuser à explorer et comparer les différentes méthodes.
+Il peut être difficile de choisir quelle méthode d'ordination pour répondre à vos questions de recherche. De manière générale, pour le genre de données que vous avez récoltées, l'analyse de correspondance (CA) s'avère une méthode très puissante. Or, rien de mieux que de s'amuser à explorer et comparer les différentes méthodes.
 
 ## CA
-données : quantitatives d'abondances ou binaires (présence-absence); même unité pour chq variable
-modèle unimodal
-fonction : cca
+données : quantitatives d'abondances ou binaires (présence-absence); non-négatives; même unité pour chq variable
+Modèle unimodal
+Les axes maximisent la correspondance entre les sites et les espèces
+fonction : cca (librairie vegan)
 input : matrice de communautés
 distance : Chi-carré
 à utiliser si : Nos données sont de type présence-absence. 
 
 ## PCA
 données : quantitatives d'abondances; permet des unités différentes entre variables (mais doivent être centrées-réduites).
-modèle linéaire
-fonction : rda
+Modèle linéaire
+Les axes maximisent la variation dans la composition.
+fonction : rda (librairie vegan)
 input : matrice de communautés
 distance : euclidienne (mais pour régler prob de double-0, transformation Hellinger)
 à utiliser si : On veut donner moins de poids aux espèces rares dans la distinction de nos communautés; nos données contiennent plus de sites que d'espèces
 
 ## PCoA
 données : quantitatives, qualitatives, mixtes
-fonction : 
+fonction : pcoa (librairie ape)
 input : matrice de distance
 distance : au choix (ex. bray-curtis)
 à utiliser si : Nos données contiennent plus d'espèces que de sites; on veut utiliser une des nombreuses autres distances que euclidienne et chi-carré; on a des données qualitatives.
