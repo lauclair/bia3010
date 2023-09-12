@@ -23,6 +23,7 @@ statistiques, puis de vérifier la qualité des données. Elle permet aussi d'é
 si les données ont besoin d'être transformées avant de procéder aux analyses.
 
 ## Quelques fonctions de base
+
 Pour vérifier le nombre de lignes et de colonnes de votre *dataset*:
 ```{r}
 dim(iris)
@@ -50,6 +51,7 @@ d'observations (variables catégoriques):
 summary(iris)
 ```
 
+
 Pour oconnaître les niveaux d'une variable catégorique:
 ```{r}
 levels(iris$Species)
@@ -58,9 +60,9 @@ levels(iris$Species)
 <br>
 
 ## Visualisation d'un jeu de données
+
 La fonction `plot()` est une fonction versatile qui permet de créer une grande
-variété de figures. Dépendemment du type de data et des arguments fournis à la 
-fonction, `plot()` peut générer plusieurs types de figures comme:
+variété de figures avec les données brutes. Dépendemment du type de donnée et des arguments fournis à la fonction, `plot()` peut générer plusieurs types de figures comme:
 
 Une seule matrice de *scatterplots* figure peut être créée avec toutes les variables 
 continues.
@@ -92,28 +94,27 @@ hist(iris$Sepal.Width)
 
 # Conseils pour des figures et tableaux réussis
 
-Les figures sont des représentations visuelles des résultats. Elles rendent la lectures des résultats principaux plus facile et permettent de mettre en évidence des tendances ou motifs intéressants. Elles doivent contenir:
+Les figures sont des représentations visuelles des résultats. Elles rendent la lectures des résultats principaux plus facile et permettent de mettre en évidence des tendances ou motifs intéressants. On veut pouvoir la comprendre sans avoir à osciller entre la figure et le texte.  Elles doivent contenir:
 
-+ **Titre**: les variables mesurées, les unités de mesure,
++ **Un titre descriptif**: les variables mesurées, les unités de mesure, . Le titre doit fournir assez d'information pour qu'on comprenne le contexte de la figure sans devoir référer au texte.
 
-+ **Titre des axes**
++ **Titre des axes**: doivent comprendre la variable et son unité de mesure
 
-+ **Barres d'erreurs**: les inclure pour indiquer l'erreur standard autour d'une moyenne
++ **Barres d'erreurs**: les inclure pour indiquer l'écart-type autour de la moyenne
 
 + **Légende**: une petite légende peut être nécessaire pour distinguer les traitements (couleur, type de ligne, etc.)
 
 + **Indice de significativité**: la valeur p d'une relation, des astérisques au-dessus de graphes à barres pour indiquer si la relation est significative, etc.
 
-Les tableaux présentent habituellement des résultats plus complexes qui seraient trop encombrants à inclure dans une figure ou dans le texte. Les lignes et les colonnes doivent contenir le nom de la variable ainsi que l'unité de mesure.
+Les tableaux présentent habituellement des résultats plus complexes qui seraient trop encombrants à inclure dans une figure ou dans le texte. Généralement, si les données ne peuvent être présentées en une ou deux phrases, un tableau est nécessaire. Les lignes et les colonnes doivent contenir le nom de la variable ainsi que l'unité de mesure.
 
 (ne pas juste mettre un copier-coller du summary de l'analyse)
 
 ## Légende d'une figure ou d'un tableau
-taille d'échantillon, valeur p, différencier les traitements, abréviations, la méthode de collection, 
+Les légendes servent à compléter l'information qui est présentée dans le tableau ou la figure. On y retrouve entre autre les tailles d'échantillons (n), valeur p, des descriptions des abréviations, la méthode de collection, le nombre de réplicats, etc.
 
 ## Annexe ou pas?
-Les données ou les figures qui ne contribuent pas directement à l'histoire principale de votre rapport peuvent être rassemblées en annexes. Dans cette section, on peut retrouver, par exemple, des cartes du site d'échantillonnage, du matériel utilisé pour récolter les données, 
-
+Les données ou les figures qui ne contribuent pas directement à l'histoire principale de votre rapport peuvent être rassemblées en annexes. Dans cette section, on peut retrouver, par exemple, des cartes du site d'échantillonnage, du matériel utilisé pour récolter les données, des tableaux avec davantage d'informations sur les modèles (pas de capture d'écran du *summary*!), etc.
 
 
 <br>
