@@ -21,7 +21,6 @@ Un des package R couramment utilisé pour effectuer des tests sur des matrices d
 ```{r, message = FALSE, warning = FALSE}
 library(vegan)
 ```
-
 <br>
 
 ## Matrice de communauté
@@ -31,12 +30,22 @@ En écologie, on utilise souvent des matrices de communauté: matrice d'abondanc
 La différence principale entre une matrice et un *dataframe* est que la matrice ne contient qu'une seule classe de donnée, tandis que le *dataframe* en contient souvent plusieurs. Les lignes correspondent aux objets: il s'agit de l'unité d'échantillonnage où vous avez échantillonné votre communauté (site, parcelle, quadrat, etc.).
 Les colonnes correspondent aux descripteurs: il s'agit de vos espèces (ou de vos familles, morphotypes, etc.). Dans chaque cellule, on retrouve l'abondance (nombre d'individus, recouvrement, etc.) ou la présence-absence (0 ou 1) de chaque espèce à chaque site.
 
-Nous allons télécharger une base de données pour tester les différents types d'analyses. La base de données **varespec** décrit les recouvrements de différentes espèces de lichens dans des paturages (Väre et al. 1995).
+Voici quelques exemples de structures de matrices (Ovaskainen et al. 2017):
+
+<br>
+
+![](matrixfig.png)
+
+<br>
+
+Nous allons télécharger une base de données pour tester les différents types d'analyses. La base de données `varespec` décrit les recouvrements de différentes espèces de lichens dans des paturages (Väre et al. 1995).
 
 ```{r}
 data(varespec)
 head(varespec)
 ```
+<br>
+
 Ici, les sites ont été numérotés (nom des lignes) et les noms de colonnes correspondent aux noms scientifiques abrégés des espèces de lichens. L'information des cellules permet de connaître le recouvrement de chaque espèce à chaque site.
 
 <br>
@@ -51,19 +60,22 @@ varesepc.matrix <- as.matrix(varespec)
 
 class(varesepc.matrix)
 ```
+<br>
 
-Parfois, on aura besoin de remanipuler nos tableaux de données. Dans la librarie picante, la fonction **matrix2sample** converti une matrice de communautés en un tableau de données format "long" (chaque ligne est une observation). La fonction **sample2matrix** fait le contraire.
+Parfois, on aura besoin de remanipuler nos tableaux de données. Dans la librarie picante, la fonction `matrix2sample` converti une matrice de communautés en un tableau de données format "long" (chaque ligne est une observation). La fonction `sample2matrix` fait le contraire.
 ```{r}
 library(picante)
 varespec_long <- matrix2sample(varespec)
 varespec <- sample2matrix(varespec_long)
 ```
+<br>
 
 De plus, les données d'abondances peuvent aussi être transformées en données binaires (présence-absence).
-La fonction **decostand** de la librairie vegan permet de standardiser et de transformer les données compositionnelles de communautés. Nous reviendrons à cette fonction plus loin...
+La fonction `decostand` de la librairie `vegan` permet de standardiser et de transformer les données compositionnelles de communautés. Nous reviendrons à cette fonction plus loin...
 ```{r}
 varespec.pa<-decostand(varesepc.matrix, method="pa")
 ```
+<br>
 
 À partir dune matrice de communauté, on peut aussi calculer des mesures de diversité alpha pour chaque site.
 ```{r}
@@ -72,6 +84,8 @@ shannon <- diversity(varespec, index = "shannon")
 # Mettre en tableau
 diversite <- cbind(richesse, shannon)
 ```
+<br>
+
 On peut maintenant tester, par exemple, si les différentes mesures de diversité alpha diffèrent entre des groupes de communautés ou si elles sont corrélés à des variables environnementales... mais ça ce sont des analyses univariées...
 
 <br>
@@ -441,6 +455,8 @@ Jari Oksanen, F. Guillaume Blanchet, Michael Friendly, Roeland Kindt, Pierre Leg
 Legendre, P., & Gallagher, E. D. (2001). Ecologically meaningful transformations for ordination of species data. Oecologia, 129, 271-280.
 
 Legendre, P., & Legendre, L. (1998). Numerical ecology (2nd Edition). Elsevier.
+
+Ovaskainen, O., Tikhonov, G., Norberg, A., Guillaume Blanchet, F., Duan, L., Dunson, D., Roslin, T., Abrego, N. (2017). How to make more out of community data? A conceptual framework and its implementation as models and software. Ecology Letters, 20(5), 561–576.
 
 Palmer, M. W. Ordination Methods - an overview (https://ordination.okstate.edu/overview.htm#Direct_gradient_analysis)
 
