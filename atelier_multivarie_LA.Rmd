@@ -107,8 +107,6 @@ Or, cet espace comporte autant de dimensions que de descripteurs (espèces) et i
 
 ![Source : Michael W. Palmer; https://ordination.okstate.edu/overview.htm. Sur la figure, les points sont les objets (les sites) et les axes sur la figure du milieu sont les descripteurs (les espèces).](ordinations.png)
 
-Le premier axe sera toujours calculé pour représenter la plus grande variation dans l'espace multidimensionnel. Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la variance entre les points, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant.
-
 Note: Similairement, les ordinations permettent aussi d'ordonner les descripteurs (espèces) entre eux dans l'espace. Ainsi, deux espèces proches dans l'ordination se retrouvent plus souvent dans les mêmes sites que deux espèces éloignées. Ici, nous allons nous concentrer sur l'ordination des objets (sites), mais le principe est similaire avec les descripteurs (espèces).
 
 Il existe différentes méthodes d'ordination: 
@@ -120,6 +118,8 @@ Il existe différentes méthodes d'ordination:
 <br>
 
 # L'analyse de correspondance (CA)
+
+L'analyse de correspondance est une méthode d'ordination appropriée pour analyser des jeux de données contenant des espèces à distribution unimodale (par ex. dont l'abondance suir une distribution normale le long d'un gradient environnemental).
 
 Les données qu'on fourni pour une CA sont sous forme de *matrice de communautés*, soit avec des **données d'abondances** brutes (sans pré-transformation) ou des **données binaires de présence-absence**.
 
@@ -152,7 +152,7 @@ Chaque axe de l'ordination est un eigenvector (vecteur propre), qui est associé
 
 "Proportion explained" : Cette valeur représente la proportion de la variation totale dans la composition des communautés qui est expliqué par un axe donné. Dans la CA, la proportion expliquée d'un axe correspond à la valeur propre divisée par l'inertie.
 
-Ici, le premier axe explique 25% de la variation dans vos données, le deuxième 17%, etc. Rappel : les axes/vecteurs ne représente pas une variable biologique/écologique déterminée, mais peuvent être vu comme une "combinaison de variables".
+Ici, le premier axe explique 25% de la variation dans vos données, le deuxième 17%, etc. Rappel : les axes/vecteurs ne représente pas une variable biologique/écologique déterminée, mais peuvent être vu comme une "combinaison de variables". Contrairement à la PCA qui maximise la variance expliquée par le premier axe, la CA maximise la correspondance entre les scores des sites et des espèces. Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la correspondance entre les scores, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant.
 
 "Cumulative proportion" : Proportion cumulative d'une axe donné et des précédents.
 
@@ -173,6 +173,8 @@ plot(ca.varespec, display = c("sites", "species"))
 L'espèce "icmaeric" par exemple, est plus abondante dans les sites qui sont proches dans l'ordination (6,13,7,5,14) que dans les sites plus loin (10,9,21,28).
 
 **Il ne s'agit toutefois pas d'un test statistique**. Les ordinations nous permettent de visualiser certaines tendances dans nos données. Ce n'est donc pas très approprié pour tester directement des hypothèses.
+
+De plus, lorsqu'on interprète un graphique d'ordination, on ne tient pas compte de la direction des axes (gauche-droite, haut-bas... pourrait être inversée), ni vraiment de leur échelle numérique.
 
 #### Scaling (quelques mots pour faciliter l'interprétation des graphiques)
 
@@ -220,9 +222,11 @@ Ce type de figure contient beaucoup d'informations, mais est parfois difficile �
 
 # L'analyse en composantes principales (PCA)
 
-La PCA est une autre méthode d'ordination fréquemment utilisée.
+La PCA est une autre méthode d'ordination fréquemment utilisée, qui assume la distribution linéaire des espèces le long d'un gradient.
 
-Comme la CA, les données qu'on fournit pour une PCA sont sous forme de *matrice de communautés*. Mais, contrairement à la CA, la PCA peut être utilisée avec des **données d'abondance seulement**, (pas avec des données de présence-absence).
+Comme la CA, les données qu'on fournit pour une PCA sont sous forme de *matrice de communautés*. Mais, contrairement à la CA, la PCA peut être utilisée avec des **données d'abondance seulement** (pas avec des données de présence-absence).
+
+Dans une PCA, le premier axe sera toujours calculé pour représenter la plus grande variation dans l'espace multidimensionnel (contrairement à la CA qui maximise la corrélation entre les coordonnées des sites et des espèces). Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la variance entre les points, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant.
 
 Pour effectuer une PCA, il est mieux que nos données contiennent plus de sites (lignes) que d'espèces (colonnes). 
 
@@ -321,14 +325,16 @@ varespec.bray <- vegdist(varespec, method='bray')
 Il peut être difficile de choisir quelle méthode d'ordination pour répondre à vos questions de recherche. De manière générale, pour le genre de données que vous avez récoltées (données d'abondances, peu de sites, beaucoup d'espèces, beaucoup de zéros), l'analyse de correspondance (CA) s'avère une méthode très puissante. Or, rien de mieux que de s'amuser à explorer et comparer les différentes méthodes.
 
 ## CA
-données : quantitatives d'abondances ou binaires (présence-absence)
+données : quantitatives d'abondances ou binaires (présence-absence); même unité pour chq variable
+modèle unimodal
 fonction : cca
 input : matrice de communautés
 distance : Chi-carré
 à utiliser si : Nos données sont de type présence-absence. 
 
 ## PCA
-données : quantitatives d'abondances
+données : quantitatives d'abondances; permet des unités différentes entre variables (mais doivent être centrées-réduites).
+modèle linéaire
 fonction : rda
 input : matrice de communautés
 distance : euclidienne (mais pour régler prob de double-0, transformation Hellinger)
@@ -340,6 +346,7 @@ fonction :
 input : matrice de distance
 distance : au choix (ex. bray-curtis)
 à utiliser si : Nos données contiennent plus d'espèces que de sites; on veut utiliser une des nombreuses autres distances que euclidienne et chi-carré; on a des données qualitatives.
+bray-curtis : ignore les double zéros; donne plus de poids aux espèces communes; affecté par la taille des échantillons (performe mieux avec faible diversité spécifique et petits échantillons).
 
 
 
