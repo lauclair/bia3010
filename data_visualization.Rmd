@@ -55,9 +55,7 @@ Pour oconnaître les niveaux d'une variable catégorique:
 levels(iris$Species)
 ```
 
-
-
-
+<br>
 
 ## Visualisation d'un jeu de données
 La fonction `plot()` est une fonction versatile qui permet de créer une grande
@@ -92,20 +90,35 @@ hist(iris$Sepal.Width)
 ```
 
 
+# Conseils pour des figures et tableaux réussis
+
+Les figures sont des représentations visuelles des résultats. Elles rendent la lectures des résultats principaux plus facile et permettent de mettre en évidence des tendances ou motifs intéressants. Elles doivent contenir:
+
++ **Titre**: les variables mesurées, les unités de mesure,
+
++ **Titre des axes**
+
++ **Barres d'erreurs**: les inclure pour indiquer l'erreur standard autour d'une moyenne
+
++ **Légende**: une petite légende peut être nécessaire pour distinguer les traitements (couleur, type de ligne, etc.)
+
++ **Indice de significativité**: la valeur p d'une relation, des astérisques au-dessus de graphes à barres pour indiquer si la relation est significative, etc.
+
+Les tableaux présentent habituellement des résultats plus complexes qui seraient trop encombrants à inclure dans une figure ou dans le texte. Les lignes et les colonnes doivent contenir le nom de la variable ainsi que l'unité de mesure.
+
+(ne pas juste mettre un copier-coller du summary de l'analyse)
+
+## Légende d'une figure ou d'un tableau
+taille d'échantillon, valeur p, différencier les traitements, abréviations, la méthode de collection, 
+
+## Annexe ou pas?
+Les données ou les figures qui ne contribuent pas directement à l'histoire principale de votre rapport peuvent être rassemblées en annexes. Dans cette section, on peut retrouver, par exemple, des cartes du site d'échantillonnage, du matériel utilisé pour récolter les données, 
 
 
-# Tableaux (Laurie)
 
-# Conseils pour des figures réussies
+<br>
 
-## Légendes
-
-# Annexe ou pas?
-
-
-
-
-# Coder des graphiques (Sabrina)
+# Coder des graphiques avec ggplot (Sabrina)
 
 ## Observer la stucture des données univariées
 ```{r}
