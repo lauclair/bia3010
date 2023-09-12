@@ -13,8 +13,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(datasets)
 data(iris)
 ```
-
-# Exploration de données: graphiques de base
+ 
+# Exploration de données
 
 Avant de débuter des analyses, il est important de se familisariser avec son
 jeu de données afin d'avoir une idée de sa structure. Cette étape permet
@@ -22,13 +22,21 @@ d'identifier des motifs, des tendances ou des relations préalablement aux tests
 statistiques, puis de vérifier la qualité des données. Elle permet aussi d'évaluer
 si les données ont besoin d'être transformées avant de procéder aux analyses.
 
+## Fonctions de base
+Pour vérifier le nombre de lignes et de colonnes de votre *dataset*
+```{r}
+dim(iris)
+```
+
+Pour 
+
 ## Visualisation d'un jeu de données
 La fonction `plot()` est une fonction versatile qui permet de créer une grande
 variété de figures. Dépendemment du type de data et des arguments fournis à la 
 fonction, `plot()` peut générer plusieurs types de figures comme:
 
-Une seule figure avec tous les *scatterplots* des variables les unes par rapport 
-aux autres.
+Une seule matrice de *scatterplots* figure peut être créée avec toutes les variables 
+continues.
 ```{r}
 plot(iris)
 ```
@@ -42,17 +50,11 @@ des pétales dans le jeu de données `iris`, on peut l'écrire ainsi:
 plot(iris$Sepal.Length~iris$Petal.Length)
 ```
 
-À l'aide de la fonction `boxplot()` on peut visualiser la dispersion d'une variable selon différents groupes. Ce type de figure permet aussi d'identifier rapidement des valeurs aberrantes ou des anomalies. 
+À l'aide de la fonction `boxplot()`, on peut visualiser la dispersion d'une variable selon dles groupes d'une variable catégorique. Ce type de figure permet aussi d'identifier rapidement des valeurs aberrantes ou des anomalies. 
 
 ```{r}
 boxplot(iris$Petal.Length~iris$Species)
 ```
-
-... à modifier + continuer (Laurie)
-
-Plusieurs analyses recquièrent que les résidus des données soint distribuées normalement.
-Il est possible de vérifier visuellement la ditribution des résidus à l'aide de plusieurs
-fonctions.
 
 La fonction `hist()` génère un histogramme de la variable qui y est précisée.
 
@@ -64,6 +66,13 @@ hist(iris$Sepal.Width)
 
 
 # Tableaux (Laurie)
+
+# Conseils pour des figures réussies
+
+## Légendes
+
+# Annexe ou pas?
+
 
 
 
