@@ -5,7 +5,7 @@ date: "06/09/2023 - Hélène Dion-Phénix, Laurie Auclair et Jocelyn Lauzon"
 output: html_document
 ---
 # Analyses multivariées - quelques bases!
-
+coucou
 ## Que sont les analyses multivariées?
 
 On utilise les analyses multivariées pour tester des prédictions dont la variable réponse (y) est composée de plusieurs vecteurs de données (plusieurs colonnes d'une matrice).
