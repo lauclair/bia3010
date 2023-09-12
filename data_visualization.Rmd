@@ -12,11 +12,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Exploration de données: graphiques de base
 
-Avant de débuter des analayses, il est important de se familisariser avec son
+Avant de débuter des analyses, il est important de se familisariser avec son
 jeu de données afin d'avoir une idée de sa structure. Cette étape permet
 d'identifier des motifs, des tendances ou des relations préalablement aux tests 
-statistiques, puis de vérifier la qualité de vos données. Elle permet aussi d'évaluer
+statistiques, puis de vérifier la qualité des données. Elle permet aussi d'évaluer
 si les données ont besoin d'être transformées avant de procéder aux analyses.
+
+## Visualisation d'un jeu de données
+La fonction `plot()` est une fonction versatile qui permet de créer une grande
+variété de figures. Dépendemment du type de data et des arguments fournis à la 
+fonction, `plot()` peut générer plusieurs types de figures comme
 
 
 # Tableaux (Laurie)
@@ -72,6 +77,7 @@ plot(ca.varespec, display = c("sites", "species"))
 ```
 
 ```{r}
+par(mfrow=c(1,2))
 plot(ca.varespec, scaling=1, type="none", main='CA - biplot scaling 1', 
      xlab=c("CA1 (%)", round((ca.varespec$CA$eig[1]/sum(ca.varespec$CA$eig))*100,2)),
      ylab=c("CA2 (%)", round((ca.varespec$CA$eig[2]/sum(ca.varespec$CA$eig))*100,2)))
