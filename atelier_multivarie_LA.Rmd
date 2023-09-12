@@ -7,7 +7,7 @@ output: html_document
 <br>
 
 # Analyses multivariées - quelques bases!
-coucou
+
 ## Que sont les analyses multivariées?
 
 On utilise les analyses multivariées pour tester des prédictions dont la variable réponse (y) est composée de plusieurs vecteurs de données (plusieurs colonnes d'une matrice). L'objectif de ce type d'analyse est de comprendre les relations et les motifs qui existent parmi 
