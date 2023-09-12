@@ -4,11 +4,13 @@ author: "BIA-3010 ÉTÉ 2023"
 date: "06/09/2023 - Hélène Dion-Phénix, Laurie Auclair et Jocelyn Lauzon"
 output: html_document
 ---
+<br>
+
 # Analyses multivariées - quelques bases!
 
 ## Que sont les analyses multivariées?
 
-On utilise les analyses multivariées pour tester des prédictions dont la variable réponse (y) est composée de plusieurs vecteurs de données (plusieurs colonnes d'une matrice).
+On utilise les analyses multivariées pour tester des prédictions dont la variable réponse (y) est composée de plusieurs vecteurs de données (plusieurs colonnes d'une matrice). L'objectif de ce type d'analyse est de comprendre les relations et les motifs qui existent parmi 
 
 Tout comme pour les statistiques univariées où on retrouve notamment les régressions linéaires, les tests de t, les ANOVAs, etc., il existe plusieurs types d'analyses multivariées. Dans ce document, nous en verrons seulement quelques-unes qui devraient vous permettre de tester la plupart de vos prédictions lorsque les analyses univariées ne sont pas suffisantes.
 
@@ -62,8 +64,8 @@ class(varesepc.matrix)
 ```
 <br>
 
-Parfois, on aura besoin de remanipuler nos tableaux de données. Dans la librarie picante, la fonction `matrix2sample` converti une matrice de communautés en un tableau de données format "long" (chaque ligne est une observation). La fonction `sample2matrix` fait le contraire.
-```{r}
+Parfois, on aura besoin de remanipuler nos tableaux de données. Dans la librarie `picante`, la fonction `matrix2sample` convertit une matrice de communautés en un tableau de données format "long" (chaque ligne est une observation). La fonction `sample2matrix` fait le contraire.
+```{r, message = FALSE, warning = FALSE}
 library(picante)
 varespec_long <- matrix2sample(varespec)
 varespec <- sample2matrix(varespec_long)
@@ -73,11 +75,11 @@ varespec <- sample2matrix(varespec_long)
 De plus, les données d'abondances peuvent aussi être transformées en données binaires (présence-absence).
 La fonction `decostand` de la librairie `vegan` permet de standardiser et de transformer les données compositionnelles de communautés. Nous reviendrons à cette fonction plus loin...
 ```{r}
-varespec.pa<-decostand(varesepc.matrix, method="pa")
+varespec.pa <- decostand(varesepc.matrix, method="pa")
 ```
 <br>
 
-À partir dune matrice de communauté, on peut aussi calculer des mesures de diversité alpha pour chaque site.
+À partir d'une matrice de communauté, on peut aussi calculer des mesures de diversité alpha pour chaque site.
 ```{r}
 richesse <- specnumber(varespec)
 shannon <- diversity(varespec, index = "shannon")
@@ -380,17 +382,17 @@ bray-curtis : ignore les double zéros; donne plus de poids aux espèces commune
 
 La PERMANOVA est l'analogue multivarié de l'ANOVA.
 Rappel sur l'ANOVA:
-- Elle est appropriée pour tester des hypothèses de structures écologiques complexes comme de la variabilité spatiale.
-- Les variances intra et intergroupes sont comparées pour fournir une statistique F.
-- L’hypothèse nulle stipule que la statistique F n’est pas significativement différente de 0, ce qui se traduit par une absence de différence entre les groupes. La signification de cette statistique est évaluée par comparaison à une distribution théorique. Elle est donc paramétrique.
++ Elle est appropriée pour tester des hypothèses de structures écologiques complexes comme de la variabilité spatiale.
++ Les variances intra et intergroupes sont comparées pour fournir une statistique F.
++ L’hypothèse nulle stipule que la statistique F n’est pas significativement différente de 0, ce qui se traduit par une absence de différence entre les groupes. La signification de cette statistique est évaluée par comparaison à une distribution théorique. Elle est donc paramétrique.
 
 La PERMANOVA (Anderson, 2001):
-- Analyse de variance de données multivariées basée sur le calcul d'une pseudo-statistique F.
-- Test non paramétrique en testant la signification des pseudo-statistiques F par un test de permutations. 
-- La pseudo-statistique F est calculée d’après une matrice de distance (nous y reviendrons!). 
-MAIS ATTENTION:
-- Suppose l'indépendance des données
-- Est sensible aux différences de dispersion des points entre les groupes.
++ Analyse de variance de données multivariées basée sur le calcul d'une pseudo-statistique F.
++ Test non paramétrique en testant la signification des pseudo-statistiques F par un test de permutations. 
++ La pseudo-statistique F est calculée d’après une matrice de distance. 
+**MAIS ATTENTION**:
++ Suppose l'indépendance des données
++ Est sensible aux différences de dispersion des points entre les groupes.
 
 Une différence significative entre groupe peut donc être due à une différence de position centrale (moyenne) ou à une différence de dispersion des points (variance). Pour départager ces deux effets, un test basé sur les distances d’homogénéité de dispersions multivariées peut être réalisé (Anderson, 2006). Nous y reviendrons.
 
