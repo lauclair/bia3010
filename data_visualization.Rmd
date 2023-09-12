@@ -33,14 +33,34 @@ aux autres.
 plot(iris)
 ```
 
-Créer un *scatterplot* de la relation entre une variable spécifique et une autre,
+Pour créer un *scatterplot* de la relation entre une variable spécifique et une autre,
 il suffit d'entrer celles-ci dans la fonction, séparées par le signe **~**. Par 
 exemple, si on veut visualiser la relation entre la longueur des sépales et celle 
-des pétales, on peut l'écrire ainsi:
+des pétales dans le jeu de données `iris`, on peut l'écrire ainsi:
 
 ```{r}
 plot(iris$Sepal.Length~iris$Petal.Length)
 ```
+
+À l'aide de la fonction `boxplot()` on peut visualiser la dispersion d'une variable selon différents groupes. Ce type de figure permet aussi d'identifier rapidement des valeurs aberrantes ou des anomalies. 
+
+```{r}
+boxplot(iris$Petal.Length~iris$Species)
+```
+
+... à modifier + continuer (Laurie)
+
+Plusieurs analyses recquièrent que les résidus des données soint distribuées normalement.
+Il est possible de vérifier visuellement la ditribution des résidus à l'aide de plusieurs
+fonctions.
+
+La fonction `hist()` génère un histogramme de la variable qui y est précisée.
+
+```{r}
+hist(iris$Sepal.Width)
+```
+
+
 
 
 # Tableaux (Laurie)
