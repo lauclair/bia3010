@@ -8,12 +8,17 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+<br>
+
 # Importer les données
 ```{r}
 library(datasets)
 data(iris)
 ```
- 
+
+<br>
+
 # Exploration de données
 
 Avant de débuter des analyses, il est important de se familisariser avec son
@@ -91,6 +96,7 @@ La fonction `hist()` génère un histogramme de la variable qui y est précisée
 hist(iris$Sepal.Width)
 ```
 
+<br>
 
 # Conseils pour des figures et tableaux réussis
 
