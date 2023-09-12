@@ -190,11 +190,33 @@ plot(envfit.varechem, p.max = 0.05, col = "red")#Les correlations significatives
 
 
 ### Fonction ordiplot
-
 ```{r}
 ordiplot(ca.varespec)
 ```
 
+```{r}
+pl <- ordiplot(ca.varespec, type = "none", 
+               xlab=c("CA1", round((ca.varespec$CA$eig[1]/sum(ca.varespec$CA$eig))*100, 2)), 
+               ylab = "PC2 (16,1%)")
+points(pl, "sites", pch=21, col="black", bg="forestgreen")
+text(pl, "species", col="black", cex=0.9)
+#text(pl, "species", col="black", cex=0.9, 
+#     select = c("a.PRPE","a.ACSP","a.COCO","A.BEAL","h.RUID","h.ABBA","h.COCO","h.COCA","h.VILA","a.ACSA","a.ABBA","a.ALRU","A.BEPA","A.ABBA","h.DRIN"))
+ordihull(pca_comm, env_scaled$milieu, label = T, draw ="polygon", col=c("darkgreen","grey"), alpha=0.4, lwd = 1, kind=sd)
+```
+
+
+### ggplot2 + ggord
+
+```{r}
+library(ggplot2)
+library(ggord)
+```
+
+
+```{r}
+ggord(ca.varespec, ca.varespec, grp_in = NULL, axes = c("1", "2"))
+```
 
 
 ## PCA
