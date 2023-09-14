@@ -515,17 +515,27 @@ plot(disper.dune)
 Faire une ordination du même type pour chacune de vos deux matrices de communautés.
 
 Le test Procruste superpose les deux ordinations. (Dans cet exemple, je fais le test pour comparer les ordinations de deux méthodes, la CA et la PCA sur le même jeu de données...)
+
+Attention! Il faut déterminer si la relation entre vos matrices est symétrique ou asymétrique. En d’autres mots, pensez-vous qu’une des communautés affecte l’autre? Si oui, la relation est asymétrique et vous mettrez la matrice X en premier dans la fonction, suivi de la matrice Y (la matrice X explique la matrice Y). Si votre hypothèse est par exemple que vos deux communautés sont affectées par les mêmes variables environnementales et donc qu’elles devraient être corrélées, la relation est symétrique. Vous devrez spécifier l’argument symmetric = TRUE dans la fonction `procrustes`.
 ```{r}
 pro.ca.pca <- procrustes(ca.varespec, pca.varespec, symmetric = TRUE, scores="sites")
 pro.ca.pca
 plot(pro.ca.pca, kind = 1, type = "text")
 plot(pro.ca.pca, kind = 2)
-protest(ca.varespec, pca.varespec, symmetric = T, scores = "sites", permutations = 999)
 ```
-
 Vous visualisez l’ordination résultante : il y aura une ligne entre les paires de points correspondant au même site. Si les lignes sont petites, c’est que les ressemblances entre les sites en composition de la communauté 1 sont similaires aux ressemblances entre les sites en composition de la communauté 2.
 
+Test de signification avec la fonction `protest` pour vérifier si la corrélation entre les deux matrices est significative.
+```{r}
+protest(ca.varespec, pca.varespec, symmetric = T, scores = "sites", permutations = 999)
+```
+... et les deux ordinations sont corrélées!
+
+<br>
+
 Voilà! c'était un aperçu du vaste monde des statistiques multivariées! Amusez-vous, mais soyez prudents!
+
+<br>
 
 # Références:
 
