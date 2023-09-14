@@ -516,7 +516,11 @@ Faire une ordination du même type pour chacune de vos deux matrices de communa
 
 Le test Procruste superpose les deux ordinations. (Dans cet exemple, je fais le test pour comparer les ordinations de deux méthodes, la CA et la PCA sur le même jeu de données...)
 ```{r}
-(procrustes(ca.varespec, pca.varespec, symmetric = TRUE))
+pro.ca.pca <- procrustes(ca.varespec, pca.varespec, symmetric = TRUE, scores="sites")
+pro.ca.pca
+plot(pro.ca.pca, kind = 1, type = "text")
+plot(pro.ca.pca, kind = 2)
+protest(ca.varespec, pca.varespec, symmetric = T, scores = "sites", permutations = 999)
 ```
 
 Vous visualisez l’ordination résultante : il y aura une ligne entre les paires de points correspondant au même site. Si les lignes sont petites, c’est que les ressemblances entre les sites en composition de la communauté 1 sont similaires aux ressemblances entre les sites en composition de la communauté 2.
