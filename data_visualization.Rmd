@@ -196,8 +196,8 @@ ordiplot(ca.varespec)
 
 ```{r}
 #pl <- ordiplot(ca.varespec, type = "none", 
-               xlab=c("CA1", round((ca.varespec$CA$eig[1]/sum(ca.varespec$CA$eig))*100, 2)), 
-               ylab = "PC2 (16,1%)")
+               #xlab=c("CA1", round((ca.varespec$CA$eig[1]/sum(ca.varespec$CA$eig))*100, 2)), 
+               #ylab = "PC2 (16,1%)")
 #points(pl, "sites", pch=21, col="black", bg="forestgreen")
 #text(pl, "species", col="black", cex=0.9)
 #text(pl, "species", col="black", cex=0.9, 

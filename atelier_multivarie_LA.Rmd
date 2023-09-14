@@ -194,9 +194,9 @@ De plus, lorsqu'on interprète un graphique d'ordination, on ne tient pas compte
 
 #### Scaling (quelques mots pour faciliter l'interprétation des graphiques)
 
-La fonction plot effectue un scaling = 2 par défaut. Ce type de scaling conserve la corrélation entre les descripteurs (espèces) et l'angle entre ceux-ci représente leur corrélation (90° : aucune corrélation, 180° : forte corrélation négative)
+La fonction plot effectue un scaling = 2 par défaut. Ce type de scaling est approprié si on cherche principalement à ordonner les espèces. Il conserve la distance chi2 entre les descripteurs (espèces) ainsi que la corrélation entre ceux-ci; l'angle entre les espèces représente leur corrélation (90° : aucune corrélation, 180° : forte corrélation négative). Une espèce proche d'un site est plus fréquent dans ce site qu'aux sites éloignées d'elle.
 
-Sur un biplot avec un scaling = 1, la distance entre les objets (sites) reflète approximativement leur distance euclidienne (ou chi-carré), mais l'angle entre les descripteurs (espcèces) ne reflètent pas leur corrélation.
+Sur un biplot avec un scaling = 1, la distance entre les objets (sites) reflète approximativement leur distance, mais l'angle entre les descripteurs (espèces) ne reflètent pas leur corrélation. Un site proche d'une espèce a une plus grande proportion de cette espèce que les sites éloignés d'elle.
 
 <br>
 
@@ -216,12 +216,16 @@ Attention! Vos variables environnementales ne sont souvent pas dans les mêmes d
 varechem <- scale(varechem)
 ```
 
---> La fonction **envfit** permet de tester la corrélation entre les axes d'une ordination et des gradients environnementaux. Chaque vecteur environnemental est aussi associé à une valeur p déterminée par permutation.
+--> La fonction **envfit** permet de calculer la régression (et donc la corrélation) de variables environnementales (indépendamment les unes des autres) aux axes d'une ordination. Cette fonction peut nous aider à interpréter écologiquement le positionnement des sites et des espèces dans l'ordination. 
+Chaque variable environnementale est associée à une valeur p déterminée par permutation (donc change à chq fois qu'on la calcul) et à un R2.
 
 ```{r}
 (envfit.ca <- envfit(ca.varespec, varechem))
 ```
-Les valeurs **CA1 et CA2** représentent la *direction des vecteurs* le long des deux axes de l'ordination, le **r2** donne la *force de la corrélation* entre les variables environnementales et la position des sites dans l'ordination et la **valeur P** [Pr(>r)] donne la *signification statistique*.
+
+Les valeurs **CA1 et CA2** représentent la *direction des vecteurs* le long des deux axes de l'ordination, le **r2** donne la *force de la corrélation* entre les variables environnementales et les axes dans l'ordination et la **valeur P** [Pr(>r)] donne la *signification statistique*.
+
+Mais attention! Les variables dont la corrélation est forte n'expliquent pas nécessairement la composition en espèces de nos sites, mais sont plutôt associées à la variation extraite par les axes de l'ordination.
 
 Il est aussi possible de visualiser les résultats statistiques du tableau, en incorporant les vecteurs des gradients environnementaux sur vos ordinations!
 ```{r}
@@ -240,7 +244,7 @@ Ce type de figure contient beaucoup d'informations, mais est parfois difficile �
 
 La PCA est une autre méthode d'ordination fréquemment utilisée, qui assume la distribution linéaire des espèces le long d'un gradient.
 
-Comme la CA, les données qu'on fournit pour une PCA sont sous forme de *matrice de communautés*. Mais, contrairement à la CA, la PCA peut être utilisée avec des **données d'abondance seulement** (pas avec des données de présence-absence).
+Comme la CA, les données qu'on fournit pour une PCA sont sous forme de *matrice de communautés*. Mais, contrairement à la CA, la PCA peut être utilisée avec des **données d'abondance**, mais n'est pas la méthode la plus appropriée pour travailler avec des données de présence-absence.
 
 Dans une PCA, le premier axe (correspondant à une combinaison linéaire des descripteurs) sera toujours calculé pour représenter la plus grande variation dans l'espace multidimensionnel (contrairement à la CA qui maximise la corrélation entre les coordonnées des sites et des espèces). Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la variance entre les points, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant.
 
@@ -338,41 +342,33 @@ biplot.pcoa(varespec.pcoa, varespec)
 
 # Résumé des différences entre les méthodes d'ordination
 
-Il peut être difficile de choisir quelle méthode d'ordination pour répondre à vos questions de recherche. De manière générale, pour le genre de données que vous avez récoltées, l'analyse de correspondance (CA) s'avère une méthode très puissante. Or, rien de mieux que de s'amuser à explorer et comparer les différentes méthodes.
+Il peut être difficile de choisir quelle méthode d'ordination pour répondre à vos questions de recherche. De manière générale, pour le genre de données que vous avez récoltées, la CA et la PCA s'avèrent des méthodes très puissantes. Or, rien de mieux que de s'amuser à explorer et comparer les différentes méthodes!
 
 ## CA
-données : quantitatives d'abondances ou binaires (présence-absence); non-négatives; même unité pour chq variable
-Modèle unimodal
-Les axes maximisent la correspondance entre les sites et les espèces
-fonction : cca (librairie vegan)
-input : matrice de communautés
-distance : Chi-carré
-à utiliser si : Nos données sont de type présence-absence. 
++ données : quantitatives d'abondances ou binaires (présence-absence); non-négatives; même unité pour chq variable
++ méthode unimodal
++ Les axes maximisent la correspondance entre les sites et les espèces
++ fonction : cca (librairie vegan)
++ input : matrice de communautés
++ distance : chi-carré
++ à utiliser si : On veut la meilleure correspondance entre nos scores de sites et d'espèces; nos données sont de type présence-absence; on veut donner plus de poids aux espèces rares (si on est confiant dans notre échantillonnage)
 
 ## PCA
-données : quantitatives d'abondances; permet des unités différentes entre variables (mais doivent être centrées-réduites).
-Modèle linéaire
-Les axes maximisent la variation dans la composition.
-fonction : rda (librairie vegan)
-input : matrice de communautés
-distance : euclidienne (mais pour régler prob de double-0, transformation Hellinger)
-à utiliser si : On veut donner moins de poids aux espèces rares dans la distinction de nos communautés; nos données contiennent plus de sites que d'espèces
++ données : quantitatives d'abondances; permet des unités différentes entre variables (mais doivent être centrées-réduites).
++ méthode linéaire
++ Les axes maximisent la variation dans la composition.
++ fonction : rda (librairie vegan)
++ input : matrice de communautés
++ distance : euclidienne (mais pour régler prob de double-0, transformation Hellinger)
++ à utiliser si : On veut extraire le plus de variance possible avec nos axes; on veut donner moins de poids aux espèces rares dans la distinction de nos communautés; nos données contiennent plus de sites que d'espèces
 
 ## PCoA
-données : quantitatives, qualitatives, mixtes
-fonction : pcoa (librairie ape)
-input : matrice de distance
-distance : au choix (ex. bray-curtis)
-à utiliser si : Nos données contiennent plus d'espèces que de sites; on veut utiliser une des nombreuses autres distances que euclidienne et chi-carré; on a des données qualitatives.
-bray-curtis : ignore les double zéros; donne plus de poids aux espèces communes; affecté par la taille des échantillons (performe mieux avec faible diversité spécifique et petits échantillons).
-
-
-
-....
-
-
-
-
++ données : quantitatives, qualitatives, mixtes
++ fonction : pcoa (librairie ape)
++ input : matrice de distance
++ distance : au choix (ex. bray-curtis)
++ à utiliser si : Nos données contiennent plus d'espèces que de sites; on veut utiliser une des nombreuses autres distances que euclidienne et chi-carré en fonction de nos données; on a des données qualitatives.
++ bray-curtis : ignore les double zéros; donne plus de poids aux espèces communes vs chi2; affecté par la taille des échantillons (performe mieux avec faible diversité spécifique et petits échantillons).
 
 <br>
 
@@ -463,3 +459,5 @@ Ovaskainen, O., Tikhonov, G., Norberg, A., Guillaume Blanchet, F., Duan, L., Dun
 Palmer, M. W. Ordination Methods - an overview (https://ordination.okstate.edu/overview.htm#Direct_gradient_analysis)
 
 Väre, H., Ohtonen, R. and Oksanen, J. (1995) Effects of reindeer grazing on understorey vegetation in dry Pinus sylvestris forests. Journal of Vegetation Science 6, 523--530.
+
+Zelený, D. (2022). Analysis of community ecology data in R. Common confusions and mistakes. https://www.davidzeleny.net/anadat-r/doku.php/en:confusions#:~:text=Hellinger%20transformation%20has%20therefore%20two,sensitive%20to%20double%2Dzero%20problem.
