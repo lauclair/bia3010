@@ -103,7 +103,7 @@ Q3- Est-ce que deux matrices d'abondances aux mêmes sites (ex. arthropodes et p
 
 Différents types d'analyses existent pour différentes questions. Tout comme pour les statistiques univariées, vous devrez choisir le bon test (parmi toutes les méthodes qui existent) pour répondre à vos prédictions!
  
-Mais avant de répondre à nos questions, explorons visuellement nos données de composition des communautés!
+Mais avant de répondre à nos questions, explorons visuellement nos données de composition des communautés! 
 
 <br>
 
