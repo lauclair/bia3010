@@ -59,7 +59,6 @@ Pour pouvoir utiliser vos matrices de communauté, vous devez vous assurer que v
 ```{r}
 class(varespec)
 varesepc.matrix <- as.matrix(varespec)
-
 class(varesepc.matrix)
 ```
 <br>
