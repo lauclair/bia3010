@@ -10,7 +10,7 @@ output: html_document
 
 ## Que sont les analyses multivariées?
 
-On utilise les analyses multivariées pour tester des prédictions dont la variable réponse (y) est composée de plusieurs vecteurs de données (plusieurs colonnes d'une matrice). L'objectif de ce type d'analyse est de comprendre les relations et les motifs qui existent parmi 
+On utilise les analyses multivariées pour tester des prédictions dont la variable réponse (y) est composée de plusieurs vecteurs de données (plusieurs colonnes d'une matrice). L'objectif de ce type d'analyse est de comprendre les relations et les motifs qui existent parmi plusieurs groupes de variables.
 
 Tout comme pour les statistiques univariées où on retrouve notamment les régressions linéaires, les tests de t, les ANOVAs, etc., il existe plusieurs types d'analyses multivariées. Dans ce document, nous en verrons seulement quelques-unes qui devraient vous permettre de tester la plupart de vos prédictions lorsque les analyses univariées ne sont pas suffisantes.
 
@@ -95,31 +95,34 @@ On peut maintenant tester, par exemple, si les différentes mesures de diversit�
 
 Deux questions de recherche fréquentes:
 
-Q1- Est-ce que les différences de composition en espèces dans vos sites sont associées à des gradients environnementaux?
+Q1- Tester si les différences en composition d'espèces dans vos sites sont corrélées à des gradients environnementaux?
 
-Q2- Est-ce que la composition en espèces diffère entre des groupes de sites? 
-
-Q3- Est-ce que deux matrices d'abondances aux mêmes sites (ex. arthropodes et plantes) sont corrélées?
+Q2- Tester si la composition en espèces diffère entre des groupes de sites? 
 
 Différents types d'analyses existent pour différentes questions. Tout comme pour les statistiques univariées, vous devrez choisir le bon test (parmi toutes les méthodes qui existent) pour répondre à vos prédictions!
  
+Autre exemple de question :
+Tester si deux matrices d'abondances aux mêmes sites (ex. plantes et arthropodes) sont corrélées. Dans ce cas, vous pourriez faire des **tests Procrustes**. Nous ne verrons pas en détails ces tests ici, mais nous pourrons l'expliquer aux équipes intéressées.
+
 Mais avant de répondre à nos questions, explorons visuellement nos données de composition des communautés!
 
 <br>
 
 # Les ordinations
 
-Lorsqu'on s'intéresse à des communautés à différents sites, on est souvent intéressé à visualiser quels sites sont plus semblables ou plus différents en termes de composition en espèces. Pour ce faire, on utilise souvent les ordinations. 
+Lorsqu'on s'intéresse à des communautés à différents sites, on est souvent intéressé à visualiser quels sites sont plus semblables ou plus différents en termes de composition d'espèce. Pour ce faire, on utilise souvent les ordinations. 
 
 Nos **objets** (sites, parcelles) peuvent être "ordonnés" en fonction de leur ressemblance, dans un espace multidimensionnel, où chaque axe (dimension) représente un **descripteur** (ex. une espèce).
 
-Les sites situés plus proches l'un de l'autre dans cet espace multidimensionel ellipsoïde sont plus similaires dans leur composition en espèces que les sites situés plus loin. 
+Les sites situés plus proches l'un de l'autre dans cet espace multidimensionel sont plus similaires dans leur composition en espèces que les sites situés plus loin. 
 
 Or, cet espace comporte autant de dimensions que de descripteurs (espèces) et il est très difficile de représenter ou de visualiser un espace à plus de 3 dimensions!
 
---> L'ordination permet de trouver les deux ou trois axes de notre espace qui explique le plus de variation dans nos données. Ces axes représentent une "combinaison de variables" (et non plus des espèces particulières). L'ordination permet de visualiser l'espace multidimensionel en 2D (espace réduit) et simplifie l'interprétation des données multivariées.
+--> L'ordination permet de trouver les deux ou trois axes de notre espace qui explique le plus de variation entre nos sites. Ces axes représentent une "combinaison de variables". L'ordination permet de visualiser l'espace multidimensionel en 2D et simplifie l'interprétation des données multivariées.
 
 ![Source : Michael W. Palmer; https://ordination.okstate.edu/overview.htm. Sur la figure, les points sont les objets (les sites) et les axes sur la figure du milieu sont les descripteurs (les espèces).](ordinations.png)
+
+Note: Similairement, les ordinations permettent aussi d'ordonner les descripteurs (espèces) entre eux dans l'espace. Ainsi, deux espèces proches dans l'ordination se retrouvent plus souvent dans les mêmes sites que deux espèces éloignées. Ici, nous allons nous concentrer sur l'ordination des objets (sites), mais le principe est similaire avec les descripteurs (espèces).
 
 Il existe différentes méthodes d'ordination: 
 - l'analyse de correspondance (CA);
@@ -131,17 +134,17 @@ Il existe différentes méthodes d'ordination:
 
 # CA : L'analyse de correspondance
 
+L'analyse de correspondance est une méthode d'ordination appropriée pour analyser des jeux de données contenant des espèces à distribution unimodale (par ex. dont l'abondance suir une distribution normale le long d'un gradient environnemental).
+
 Les données qu'on fourni pour une CA sont sous forme de *matrice de communautés*, soit avec des **données d'abondances** brutes (sans pré-transformation) ou des **données binaires de présence-absence**.
 
 Pour faire une ordination de type CA, toutes les données doivent être dans la même dimension physique (même unité) et ne pas contenir de données négatives, ni de NA.
-
-*L'analyse de correspondance est une méthode d'ordination appropriée pour analyser des jeux de données contenant des espèces à distribution unimodale (par ex. dont l'abondance suit une distribution normale le long d'un gradient environnemental).*
 
 Elle s'effectue en trois étapes dont voici le résumé (nous n'entrerons pas dans tous les détails ici):
 
 1- Conversion de la matrice d'abondance (données brutes) en matrice Q de contributions de Pearson (calcul des **distances Chi2** entre objets). La table de contribution de Pearson contient l'information pour ordonner les sites dans l'espace multidimensionnel.
 
-La distance de Chi2 exclut les **doubles zéros**, ces derniers sont souvent présents dans les données de communautés et peuvent poser problème. Avec la CA, si vous avez deux sites qui ne possèdent pas une espèce de lichens A, cette absence d'espèce A ne contribuera pas à la ressemblance entre les 2 sites (alors qu'une présence commune d'une espèce B aux 2 sites contribue à leur ressemblance). 
+La distance de Chi2 exclut les **doubles zéros**, ces derniers sont souvent présents dans les données de communautés et peuvent poser problème. Avec la CA, si vous avez deux sites qui ne possèdent pas une espèce de lichens A, cette absence d'espèce A ne contribuera pas autant à la ressemblance entre les 2 sites que la présence commune de l'espèce B aux 2 sites. 
 
 2- Décomposition de la table de contributions de Pearson en valeurs propres (eigenvalues) et en vecteurs propres (eigenvectors). Les vecteurs propres sont ce qui permet de réduire l'espace multidimensionnel en quelques axes qui expliquent le mieux la variation entre les sites.
 
@@ -149,7 +152,7 @@ La distance de Chi2 exclut les **doubles zéros**, ces derniers sont souvent pr�
 
 ## Faire une CA dans R
 
-Avec le package vegan, on peut utiliser la fonction `cca` pour calculer une ordination CA. Cette fonction exécute les étapes 1 et 2. Le premier argument (le seul ici) est notre matrice d'abondance brute.
+Avec le package vegan, on peut utiliser la fonction **cca** pour calculer une ordination CA. Cette fonction exécute les étapes 1 et 2. Le premier argument (le seul ici) est notre matrice d'abondance brute.
 ```{r}
 ca.varespec<-cca(varespec)
 ```
@@ -158,27 +161,29 @@ Allons inspecter en détails l'objet cca qu'on vient de créer.
 ```{r}
 summary(ca.varespec)
 ```
+
 *Les ordinations CA et PCA sont des eigenanalysis : les résultats sont basés sur le calcul d'eigenvector et de eigenvalue. Chaque axe de l'ordination est le résultat de la mise à l'échelle d'un eigenvector (vecteur propre) et possède une eigenvalue (valeur propre) correspondant à la quantité de variance qu'elle explique.*
 
 **Proportion explained** : *Cette valeur représente, pour chaque axe, la proportion de la variance totale expliquée par les descripteurs dans l'ordination. Elle est calculée en divisant la valeur propre par l'inertie*
 --> Plus simplement, on peut dire qu'elle représente le **pourcentage de variation dans la composition des communautés qui est expliquée par un axe donné**.
 
-Ici, le premier axe explique 25% de la variation dans vos données, le deuxième 17%, etc. 
+Ici, le premier axe explique 25% de la variation dans vos données, le deuxième 17%, etc. Rappel : les axes/vecteurs ne représente pas une variable biologique/écologique déterminée, mais peuvent être vu comme une "combinaison de variables". Contrairement à la PCA qui maximise la variance expliquée par le premier axe, la CA maximise la correspondance entre les scores des sites et des espèces. Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la correspondance entre les scores, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant.
 
 "Cumulative proportion" : Proportion cumulative d'une axe donné et des précédents.
 
-Les axes 1 et 2 expliquent ensemble 42% de la variation dans nos données compositionnelles. 
-
 Les "**site scores**" et "**species scores**" correspondent aux coordonnées (position) des objets et des espèces dans l'espace multidimensionnel.
 
-Rappel : les axes/vecteurs ne représente pas une variable biologique/écologique déterminée, mais peuvent être vu comme une "combinaison de variables". Contrairement à la PCA qui maximise la variance expliquée par le premier axe, la CA maximise la correspondance entre les scores des sites et des espèces. Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la correspondance entre les scores, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant.
-
-On peut ensuite créer un graphique **biplot** avec la fonction `plot` pour visualiser les **sites** et les **espèces** le long des deux premiers axes. (étape 3)
+On peut ensuite visualiser avec la fonction **plot** les objets le long des deux premiers axes. (étape 3)
 ```{r}
-plot(ca.varespec)
+plot(ca.varespec, display = "sites")
 ```
 
-En observant cette ordination, on peut voir par exemple que les sites 20 et 23 ou encore 9 et 10 sont similaires dans leur composition en espèce de lichens en comparaison au reste des sites. Les sites 5 et 28 sont très différents en comparaison des autres.
+Comme vu dans la sortie de la CA, l'axe 1 et 2 explique ensemble 42% de la variation dans nos données compositionnelles. En observant cette ordination, on peut voir par exemple que les sites 20 et 23 ou encore 9 et 10 sont similaires dans leur composition en espèce de lichens en comparaison au reste des sites. Les sites 5 et 28 sont très différents en comparaison des autres.
+
+En plus des *sites*, on peut aussi afficher les *espèces* sur notre graphique d'ordination (**biplot**) pour nous permettre de voir à quels sites ou groupe de sites elles sont associées.
+```{r}
+plot(ca.varespec, display = c("sites", "species"))
+```
 
 L'espèce "icmaeric" par exemple, est plus abondante dans les sites qui sont proches dans l'ordination (6,13,7,5,14) que dans les sites plus loin (10,9,21,28).
 
@@ -188,31 +193,15 @@ De plus, lorsqu'on interprète un graphique d'ordination, on ne tient pas compte
 
 #### Scaling (quelques mots pour faciliter l'interprétation des graphiques)
 
-Les fonctions `summary` et `plot` effectuent un **scaling 2** par défaut. Ce type de scaling est approprié si on s'intéresse principalement à l'ordination/l'interrelation des espèces. Sur le biplot ("correlation biplot), la distance entre les espèces reflète approximativement leur distance chi-carré. Le scaling 2 conserve aussi la corrélation entre les espèces : sur le biplot, l'angle entre celles-ci représente leur corrélation (90° : aucune corrélation, 180° : forte corrélation négative). Une espèce proche d'un site est plus fréquent dans ce site qu'aux sites éloignées d'elle.
+La fonction plot effectue un scaling = 2 par défaut. Ce type de scaling est approprié si on cherche principalement à ordonner les espèces. Il conserve la distance chi2 entre les descripteurs (espèces) ainsi que la corrélation entre ceux-ci; l'angle entre les espèces représente leur corrélation (90° : aucune corrélation, 180° : forte corrélation négative). Une espèce proche d'un site est plus fréquent dans ce site qu'aux sites éloignées d'elle.
 
-Le **scaling 1** est pertinent lorsqu'on s'intéresse à l'ordination/l'interrelation des sites. Sur un biplot avec un scaling 1 ("distance biplot"), la distance entre les sites reflète approximativement leur distance chi-carré, mais l'angle entre les descripteurs (espèces) ne reflètent pas leur corrélation. Un site proche d'une espèce a une plus grande proportion de cette espèce que les sites éloignés d'elle.
-
-Dans les deux types de scaling, **les proportions de variance expliquées par les axes restent les mêmes**, mais les scores des sites et des espèces changent.
-
-```{r}
-summary(ca.varespec, scaling =1)
-```
-
-```{r}
-par(mfrow = c(1, 2))
-plot(ca.varespec, scaling = 2, main = "biplot scaling 2" ) 
-plot(ca.varespec, scaling = 1, main = "biplot scaling 1" ) 
-```
-
-Au final, la différence dans l'interprétation est assez subtile. L'avantage du scaling 2 (à part être le scaling par défaut!) permet de voir la corrélation entre espèces, ce qui peut donner des pistes de réflexions (mais pas des résultats statistiques!) quant aux dynamiques des communautés.
+Sur un biplot avec un scaling = 1, la distance entre les objets (sites) reflète approximativement leur distance, mais l'angle entre les descripteurs (espèces) ne reflètent pas leur corrélation. Un site proche d'une espèce a une plus grande proportion de cette espèce que les sites éloignés d'elle.
 
 <br>
 
-## Q1- Est-ce que les différences de composition en espèces dans vos sites sont associées à des gradients environnementaux?
+## Q1- Tester si les différences en composition d'espèces dans vos sites sont corrélées à des gradients environnementaux
 
 ## La fonction envfit
-
-La fonction `envfit` permet de calculer la régression (et donc la corrélation) de variables environnementales, indépendamment les unes des autres, aux axes d'une ordination (par défaut aux deux premiers axes, mais peut être changé par argument *choices=c(X,X)*). Cette fonction peut nous aider à interpréter écologiquement le positionnement des sites et des espèces dans l'ordination.
 
 Pour l'exemple, nous allons télécharger des données environnementales de caractéristiques du sol sur les sites associés aux données d'abondances de lichens
 ```{r}
@@ -226,36 +215,34 @@ Attention! Vos variables environnementales ne sont souvent pas dans les mêmes d
 varechem <- scale(varechem)
 ```
 
-Calculer les régressions.
+--> La fonction **envfit** permet de calculer la régression (et donc la corrélation) de variables environnementales (indépendamment les unes des autres) aux axes d'une ordination. Cette fonction peut nous aider à interpréter écologiquement le positionnement des sites et des espèces dans l'ordination. 
+Chaque variable environnementale est associée à une valeur p déterminée par permutation (donc change à chq fois qu'on la calcul) et à un R2.
+
 ```{r}
-(envfit.ca <- envfit(ca.varespec, varechem))
+envfit.ca <- envfit(ca.varespec, varechem)
 ```
-Pour chaque variable environnementale :
-+ les valeurs **CA1 et CA2** représentent la *direction des vecteurs* le long des deux axes de l'ordination
-+ le **r2** donne la *force de la corrélation* entre les variables environnementales et les deux axes spécifiés de l'ordination
-+ la **valeur P** [Pr(>r)] donne la *signification statistique* (déterminée par permutation, donc change à chq fois qu'on la calcule).
+
+Les valeurs **CA1 et CA2** représentent la *direction des vecteurs* le long des deux axes de l'ordination, le **r2** donne la *force de la corrélation* entre les variables environnementales et les axes dans l'ordination et la **valeur P** [Pr(>r)] donne la *signification statistique*.
 
 Il est aussi possible de visualiser les résultats statistiques du tableau, en incorporant les vecteurs des gradients environnementaux sur vos ordinations!
-
-*Mais avant, attention. Encore une fois, par défaut, la fonction `envfit` utilise un scaling 2. Si vous avez choisi de faire un scaling 1 pour votre biplot, il faut aussi faire les tests envfit avec ce type de scaling (mettre en argument à l'étape ci-haut; *scaling=X*).*
 ```{r}
-par(mfrow = c(1, 2))
 plot(ca.varespec, display = "sites")
 plot(envfit.ca)
-plot(ca.varespec)
-plot(envfit.ca, p.max = 0.05, col = "forestgreen") # Les correlations significatives apparaissent en vert
+plot(envfit.ca, p.max = 0.05, col = "red") # Les correlations significatives apparaissent en rouge
 ```
-Sur le biplot, la longueur d'un vecteur renseigne sur la force de la corrélation (r2) entre la variable environnementale et les axes de l'ordination, tandis que la direction du vecteur fait pointer celui-ci vers les objets (sites) ayant des valeurs plus élevés pour cette variable.
 
-*Attention, subtilité! Les variables dont la corrélation est forte *n'expliquent pas nécessairement la différence dans la composition en espèces de nos sites*, mais sont plutôt *associées à la variation extraite par les axes de l'ordination*. Les ordinations avec contraintes (ou canoniques) permettent par exemple de tester directement l'influence d'une matrice environnementale sur une matrice de commnautés; mais nous ne les aborderons pas ici. *
+La longueur d'un vecteur renseigne sur la force de la corrélation (r2) entre la variable environnementale et les axes de l'ordination, tandis que la direction du vecteur fait pointer celui-ci vers les objets (sites) ayant des valeurs plus élevés pour cette variable.
 
-Dans le cadre de vos projets, la fonction `envfit` peut être très utile pour interpréter écologiquement les axes et les patrons d'ordination des sites et des espèces, émettre d'autres hypothèses, etc.
+Attention! Les variables dont la corrélation est forte n'expliquent pas nécessairement la composition en espèces de nos sites, mais sont plutôt associées à la variation extraite par les axes de l'ordination. 
+Ce test sert donc surtout à interpréter écologiquement les axes et les patrons d'ordination des espèces, d'émettre d'autres hypothèses, etc.
 
-Ici, on voit que les sites 3 et 4 ont une composition en espèces relativement similaire où on retrouve plus fréquemment l'espèce Flaniva, et dont le sol contient plus d'aluminium et de fer que les sites dans le quadrant en haut à droite.
+....
 
-Ce type de figure contient beaucoup d'informations et peut être difficile à interpréter. Mais il s'agit d'une bonne façon d'explorer et/ou de visualiser nos données. 
 
-<br>
+
+Par exemple, la quantité d'aluminium et de fer dans le sol est corrélée avec des différences dans la composition en espèces de lichens entre les sites. Les sites dans le cadran en bas à gauche ont une composition en espèces plus similaire et leur sol contiennent plus d'aluminium et de fer que les sites en haut à droite.
+
+Ce type de figure contient beaucoup d'informations, mais est parfois difficile à interpréter. Il s'agit souvent d'une façon d'explorer et/ou de visualiser nos données. 
 
 # PCA : L'analyse en composantes principales
 
@@ -389,9 +376,9 @@ Il peut être difficile de choisir quelle méthode d'ordination pour répondre �
 
 <br>
 
-# PERMANOVA : L'analyse permutationnelle de variance multivariées 
+# Q2- Tester si la composition en espèces diffère entre des groupes de sites?
 
-## Q2- Est-ce que la composition en espèces diffère entre des groupes de sites? 
+## L'analyse permutationnelle de variance multivariées (PERMANOVA)
 
 La PERMANOVA est l'analogue multivarié de l'ANOVA.
 Rappel sur l'ANOVA:
@@ -453,13 +440,6 @@ Une façon facile et pratique de visualiser nos groupes, ici aménagement, est d
 plot(disper.dune)
 ```
 
-# Tests procrustes
-
-## Q3- Est-ce que deux matrices d'abondances aux mêmes sites (ex. arthropodes et plantes) sont corrélées?
-
-
-
-
 Voilà! c'était un aperçu du vaste monde des statistiques multivariées! Amusez-vous, mais soyez prudents!
 
 # Références:
@@ -467,8 +447,6 @@ Voilà! c'était un aperçu du vaste monde des statistiques multivariées! Amuse
 Anderson, M. J. (2001). A new method for non-parametric multivariate analysis of variance. Austral Ecology, 26 (1), 32–46. doi: 10.1080/13645700903062353
 
 Anderson, M. J. (2006). Distance-based tests for homogeneity of multivariate dispersions. Biometrics, 62 (1), 245‑253. doi: 10.1111/j.1541-0420.2005.00440.x
-
-Borcard, D., Gillet, F. et Legendre, P. (2018). Numerical Ecology with R (2nd Edition). Springer.
 
 Bourgeois, B., Giroux-Bougard, X., Winegardner, A., Chrétien, E., Granados, M. et Centre de la science de la biodiversité du Québec [CSBQ]. (2012). Atelier 9: Analyses multivariées. https://wiki.qcbs.ca/r_atelier9
 
