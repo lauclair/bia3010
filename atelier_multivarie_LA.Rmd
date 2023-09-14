@@ -133,7 +133,7 @@ Il existe différentes méthodes d'ordination:
 
 <br>
 
-# L'analyse de correspondance (CA)
+# CA : L'analyse de correspondance
 
 L'analyse de correspondance est une méthode d'ordination appropriée pour analyser des jeux de données contenant des espèces à distribution unimodale (par ex. dont l'abondance suir une distribution normale le long d'un gradient environnemental).
 
@@ -162,11 +162,11 @@ Allons inspecter en détails l'objet cca qu'on vient de créer.
 ```{r}
 summary(ca.varespec)
 ```
-Beaucoup d'info! La fonction cca de vegan est aussi utilisée pour d'autres types d'analyses, alors certaines des sorties de la fonction ne sont pas très utiles dans le cas d'une CA. Notamment, ici l'inertie ne permet pas de tirer de conclusions sur vos données. 
 
-Chaque axe de l'ordination est un eigenvector (vecteur propre), qui est associé à une eigenvalue (valeur propre). 
+*Les ordinations CA et PCA sont des eigenanalysis : les résultats sont basés sur le calcul d'eigenvector et de eigenvalue. Chaque axe de l'ordination est le résultat de la mise à l'échelle d'un eigenvector (vecteur propre) et possède une eigenvalue (valeur propre) correspondant à la quantité de variance qu'elle explique.*
 
-"Proportion explained" : Cette valeur représente la proportion de la variation totale dans la composition des communautés qui est expliqué par un axe donné. Dans la CA, la proportion expliquée d'un axe correspond à la valeur propre divisée par l'inertie.
+**Proportion explained** : *Cette valeur représente, pour chaque axe, la proportion de la variance totale expliquée par les descripteurs dans l'ordination. Elle est calculée en divisant la valeur propre par l'inertie*
+--> Plus simplement, on peut dire qu'elle représente le **pourcentage de variation dans la composition des communautés qui est expliquée par un axe donné**.
 
 Ici, le premier axe explique 25% de la variation dans vos données, le deuxième 17%, etc. Rappel : les axes/vecteurs ne représente pas une variable biologique/écologique déterminée, mais peuvent être vu comme une "combinaison de variables". Contrairement à la PCA qui maximise la variance expliquée par le premier axe, la CA maximise la correspondance entre les scores des sites et des espèces. Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la correspondance entre les scores, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant.
 
@@ -225,8 +225,6 @@ Chaque variable environnementale est associée à une valeur p déterminée par 
 
 Les valeurs **CA1 et CA2** représentent la *direction des vecteurs* le long des deux axes de l'ordination, le **r2** donne la *force de la corrélation* entre les variables environnementales et les axes dans l'ordination et la **valeur P** [Pr(>r)] donne la *signification statistique*.
 
-Mais attention! Les variables dont la corrélation est forte n'expliquent pas nécessairement la composition en espèces de nos sites, mais sont plutôt associées à la variation extraite par les axes de l'ordination.
-
 Il est aussi possible de visualiser les résultats statistiques du tableau, en incorporant les vecteurs des gradients environnementaux sur vos ordinations!
 ```{r}
 plot(ca.varespec, display = "sites")
@@ -236,11 +234,18 @@ plot(envfit.ca, p.max = 0.05, col = "red") # Les correlations significatives app
 
 La longueur d'un vecteur renseigne sur la force de la corrélation (r2) entre la variable environnementale et les axes de l'ordination, tandis que la direction du vecteur fait pointer celui-ci vers les objets (sites) ayant des valeurs plus élevés pour cette variable.
 
+Attention! Les variables dont la corrélation est forte n'expliquent pas nécessairement la composition en espèces de nos sites, mais sont plutôt associées à la variation extraite par les axes de l'ordination. 
+Ce test sert donc surtout à interpréter écologiquement les axes et les patrons d'ordination des espèces, d'émettre d'autres hypothèses, etc.
+
+....
+
+
+
 Par exemple, la quantité d'aluminium et de fer dans le sol est corrélée avec des différences dans la composition en espèces de lichens entre les sites. Les sites dans le cadran en bas à gauche ont une composition en espèces plus similaire et leur sol contiennent plus d'aluminium et de fer que les sites en haut à droite.
 
 Ce type de figure contient beaucoup d'informations, mais est parfois difficile à interpréter. Il s'agit souvent d'une façon d'explorer et/ou de visualiser nos données. 
 
-# L'analyse en composantes principales (PCA)
+# PCA : L'analyse en composantes principales
 
 La PCA est une autre méthode d'ordination fréquemment utilisée, qui assume la distribution linéaire des espèces le long d'un gradient.
 
@@ -264,7 +269,7 @@ summary(pca.varespec)
 ```
 Encore une fois, ce qui nous intéresse surtout ici c'est la proportion de la variance expliquée par chaque axe.
 
-Dans la PCA, l'inertie représente la variance totale de l'ordination qui est expliquée par les descripteurs (les espèces). On peut voir que la proportion de la variance expliquée par un axe correspond à sa valeur propre divisé par l'inertie.
+*Dans la PCA, l'inertie représente la variance totale des données qui est expliquée par les descripteurs (les espèces) dans l'ordination. Comme pour la CA, la proportion de la variance expliquée par un axe correspond à sa valeur propre (variance totale des données expliquée par l'axe) divisé par l'inertie.*
 
 ```{r}
 plot(pca.varespec)
@@ -283,7 +288,7 @@ plot(envfit.pca)
 plot(envfit.pca, p.max = 0.05, col = "red")
 ```
 
-# L'analyse en coordonnées principales (PCoA)
+# PCoA : L'analyse en coordonnées principales
 
 La PCoA est une autre méthode d'ordination fréquemment utilisée. Elle se démarque surtout par la possibilité d'utiliser n'importe quelle mesure de distance au choix (ex. distance Bray-Curtis).
 
@@ -342,7 +347,7 @@ biplot.pcoa(varespec.pcoa, varespec)
 
 # Résumé des différences entre les méthodes d'ordination
 
-Il peut être difficile de choisir quelle méthode d'ordination pour répondre à vos questions de recherche. De manière générale, pour le genre de données que vous avez récoltées, la CA et la PCA s'avèrent des méthodes très puissantes. Or, rien de mieux que de s'amuser à explorer et comparer les différentes méthodes!
+Il peut être difficile de choisir quelle méthode d'ordination pour répondre à vos questions de recherche. De manière générale, pour le genre de données que vous avez récoltées, la CA et la PCA s'avèrent des méthodes très adaptées. Or, rien de mieux que de s'amuser à explorer et comparer les différentes méthodes!
 
 ## CA
 + données : quantitatives d'abondances ou binaires (présence-absence); non-négatives; même unité pour chq variable
