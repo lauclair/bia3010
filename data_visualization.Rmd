@@ -232,14 +232,5 @@ ggord(ca.varespec, ca.varespec, grp_in = NULL, axes = c("1", "2"))
 
 La fonction biplot ne peut être qu'utilisée avec ordination linéaire comme PCA.
 
-
-
-
 --> afficher d'autres axes que 1 et 2....
 --> envfit
-
-
-
-
-
-ggplot
