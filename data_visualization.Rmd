@@ -167,7 +167,14 @@ envfit.varechem<-envfit(ca.varespec, varechem)
 ### Fonction plot
 
 ```{r}
-plot(ca.varespec, display = c("sites", "species"))
+plot(ca.varespec)
+```
+
+On pourrait aussi choisir de ne visualiser que les sites ou que les espèces.
+```{r}
+par(mfrow = c(1, 2))
+plot(ca.varespec, display = "sites")
+plot(ca.varespec, display = "species")
 ```
 
 ```{r}
