@@ -171,7 +171,7 @@ Les axes 1 et 2 expliquent ensemble 42% de la variation dans nos données compos
 
 Les "**site scores**" et "**species scores**" correspondent aux coordonnées (position) des objets et des espèces dans l'espace multidimensionnel.
 
-Rappel : les axes/vecteurs ne représente pas une variable biologique/écologique déterminée, mais peuvent être vu comme une "combinaison de variables". Contrairement à la PCA qui maximise la variance expliquée par le premier axe, la CA maximise la correspondance entre les scores des sites et des espèces. Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la correspondance entre les scores, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant.
+Rappel : les axes/vecteurs ne représente pas une variable biologique/écologique déterminée, mais peuvent être vu comme une "combinaison de variables". Contrairement à la PCA qui maximise la variance expliquée par le premier axe, **la CA maximise la correspondance entre les scores des sites et des espèces**. Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la correspondance entre les scores, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant.
 
 On peut ensuite créer un graphique **biplot** avec la fonction `plot` pour visualiser les **sites** et les **espèces** le long des deux premiers axes. (étape 3)
 ```{r}
@@ -205,6 +205,41 @@ plot(ca.varespec, scaling = 1, main = "biplot scaling 1" )
 ```
 
 Au final, la différence dans l'interprétation est assez subtile. L'avantage du scaling 2 (à part être le scaling par défaut!) permet de voir la corrélation entre espèces, ce qui peut donner des pistes de réflexions (mais pas des résultats statistiques!) quant aux dynamiques des communautés.
+
+
+
+
+
+
+
+
+## Extraire les scores des sites ou des espèces
+
+" Ces scores permettent, par exemple, d'utiliser une composante principale comme une variable dans une autre analyse, ou de faire des graphiques supplémentaires. Par exemple, vous pouvez obtenir par PCA une variable unique issue du jeu de données “spe” puis l'utiliser pour la corréler par régression à une autre variable, ou déterminer un gradient spatial. Pour extraire les scores d'une PCA, utiliser la fonction scores (): "
+
+```{r}
+sp.scores<-scores(ca.varespec, display="species", choices=c(1,2)) # choices : les axes
+site.scores<-scores(ca.varespec, display="sites", choices=c(1,2))
+```
+
+On va maintenant faire une régression (CA1 ~ Al)
+```{r}
+site.scores.df <- data.frame(site.scores)
+varechem.df <- data.frame(varechem)
+test <- lm(site.scores.df$CA1 ~ varechem.df$Al)
+summary(test)
+plot(test)
+plot(site.scores.df$CA1 ~ varechem.df$Al)
+abline(test$coefficient[1], test$coefficient[2])
+```
+
+
+
+
+
+
+
+
 
 <br>
 
@@ -259,13 +294,13 @@ Ce type de figure contient beaucoup d'informations et peut être difficile à in
 
 # PCA : L'analyse en composantes principales
 
-La PCA est une autre méthode d'ordination fréquemment utilisée, qui assume la distribution linéaire des espèces le long d'un gradient.
+La PCA est une autre méthode d'ordination fréquemment utilisée.
 
-Comme la CA, les données qu'on fournit pour une PCA sont sous forme de *matrice de communautés*. Mais, contrairement à la CA, la PCA peut être utilisée avec des **données d'abondance**, mais n'est pas la méthode la plus appropriée pour travailler avec des données de présence-absence.
+Comme la CA, les données qu'on fournit pour une PCA sont sous forme de *matrice de communautés*. La PCA peut être utilisée avec des **données d'abondance**, mais ce n'est pas la méthode la plus appropriée pour travailler avec des données de présence-absence.
 
-Dans une PCA, le premier axe (correspondant à une combinaison linéaire des descripteurs) sera toujours calculé pour représenter la plus grande variation dans l'espace multidimensionnel (contrairement à la CA qui maximise la corrélation entre les coordonnées des sites et des espèces). Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la variance entre les points, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant.
+*La PCA assume une distribution linéaire des espèces le long d'un gradient.*
 
-Pour effectuer une PCA, il est mieux que nos données contiennent plus de sites (lignes) que d'espèces (colonnes). 
+Dans une PCA, le premier axe sera toujours calculé pour représenter la plus grande variation dans l'espace multidimensionnel (contrairement à la CA qui maximise la corrélation entre les coordonnées des sites et des espèces). Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la variance entre les points, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant (comme la CA).
 
 La PCA préserve la **distance euclidienne**. Mais pour éviter le problème des doubles zéros, on doit effectuer une **transformation Hellinger** sur les données. La **distance Hellinger** est donc la distance euclidienne calculée sur les données pré-transformées par Hellinger.
 
@@ -280,6 +315,8 @@ pca.varespec <- rda(varespec.hel)
 summary(pca.varespec)
 ```
 Encore une fois, ce qui nous intéresse surtout ici c'est la proportion de la variance expliquée par chaque axe.
+
+À noter que les types de scaling 1 et 2 (défaut) suivent la même logique que dans la CA.
 
 *Dans la PCA, l'inertie représente la variance totale des données qui est expliquée par les descripteurs (les espèces) dans l'ordination. Comme pour la CA, la proportion de la variance expliquée par un axe correspond à sa valeur propre (variance totale des données expliquée par l'axe) divisé par l'inertie.*
 
@@ -300,11 +337,16 @@ plot(envfit.pca)
 plot(envfit.pca, p.max = 0.05, col = "red")
 ```
 
+## PCA sur données environnementales
+```{r}
+pca.varechem <- rda(varechem)
+summary(pca.varechem)
+plot(pca.varechem)
+```
+
 # PCoA : L'analyse en coordonnées principales
 
-La PCoA est une autre méthode d'ordination fréquemment utilisée. Elle se démarque surtout par la possibilité d'utiliser n'importe quelle mesure de distance au choix (ex. distance Bray-Curtis).
-
-La PCoA est une méthode adaptée aux jeux de données comportant plus d'espèces que de sites.
+La PCoA est une autre méthode d'ordination fréquemment utilisée. Elle se démarque surtout par la possibilité d'utiliser **n'importe quelle mesure de distance** au choix (ex. distance Bray-Curtis).
 
 Contrairement aux CA et PCA, on doit d'abord créer une **matrice de distance**, puis donner cette matrice de distance à la fonction pour que celle-ci exécute l'ordination.
 
@@ -314,7 +356,7 @@ Les matrices de distance sont très utilisées en statistiques multivariées. On
 
 ### Matrice de distance hellinger
 
-Pour calculer la distance hellinger, il faut d'abord transformer nos données avec la fonction **decostand** vu précédemment.
+Pour calculer la distance hellinger, il faut d'abord transformer nos données avec la fonction `decostand` vu précédemment.
 ```{r}
 #La transformation Hellinger
 varespec.hellinger<-decostand(varespec, method="hellinger") 
@@ -322,12 +364,12 @@ head(varespec)
 head(varespec.hellinger)
 ```
 Mais on a toujours une matrice de communautés et non de distance.
-La fonction **vegdist** de vegan permet de créer une matrice de distance à partir d'une matrice de communauté.
+La fonction **vegdist** de vegan permet de créer une matrice de distance (ici euclidienne) à partir d'une matrice de communauté.
 ```{r}
 varespec.hel <- vegdist(varespec.hellinger, method='euclid')
 ```
 
-Ces deux étapes (transformation hellinger + matrice de distance) peuvent être combinée en une seul ligne de code!
+Ces deux étapes (transformation hellinger + matrice de distance euclidienne) peuvent être combinée en une seul ligne de code!
 ```{r}
 varespec.hel <- vegdist(decostand(varespec, method='hellinger'), method='euclid')
 ```
@@ -338,7 +380,9 @@ head(varespec)
 varespec.hel
 ```
 
-Il ne sert à rien de faire une PCoA avec une matrice de distance hellinger ou de distance chi-carré, car cela revient pratiquement à faire un PCA ou un CA, respectivement.
+Ce n'est pas vraiment utile de faire une PCoA avec une matrice de distance hellinger ou de distance chi-carré, car cela revient pratiquement à faire un PCA ou un CA, respectivement.
+
+### Distance de Bray-Curtis
 
 Prenons avantage de la PCoA pour utiliser la distance de Bray-Curtis.
 ```{r}
@@ -347,44 +391,53 @@ varespec.bray <- vegdist(varespec, method='bray')
 
 ## Faire une PCoA dans R
 ```{r}
-varespec.pcoa<-pcoa(varespec.bray)
-varespec.pcoa
+varespec.pcoa<-cmdscale(varespec.bray, k =(nrow(varespec) - 1), eig = TRUE)
+especes.wa <- wascores(varespec.pcoa$points[, 1:2], varespec) 
+# Calculate weighted average projection of species
 ```
 
+envfit
 ```{r}
-biplot.pcoa(varespec.pcoa, varespec)
+(varespec.pcoa.env <- envfit(varespec.pcoa, varechem))
+```
+
+Biplot
+```{r}
+ordiplot(scores(varespec.pcoa, choices = c(1, 2)), type = "t") # afficher sites
+abline(h = 0, lty = 3)
+abline(v = 0, lty = 3)
+text(especes.wa, rownames(especes.wa), cex = 0.7, col = "red") # afficher espèces
+plot(varespec.pcoa.env, p.max = 0.05, col = "forestgreen") # afficher résultats envfit
 ```
 
 <br>
 
 # Résumé des différences entre les méthodes d'ordination
 
-Il peut être difficile de choisir quelle méthode d'ordination pour répondre à vos questions de recherche. De manière générale, pour le genre de données que vous avez récoltées, la CA et la PCA s'avèrent des méthodes très adaptées. Or, rien de mieux que de s'amuser à explorer et comparer les différentes méthodes!
+Il peut être difficile de choisir quelle méthode d'ordination pour répondre à vos questions de recherche. De manière générale, pour le genre de données que vous avez récoltées, la CA et la PCA s'avèrent des méthodes très adaptées. Or, rien de mieux que de s'amuser à explorer et comparer les différentes méthodes! **L'important est surtout de bien comprendre ce que vous faites, et que votre interprétation écologique ait du sens vis à vis votre système biologique à l'étude et ce que vous voyez sur les graphiques d'ordination.**
 
 ## CA
 + données : quantitatives d'abondances ou binaires (présence-absence); non-négatives; même unité pour chq variable
-+ méthode unimodal
 + Les axes maximisent la correspondance entre les sites et les espèces
-+ fonction : cca (librairie vegan)
++ fonction : `cca` (librairie vegan)
 + input : matrice de communautés
 + distance : chi-carré
-+ à utiliser si : On veut la meilleure correspondance entre nos scores de sites et d'espèces; nos données sont de type présence-absence; on veut donner plus de poids aux espèces rares (si on est confiant dans notre échantillonnage)
++ à utiliser si : On veut la meilleure correspondance entre nos scores de sites et d'espèces; nos données sont de type présence-absence; on veut donner plus de poids aux espèces rares (si on est confiant dans notre échantillonnage).
 
 ## PCA
 + données : quantitatives d'abondances; permet des unités différentes entre variables (mais doivent être centrées-réduites).
-+ méthode linéaire
 + Les axes maximisent la variation dans la composition.
-+ fonction : rda (librairie vegan)
++ fonction :`rda` (librairie vegan)
 + input : matrice de communautés
 + distance : euclidienne (mais pour régler prob de double-0, transformation Hellinger)
-+ à utiliser si : On veut extraire le plus de variance possible avec nos axes; on veut donner moins de poids aux espèces rares dans la distinction de nos communautés; nos données contiennent plus de sites que d'espèces
++ à utiliser si : On veut extraire le plus de variance possible avec nos axes; on veut donner moins de poids aux espèces rares dans la distinction de nos communautés; nos données contiennent plus de sites que d'espèces (vs PCoA).
 
 ## PCoA
 + données : quantitatives, qualitatives, mixtes
-+ fonction : pcoa (librairie ape)
++ fonction : `cmdsacle` (librairie stats; base R)
 + input : matrice de distance
 + distance : au choix (ex. bray-curtis)
-+ à utiliser si : Nos données contiennent plus d'espèces que de sites; on veut utiliser une des nombreuses autres distances que euclidienne et chi-carré en fonction de nos données; on a des données qualitatives.
++ à utiliser si : Nos données contiennent plus d'espèces que de sites (vs. PCA); on veut utiliser une des nombreuses autres distances que euclidienne et chi-carré en fonction de nos données; on a des données qualitatives.
 + bray-curtis : ignore les double zéros; donne plus de poids aux espèces communes vs chi2; affecté par la taille des échantillons (performe mieux avec faible diversité spécifique et petits échantillons).
 
 <br>
@@ -457,6 +510,11 @@ plot(disper.dune)
 
 ## Q3- Est-ce que deux matrices d'abondances aux mêmes sites (ex. arthropodes et plantes) sont corrélées?
 
++ Les deux matrices de communautés doivent contenir le **même nombre de lignes** (les sites), mais n'ont pas besoin d'avoir le même nombre de colonnes (les espèces).
+
+Faire une ordination du même type pour chacune de vs matrices de communautés.
+
+Le test Procruste superposera les deux ordinations.
 
 
 
