@@ -206,41 +206,6 @@ plot(ca.varespec, scaling = 1, main = "biplot scaling 1" )
 
 Au final, la différence dans l'interprétation est assez subtile. L'avantage du scaling 2 (à part être le scaling par défaut!) permet de voir la corrélation entre espèces, ce qui peut donner des pistes de réflexions (mais pas des résultats statistiques!) quant aux dynamiques des communautés.
 
-
-
-
-
-
-
-
-## Extraire les scores des sites ou des espèces
-
-" Ces scores permettent, par exemple, d'utiliser une composante principale comme une variable dans une autre analyse, ou de faire des graphiques supplémentaires. Par exemple, vous pouvez obtenir par PCA une variable unique issue du jeu de données “spe” puis l'utiliser pour la corréler par régression à une autre variable, ou déterminer un gradient spatial. Pour extraire les scores d'une PCA, utiliser la fonction scores (): "
-
-```{r}
-sp.scores<-scores(ca.varespec, display="species", choices=c(1,2)) # choices : les axes
-site.scores<-scores(ca.varespec, display="sites", choices=c(1,2))
-```
-
-On va maintenant faire une régression (CA1 ~ Al)
-```{r}
-site.scores.df <- data.frame(site.scores)
-varechem.df <- data.frame(varechem)
-test <- lm(site.scores.df$CA1 ~ varechem.df$Al)
-summary(test)
-plot(test)
-plot(site.scores.df$CA1 ~ varechem.df$Al)
-abline(test$coefficient[1], test$coefficient[2])
-```
-
-
-
-
-
-
-
-
-
 <br>
 
 ## Q1- Est-ce que les différences de composition en espèces dans vos sites sont associées à des gradients environnementaux?
@@ -338,11 +303,40 @@ plot(envfit.pca, p.max = 0.05, col = "red")
 ```
 
 ## PCA sur données environnementales
+
+On peut aussi faire une PCA sur nos données environnementales (centrées-réduites) afin de déterminer les variables expliquant la plus grande variabilité dans l'*environnement* des sites. On peut regarder les scores des "espèces" (qui sont ici les facteurs environnementaux) ou le biplot.
 ```{r}
 pca.varechem <- rda(varechem)
 summary(pca.varechem)
 plot(pca.varechem)
 ```
+## Extraire les scores des sites ou des espèces
+
+On peut aussi extraire les scores d'une composante principale pour transformer cet axe en nouvelle variable unique pouvant être utilisée dans un modèle linéaire. Cette nouvelle variable (ex. PC1) représente X % de la variance globale dans les conditions environnementales (ou dans la composition en espèces).
+
+La PCA est une méthode bien adaptée pour extraire les scores car ce type d'ordination maximise la variation expliquée par les axes.
+
+On pourrait par exemple vouloir extraire le score des sites de l'axe PC1 en une nouvelle variable représentant la variance globale dans les caractéristiques du sol ("car_sol"), pour ensuite tester la corrélation par régression à une autre variable (disons la diversité shannon en lichens des sites calculée précédemment; variable "diversite$shannon").
+
+Extraire les scores d'une PCA avec la fonction `scores`
+```{r}
+site.scores<-scores(pca.varechem, display="sites", choices=c(1,2)) # choices : les axes
+```
+
+On va maintenant faire une régression
+```{r}
+site.scores.df <- data.frame(site.scores)
+colnames(site.scores.df)[1] <- "car_sol_1"
+colnames(site.scores.df)[2] <- "car_sol_2"
+diversite.df <- data.frame(diversite)
+div.sol.1 <- lm(diversite.df$shannon ~ site.scores.df$car_sol_1)
+div.sol.2 <- lm(diversite.df$shannon ~ site.scores.df$car_sol_2)
+summary(div.sol.1)
+summary(div.sol.2)
+```
+Conclusion? Si on se fie uniquement à la première composante principale extraite, les caractéristiques physico-chimiques du sol, prises dans leur ensemble, ne semblent par influencer la diversité (shannon) en espèces de lichens. Mais si on regarde la deuxième PC, il y a une corrélation entre caractéristiques générales du sol et diversité des lichens... On se souvient lors de l'envfit sur la PCA des communautés que les variables du sol qui étaient corrélées aux axes de l'ordination étaient Fe, Al, Humdepth, Mn, Ca, etc. Or dans cette PCA des variables du sol, ces variables semblent associées au gradient de la PC2...
+
+Autre exemple, on pourrait extraire les scores des sites sur un axe de PCA de communautés, pour tester la corrélation entre la variation globale dans la composition en arthropodes herbivores et le taux d'herbivorie. (Est-ce que le taux d'herbivorie est influencée par la composition en herbivores composent les communautés?)
 
 # PCoA : L'analyse en coordonnées principales
 
@@ -392,8 +386,7 @@ varespec.bray <- vegdist(varespec, method='bray')
 ## Faire une PCoA dans R
 ```{r}
 varespec.pcoa<-cmdscale(varespec.bray, k =(nrow(varespec) - 1), eig = TRUE)
-especes.wa <- wascores(varespec.pcoa$points[, 1:2], varespec) 
-# Calculate weighted average projection of species
+especes.wa <- wascores(varespec.pcoa$points[, 1:2], varespec) # Calculate weighted average projection of species
 ```
 
 envfit
@@ -430,11 +423,11 @@ Il peut être difficile de choisir quelle méthode d'ordination pour répondre �
 + fonction :`rda` (librairie vegan)
 + input : matrice de communautés
 + distance : euclidienne (mais pour régler prob de double-0, transformation Hellinger)
-+ à utiliser si : On veut extraire le plus de variance possible avec nos axes; on veut donner moins de poids aux espèces rares dans la distinction de nos communautés; nos données contiennent plus de sites que d'espèces (vs PCoA).
++ à utiliser si : On veut extraire le plus de variance possible avec nos axes; extraire les scores des sites ou des espèces en une nouvelle variable pour tester sa corrélation dans un modèle linéaire; on veut donner moins de poids aux espèces rares dans la distinction de nos communautés; nos données contiennent plus de sites que d'espèces (vs PCoA).
 
 ## PCoA
 + données : quantitatives, qualitatives, mixtes
-+ fonction : `cmdsacle` (librairie stats; base R)
++ fonction : `cmdscale` (librairie stats; base R)
 + input : matrice de distance
 + distance : au choix (ex. bray-curtis)
 + à utiliser si : Nos données contiennent plus d'espèces que de sites (vs. PCA); on veut utiliser une des nombreuses autres distances que euclidienne et chi-carré en fonction de nos données; on a des données qualitatives.
@@ -512,11 +505,14 @@ plot(disper.dune)
 
 + Les deux matrices de communautés doivent contenir le **même nombre de lignes** (les sites), mais n'ont pas besoin d'avoir le même nombre de colonnes (les espèces).
 
-Faire une ordination du même type pour chacune de vs matrices de communautés.
+Faire une ordination du même type pour chacune de vos deux matrices de communautés.
 
-Le test Procruste superposera les deux ordinations.
+Le test Procruste superpose les deux ordinations. (Dans cet exemple, je fais le test pour comparer les ordinations de deux méthodes, la CA et la PCA sur le même jeu de données...)
+```{r}
+(procrustes(ca.varespec, pca.varespec, symmetric = TRUE))
+```
 
-
+Vous visualisez l’ordination résultante : il y aura une ligne entre les paires de points correspondant au même site. Si les lignes sont petites, c’est que les ressemblances entre les sites en composition de la communauté 1 sont similaires aux ressemblances entre les sites en composition de la communauté 2.
 
 Voilà! c'était un aperçu du vaste monde des statistiques multivariées! Amusez-vous, mais soyez prudents!
 
