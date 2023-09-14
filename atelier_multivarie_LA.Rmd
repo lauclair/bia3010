@@ -10,7 +10,7 @@ output: html_document
 
 ## Que sont les analyses multivariées?
 
-On utilise les analyses multivariées pour tester des prédictions dont la variable réponse (y) est composée de plusieurs vecteurs de données (plusieurs colonnes d'une matrice). L'objectif de ce type d'analyse est de comprendre les relations et les motifs qui existent parmi 
+On utilise les analyses multivariées pour tester des prédictions dont la variable réponse (y) est composée de plusieurs vecteurs de données (plusieurs colonnes d'une matrice). L'objectif de ce type d'analyse est de comprendre les relations et les motifs qui existent parmi plusieurs groupes de variables.
 
 Tout comme pour les statistiques univariées où on retrouve notamment les régressions linéaires, les tests de t, les ANOVAs, etc., il existe plusieurs types d'analyses multivariées. Dans ce document, nous en verrons seulement quelques-unes qui devraient vous permettre de tester la plupart de vos prédictions lorsque les analyses univariées ne sont pas suffisantes.
 
@@ -228,7 +228,7 @@ varechem <- scale(varechem)
 
 Calculer les régressions.
 ```{r}
-(envfit.ca <- envfit(ca.varespec, varechem))
+envfit.ca <- envfit(ca.varespec, varechem)
 ```
 Pour chaque variable environnementale :
 + les valeurs **CA1 et CA2** représentent la *direction des vecteurs* le long des deux axes de l'ordination
@@ -435,27 +435,31 @@ Il peut être difficile de choisir quelle méthode d'ordination pour répondre �
 
 <br>
 
-# PERMANOVA : L'analyse permutationnelle de variance multivariées 
+# L'analyse permutationnelle de variance multivariées (PERMANOVA)
 
-## Q2- Est-ce que la composition en espèces diffère entre des groupes de sites? 
+## Q2- Tester si la composition en espèces diffère entre des groupes de sites?
 
 La PERMANOVA est l'analogue multivarié de l'ANOVA.
 Rappel sur l'ANOVA:
+
 + Elle est appropriée pour tester des hypothèses de structures écologiques complexes comme de la variabilité spatiale.
 + Les variances intra et intergroupes sont comparées pour fournir une statistique F.
 + L’hypothèse nulle stipule que la statistique F n’est pas significativement différente de 0, ce qui se traduit par une absence de différence entre les groupes. La signification de cette statistique est évaluée par comparaison à une distribution théorique. Elle est donc paramétrique.
 
 La PERMANOVA (Anderson, 2001):
+
 + Analyse de variance de données multivariées basée sur le calcul d'une pseudo-statistique F.
 + Test non paramétrique en testant la signification des pseudo-statistiques F par un test de permutations. 
 + La pseudo-statistique F est calculée d’après une matrice de distance. 
+
 **MAIS ATTENTION**:
+
 + Suppose l'indépendance des données
 + Est sensible aux différences de dispersion des points entre les groupes.
 
 Une différence significative entre groupe peut donc être due à une différence de position centrale (moyenne) ou à une différence de dispersion des points (variance). Pour départager ces deux effets, un test basé sur les distances d’homogénéité de dispersions multivariées peut être réalisé (Anderson, 2006). Nous y reviendrons.
 
-Pour cet exemple, nous allons utiliser les données dune (Jongman, 1995). Il s'agit de données de composition d'espèces végétales. Les données dune.env sont des données environnementales associées aux sites, notamment le type d'aménagement agricole ("Management"). Cette variable est un facteur à 4 niveaux.
+Pour cet exemple, nous allons utiliser les données `dune` (Jongman, 1995). Il s'agit de données de composition d'espèces végétales. Les données `dune.env` sont des données environnementales associées aux sites, notamment le type d'aménagement agricole ("Management"). Cette variable est un facteur à 4 niveaux.
 ```{r}
 data(dune)
 data(dune.env)
@@ -465,33 +469,36 @@ Nous pourrions faire la prédiction qu'il y a une différence en composition d'e
 
 Si on repense à un nuage de points multidimensionnel où chaque point représente un site, on peut s'imaginer que chacun de nos groupes (ici l'aménagement), est constitué par un groupe de points. La PERMANOVA teste si le centroide de chaque groupe est différent en comparant la somme des distances entre chaque point et le centroide de son groupe avec la somme des distances entre chaque point et le centroide de tous nos sites; il s'agit de la pseudo-statistique F.
 
-///NOTE JOCELYN: C'EST CE PETIT PARAGRAPHE QUE JE TROUVE CONFONDANT.
-Par contre, la pseudo-statistique F ne se calcul pas sur une ordination comme l'ordination CA, mais sur une ordination de type PCoA qui est construite à partir d'une matrice de distance...
-///
+Par contre, la pseudo-statistique F ne se calcule pas à partir d'une matrice d'abondance, mais à partir d'une matrice de distance ou de dissimilarité (comme l'indice de Bray-Curtis, par exemple).
 
-### Matrice de distance hellinger
+
+### Créer la matrice de dissimilarité
+
 ```{r}
-dune.dist<-vegdist(decostand(dune ,method='hellinger'), method='euclid')
+dune.dist <- vegdist(decostand(dune, method='hellinger'), method='bray')
 ```
-Comparer le format des deux matrices. Noter que la matrice de distance est carrée avec les sites en lignes et en colonnes.
-
-Donc, reprenons...
+Ici, on a d'abord fait une transformation hellinger à la matrice d'abondance `dune`, puis on l'a converti en matrice de dissimilarité Bray-Curtis. La transformation hellinger est souvent appliquée aux données écologiques avant une PERMANOVA pour réduire l'impact des espèces rares et ainsi mieux interpréter les motifs généraux qui sont présents dans la communauté.
 
 La PERMANOVA teste si le centroide de chaque groupe est différent. Toutefois, il est aussi possible que certains groupes soient plus dispersés que d'autres autour de leur centroide. La PERMANOVA ne peut pas nous dire si la différence entre les groupes est causée par une différence de position des centroides ou par une différence de dispersion autour des centroides. Un autre test nous permet de tester pour des différences de dispersion...
+
 
 ### Test des distances d’homogénéité de dispersions multivariées
 
 Nous allons utiliser la fonction betadisper de vegan pour tester si la variance multivariée est différence entre les groupes d'aménagement.
 ```{r}
-disper.dune<-betadisper(dune.dist, dune.env$Management)
+disper.dune <- betadisper(dune.dist, dune.env$Management)
 anova(disper.dune) # pour effectuer un test de signification
 ```
 L'hypothèse nulle est qu'il n'y a pas de différence de dispersion entre nos groupes et l'hypothèse alternative est qu'il y a une différence. Ici, comme la valeur P est supérieure à un seuil 0.05, on ne peut pas rejeter l'hypothèse nulle. Nos groupes sont donc suffisamment homogènes dans leur dispersion pour faire notre PERMANOVA.
 
+
+### Effectuer la PERMANOVA
+
 ```{r}
 permanova.dune <- adonis2(dune.dist ~ Management, data = dune.env)
+permanova.dune
 ```
-Donc, interprétons la sortie de la PERMANOVA. On peut voir que la pseudo-statistique F est de 2.2842 et que cette valeur se retrouve à l'extrémité de notre distribution de pseudo-statistique F générée par permutation. Seul 0.3% des pseudo-statistiques F issues des permutations est plus grand que notre vraie pseudo-statistique. On peut donc dire que la composition végétale est significativement différente entre les différents types d'aménagement. De plus, le R2 nous dit que l'aménagement explique environ 30% de la variation en espèce entre nos sites.
+Donc, interprétons la sortie de la PERMANOVA. On peut voir que la pseudo-statistique F est de 2.737 et que cette valeur se retrouve à l'extrémité de notre distribution de pseudo-statistique F générée par permutation. Seul 0.3% des pseudo-statistiques F issues des permutations est plus grand que notre vraie pseudo-statistique. On peut donc dire que la composition végétale est significativement différente entre les différents types d'aménagement. De plus, le R2 nous dit que l'aménagement explique environ 34% de la variation en espèce entre nos sites.
 
 Une façon facile et pratique de visualiser nos groupes, ici aménagement, est d'utiliser la fonction plot() sur notre objet betadisper (modèle issu de la fonction disper()). Il s'agit du PCoA (ordination faite à partir d'une matrice de distance, ici de Hellinger). Chaque point correspond à un site et la couleur varie selon l'aménagement. L'interprétation est similaire à ce qui est décrit plus haut avec les ordinations CA. Ici par exemple, on peut voir que la composition en espèce végétale dans les sites aménagés "NM" et "SF" semblent plus différents en comparaison aux autres paires de sites. Voir ce lien pour plus d'information sur cette fonction graphique et sur la façon de la modifier: https://fromthebottomoftheheap.net/2016/04/17/new-plot-default-for-betadisper/
 
