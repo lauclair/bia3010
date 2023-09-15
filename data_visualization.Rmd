@@ -132,7 +132,16 @@ summary(iris)
 ```
 
 # ANOVA (Sabrina)
+La fonction de base plot() peut être utile pour visualiser rapidement un jeu de données, par exemple avec un histogramme. Par contre, vous verrez que son utilisation peut devenir  limitée lorsqu'il s'agit de réaliser des figures plus complexes ou simplement modifier certains paramètres graphiques. 
 
+C'est pour cela que nous suggérons d'utiliser la fonction ggplot(), du package "ggplot2". Cette fonction permet de réaliser des graphiques de façon plus intuitive et permet de les mettre en page plus facilement qu'avec la fonction plot(). Elle est aussi mieux documentée, il est donc plus facile de comprendre et utiliser les différents aspects de la fonction. Google est d'ailleurs votre meilleur allié pour la réalisation de vos figures!
+
+Contrairement à la fonction plot(), ggplot() fonctionne par couches. 
+Une figure ggplot() commence avec la fonction ggplot(). Elle sert à "préparer" la figure: on spécifie le jeu de données à utiliser, puis on choisit les variables qui formeront nos axes. 
+
+La fonction ggplot nécessite deux arguments: le dataset (jeu de données), puis l'argument "aes()". Ce dernier nous permet d'assigner des variables du dataset aux composantes du graphique (par exemple, les axes x et y). Voici un exemple, toujours avec le jeu de données Iris. Nous allons tester si la largeur des sépales diffère entre les espèces.
+
+(Revoir l'atelier 3 pour l'explication de l'ANOVA, incluant les postulats et critères d'utilisation, que je passe ici)
 
 
 # Régression linéaire (Sabrina)
