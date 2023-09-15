@@ -1,7 +1,7 @@
 ---
 title: "Analyses multivariées"
 author: "BIA-3010 ÉTÉ 2023"
-date: "06/09/2023 - Hélène Dion-Phénix, Laurie Auclair et Jocelyn Lauzon"
+date: "15/09/2023 - Hélène Dion-Phénix, Laurie Auclair et Jocelyn Lauzon"
 output: html_document
 ---
 <br>
@@ -67,7 +67,9 @@ Parfois, on aura besoin de remanipuler nos tableaux de données. Dans la librari
 ```{r, message = FALSE, warning = FALSE}
 library(picante)
 varespec_long <- matrix2sample(varespec)
+head(varespec_long)
 varespec <- sample2matrix(varespec_long)
+head(varespec)
 ```
 <br>
 
