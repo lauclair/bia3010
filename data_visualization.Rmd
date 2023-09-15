@@ -218,7 +218,7 @@ theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 ```
 
 On a donc changé le `fill` (intérieur) et `color` (trait) de nos boxplot, à même la fonction `boxplot()`.
-On pourrait aussi changer la couleur des boîtes en fonction de l'espèce d'iris (qui est aussi notre variable x). Dans ce cas, il faut ajouter un argument `aes()` à la fonction `boxplot()`, pour assigner notre variable à un aesthetic. Dans ce cas, notre variable `Species`:
+On pourrait aussi changer la couleur des boîtes en fonction de l'espèce d'iris (qui est aussi notre variable x). Dans ce cas, il faut ajouter un argument `aes()` à la fonction `boxplot()`, pour assigner notre variable à un aesthetic. Ce sera notre variable `Species`:
 
 ```{r}
 #Fill:
@@ -302,7 +302,7 @@ LettresSW$cld <- cld$Letters
 print(LettresSW)
 ```
 
-On ajoute nos lettres au boxplot avec la fonction `geom_text()`, avec comme argument `aes()` la table que l'on vient de créer. On peut aussi ajouter la statistique de test, en utilisant les coordonnées dans notre figure.
+On ajoute nos lettres au boxplot avec la fonction `geom_text()`, avec comme argument `aes()` la table que l'on vient de créer. On peut aussi ajouter la statistique de test avec la fonction `annotate()`, en utilisant les coordonnées x et y dans notre figure.
 
 ```{r}
 ggplot(iris, aes(x=Species, y=Sepal.Width)) +
@@ -316,6 +316,23 @@ theme_bw()+
 theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
 geom_text(data = LettresSW, aes(x = Species, y = quant, label = cld), size = 5, vjust=-1, hjust =-5)+
 annotate("text", x = 3, y = 4.5, label = "ANOVA, F(2)=49.16, p<0.001")
+```
+
+Pour bien faire, on pourrait même changer les étiquettes en x. Avec la fonction `scale_x_discrete`, j'ajoute "I." pour iris à chaque étiquette et je les mets en italique, puisque ce sont des noms latins, avec l'argument `axis.text.x` dans la fonction `theme()`. 
+
+```{r}
+ggplot(iris, aes(x=Species, y=Sepal.Width)) +
+geom_point(aes(color=Species), position = position_jitter(0.1), shape = 16, size = 2.5, show.legend=FALSE)+
+scale_color_brewer(palette="Accent")+
+geom_boxplot(alpha=0.5)+
+labs(	x="Espèce", 
+	y="Largeur des sépales (mm)",
+	title="Largeur des sépales chez les espèces d'iris")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5), axis.text.x = element_text(face="italic"))+
+geom_text(data = LettresSW, aes(x = Species, y = quant, label = cld), size = 5, vjust=-1, hjust =-5)+
+annotate("text", x = 3, y = 4.5, label = "ANOVA, F(2)=49.16, p<0.001")+
+scale_x_discrete(labels=c("I. setosa", "I. versicolor", "I. virginica"))
 ```
 
 # Régression linéaire (Sabrina)
