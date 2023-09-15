@@ -191,6 +191,133 @@ ggplot(iris, aes(x=Species, y=Sepal.Width)) +
 geom_boxplot()
 ```
 
+
+Pour ajouter/modifier d'autres éléments, il faut ajouter des couches. Ainsi, on peut changer les titres d'axes (labs pour labels), changer le thème de notre graphique (theme_bw est plus minimaliste), retirer la grille et centrer le titre:
+
+```{r}
+ggplot(iris, aes(x=Species, y=Sepal.Width)) +
+geom_boxplot()+
+labs(	x="Espèce", 
+	y="Largeur des sépales (cm)",
+	title="Largeur des sépales chez les espèces d'iris")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+```
+
+
+On peut aussi décider de changer les couleurs. Ce n'est pas toujours nécessaire ou pertinent, si ça n'ajoute pas d'information à la figure. Il faut faire attention de ne pas surcharger la figure avec le design esthétique, l'important c'est de focuser sur le message que l'on veut transmettre avec notre figure, et ne pas ajouter d'éléments qui sont distrayants. Mais pour l'exercice et se familiariser avec les paramètres graphiques, essayons:
+
+```{r}
+ggplot(iris, aes(x=Species, y=Sepal.Width)) +
+geom_boxplot(fill = "salmon", color = "red")+
+labs(	x="Espèce", 
+	y="Largeur des sépales (mm)",
+	title="Largeur des sépales chez les espèces d'iris")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
+```
+
+On a donc changé le fill (intérieur) et color (trait) de nos boxplot, à même la fonction boxplot().
+On pourrait aussi changer la couleur des boîtes en fonction de l'espèce d'iris (qui est aussi notre variable x). Dans ce cas, il faut ajouter un argument aes() à la fonction boxplot, pour assigner notre variable à un aesthetic. Dans ce cas, notre variable Species:
+
+```{r}
+#Fill:
+
+ggplot(iris, aes(x=Species, y=Sepal.Width)) +
+geom_boxplot(aes(fill=Species), show.legend = FALSE)+
+labs(	x="Espèce", 
+	y="Largeur des sépales (mm)",
+	title="Largeur des sépales chez les espèces d'iris")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
+
+#Color:
+ggplot(iris, aes(x=Species, y=Sepal.Width)) +
+geom_boxplot(aes(color=Species), show.legend = FALSE)+
+labs(	x="Espèce", 
+	y="Largeur des sépales (mm)",
+	title="Largeur des sépales chez les espèces d'iris")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
+```
+
+
+Il y a aussi des palettes de couleurs prédéfinies dans R, qu'on peut utiliser avec la fonction scale_fill_brewer (j'ai choisi la palette "Accent"):
+
+```{r}
+ggplot(iris, aes(x=Species, y=Sepal.Width)) +
+geom_boxplot(aes(fill=Species), show.legend=FALSE)+
+scale_fill_brewer(palette="Accent")+
+labs(	x="Espèce", 
+	y="Largeur des sépales (mm)",
+	title="Largeur des sépales chez les espèces d'iris")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+#Qu'est-ce qui arrive si on change Fill pour Color, dans boxplot()? Il faut aussi changer scale_fill_brewer() pour scale_color_brewer():
+
+ggplot(iris, aes(x=Species, y=Sepal.Width)) +
+geom_boxplot(aes(color=Species), show.legend=FALSE)+
+scale_color_brewer(palette="Accent")+
+labs(	x="Espèce", 
+	y="Largeur des sépales (mm)",
+	title="Largeur des sépales chez les espèces d'iris")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+```
+
+Puisque ggplot() fonctionne par couche, on peut aussi choisir d'ajouter les données brutes à notre figure. Par exemple, on ajoute avant geom_boxplot() une autre couche de données avec geom_point(), dans lequel on peut spécifier, encore une fois, l'argument aes() pour assigner la variable qui sera colorée. L'argument position définit le niveau de "jitter", qui correspond à des points qui sont "jitter", c'est-à-dire un peu "éparpillés" sur l'axe x. Ensuite, on pourrait ajouter l'argument alpha=0.5 dans la fonction boxplot(), pour les rendre semi-transparents:
+
+```{r}
+ggplot(iris, aes(x=Species, y=Sepal.Width)) +
+geom_point(aes(color=Species), position = position_jitter(0.2), shape = 16, size = 2.5, show.legend=FALSE)+
+scale_color_brewer(palette="Accent")+
+geom_boxplot(alpha=0.5)+
+labs(	x="Espèce", 
+	y="Largeur des sépales (mm)",
+	title="Largeur des sépales chez les espèces d'iris")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))
+```
+
+On peut aussi ajouter des lettres pour montrer nos résultats de comparaison (voir https://statdoe.com/one-way-anova-and-box-plot-in-r/ pour la méthode). En gros, la fonction multcompLetters4 assigne les lettres en fonction des groupes du test de Tukey, puis on constuit une table qui contient ces lettres (LettresSW dans l'exemple), la variable Species, ainsi que la position de la lettre (en haut du quartile pour chaque boîte/valeur de Species).  
+
+```{r}
+library(dplyr)
+library(multcompView)
+
+compSW<-aov(Sepal.Width~Species,data=iris)
+tukeySW <- TukeyHSD(compSW)
+print(tukeySW)
+
+cld <- multcompLetters4(compSW, tukeySW)
+
+LettresSW <- group_by(iris, Species) %>%
+  summarise(mean=mean(Sepal.Width), quant = quantile(Sepal.Width, probs = 0.75)) %>%
+  arrange(desc(mean))
+
+cld <- as.data.frame.list(cld$Species)
+LettresSW$cld <- cld$Letters
+
+print(LettresSW)
+```
+
+On ajoute nos lettres au boxplot avec la fonction geom_text(), avec comme argument aes() la table que l'on vient de créer. On peut aussi ajouter la statistique de test.
+
+```{r}
+ggplot(iris, aes(x=Species, y=Sepal.Width)) +
+geom_point(aes(color=Species), position = position_jitter(0.1), shape = 16, size = 2.5, show.legend=FALSE)+
+scale_color_brewer(palette="Accent")+
+geom_boxplot(alpha=0.5)+
+labs(	x="Espèce", 
+	y="Largeur des sépales (mm)",
+	title="Largeur des sépales chez les espèces d'iris")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
+geom_text(data = LettresSW, aes(x = Species, y = quant, label = cld), size = 5, vjust=-1, hjust =-5)+
+annotate("text", x = 3, y = 4.5, label = "ANOVA, F(2)=49.16, p<0.001")
+```
+
 # Régression linéaire (Sabrina)
 
 
