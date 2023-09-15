@@ -357,6 +357,10 @@ data(dune) # matrice de communautés
 data(dune.env) # données environnementales
 ```
 
+
+Description des données...
+
+
 Transformation Hellinger
 ```{r}
 dune.hel <- decostand(dune, method="hellinger")
