@@ -86,6 +86,7 @@ richesse <- specnumber(varespec)
 shannon <- diversity(varespec, index = "shannon")
 # Mettre en tableau
 diversite <- cbind(richesse, shannon)
+head(diversite)
 ```
 <br>
 
@@ -194,7 +195,7 @@ L'espèce "icmaeric" par exemple, est plus abondante dans les sites qui sont pro
 
 De plus, lorsqu'on interprète un graphique d'ordination, on ne tient pas compte de la direction des axes (gauche-droite, haut-bas... pourrait être inversée), ni vraiment de leur échelle numérique.
 
-#### Scaling (quelques mots pour faciliter l'interprétation des graphiques)
+#### Scaling (quelques mots pour faciliter l'interprétation des graphiques, pour ceux que ça intéresse seulement)
 
 Les fonctions `summary` et `plot` effectuent un **scaling 2** par défaut. Ce type de scaling est approprié si on s'intéresse principalement à l'ordination/l'interrelation des espèces. Sur le biplot ("correlation biplot), la distance entre les espèces reflète approximativement leur distance chi-carré. Le scaling 2 conserve aussi la corrélation entre les espèces : sur le biplot, l'angle entre celles-ci représente leur corrélation (90° : aucune corrélation, 180° : forte corrélation négative). Une espèce proche d'un site est plus fréquent dans ce site qu'aux sites éloignées d'elle.
 
