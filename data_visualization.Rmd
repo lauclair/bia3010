@@ -217,12 +217,12 @@ ordiplot(ca.varespec)
 
 ```{r}
 library(ggplot2)
-library(ggord)
+#library(ggord)
 ```
 
 
 ```{r}
-ggord(ca.varespec, ca.varespec, grp_in = NULL, axes = c("1", "2"))
+#ggord(ca.varespec, ca.varespec, grp_in = NULL, axes = c("1", "2"))
 ```
 
 
