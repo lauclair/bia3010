@@ -29,8 +29,8 @@ library(vegan)
 
 En écologie, on utilise souvent des matrices de communauté: matrice d'abondance d'espèces végétales/animales/d'arthropodes, etc. ou matrice de présence-absence de ces espèces.
 
-La différence principale entre une matrice et un *dataframe* est que la matrice ne contient qu'une seule classe de donnée, tandis que le *dataframe* en contient souvent plusieurs. Les lignes correspondent aux objets: il s'agit de l'unité d'échantillonnage où vous avez échantillonné votre communauté (site, parcelle, quadrat, etc.).
-Les colonnes correspondent aux descripteurs: il s'agit de vos espèces (ou de vos familles, morphotypes, etc.). Dans chaque cellule, on retrouve l'abondance (nombre d'individus, recouvrement, etc.) ou la présence-absence (0 ou 1) de chaque espèce à chaque site.
+La différence principale entre une matrice et un *dataframe* est que la matrice ne contient qu'une seule classe de donnée, tandis que le *dataframe* en contient souvent plusieurs. Les lignes correspondent aux **objets**: il s'agit de l'unité d'échantillonnage où vous avez échantillonné votre communauté (site, parcelle, quadrat, etc.).
+Les colonnes correspondent aux **descripteurs**: il s'agit de vos espèces (ou de vos familles, morphotypes, etc.). Dans chaque cellule, on retrouve l'abondance (nombre d'individus, recouvrement, etc.) ou la présence-absence (0 ou 1) de chaque espèce à chaque site.
 
 Voici quelques exemples de structures de matrices (Ovaskainen et al. 2017):
 
@@ -111,7 +111,7 @@ Mais avant de répondre à nos questions, explorons visuellement nos données de
 
 # Les ordinations
 
-Lorsqu'on s'intéresse à des communautés à différents sites, on est souvent intéressé à visualiser quels sites sont plus semblables ou plus différents en termes de composition en espèces. Pour ce faire, on utilise souvent les ordinations. 
+Les ordinations sont très adaptées au analyses en écologie des communautés. Lorsqu'on s'intéresse à des communautés à différents sites, on est souvent intéressé à visualiser quels sites sont plus semblables ou plus différents en termes de composition en espèces. Pour ce faire, on utilise souvent les ordinations. 
 
 Nos **objets** (sites, parcelles) peuvent être "ordonnés" en fonction de leur ressemblance, dans un espace multidimensionnel, où chaque axe (dimension) représente un **descripteur** (ex. une espèce).
 
@@ -119,7 +119,7 @@ Les sites situés plus proches l'un de l'autre dans cet espace multidimensionel 
 
 Or, cet espace comporte autant de dimensions que de descripteurs (espèces) et il est très difficile de représenter ou de visualiser un espace à plus de 3 dimensions!
 
---> L'ordination permet de trouver les deux ou trois axes de notre espace qui explique le plus de variation dans nos données. Ces axes représentent une "combinaison de variables" (et non plus des espèces particulières). L'ordination permet de visualiser l'espace multidimensionel en 2D (espace réduit) et simplifie l'interprétation des données multivariées.
+--> L'ordination permet de trouver de nouveaux axes dans cet espace, qui nous permettront de visualiser l'étendue de la variance dans nos données compositionnelles (souvent avec les deux premiers nouveaux axes qui représente le plus grand pourcentage de variance). Ces nouveaux axes représentent une "combinaison de variables" (et non plus des espèces particulières). L'ordination permet de visualiser l'espace multidimensionel en 2D (espace réduit) et simplifie l'interprétation des données multivariées.
 
 ![Source : Michael W. Palmer; https://ordination.okstate.edu/overview.htm. Sur la figure, les points sont les objets (les sites) et les axes sur la figure du milieu sont les descripteurs (les espèces).](ordinations.png)
 
