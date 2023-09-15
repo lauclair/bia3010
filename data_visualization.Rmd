@@ -302,7 +302,7 @@ LettresSW$cld <- cld$Letters
 print(LettresSW)
 ```
 
-On ajoute nos lettres au boxplot avec la fonction geom_text(), avec comme argument aes() la table que l'on vient de créer. On peut aussi ajouter la statistique de test.
+On ajoute nos lettres au boxplot avec la fonction geom_text(), avec comme argument aes() la table que l'on vient de créer. On peut aussi ajouter la statistique de test, en utilisant les coordonnées dans notre figure.
 
 ```{r}
 ggplot(iris, aes(x=Species, y=Sepal.Width)) +
