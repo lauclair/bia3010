@@ -113,15 +113,13 @@ Mais avant de répondre à nos questions, explorons visuellement nos données de
 
 Les ordinations sont très adaptées au analyses en écologie des communautés. Lorsqu'on s'intéresse à des communautés à différents sites, on est souvent intéressé à visualiser quels sites sont plus semblables ou plus différents en termes de composition en espèces. Pour ce faire, on utilise souvent les ordinations. 
 
-Nos **objets** (sites, parcelles) peuvent être "ordonnés" en fonction de leur ressemblance, dans un espace multidimensionnel, où chaque axe (dimension) représente un **descripteur** (ex. une espèce).
+Nos **objets** (sites, parcelles) peuvent être positionnés dans un espace multidimensionnel en fonction de leur composition, où chaque axe (dimension) représente un **descripteur** (ex. une espèce). Dans cet espace multidimensionnel ellipsoïde, les sites situés plus proches l'un de l'autre sont plus similaires dans leur composition en espèces que les sites situés plus loin. 
 
-Les sites situés plus proches l'un de l'autre dans cet espace multidimensionel ellipsoïde sont plus similaires dans leur composition en espèces que les sites situés plus loin. 
+![Source : Michael W. Palmer; https://ordination.okstate.edu/overview.htm. Sur la figure, les points sont les objets (les sites) et les axes sur la figure du milieu sont les descripteurs (les espèces).](ordinations.png)
 
 Or, cet espace comporte autant de dimensions que de descripteurs (espèces) et il est très difficile de représenter ou de visualiser un espace à plus de 3 dimensions!
 
 --> L'ordination permet de trouver de nouveaux axes dans cet espace, qui nous permettront de visualiser l'étendue de la variance dans nos données compositionnelles (souvent avec les deux premiers nouveaux axes qui représente le plus grand pourcentage de variance). Ces nouveaux axes représentent une "combinaison de variables" (et non plus des espèces particulières). L'ordination permet de visualiser l'espace multidimensionel en 2D (espace réduit) et simplifie l'interprétation des données multivariées.
-
-![Source : Michael W. Palmer; https://ordination.okstate.edu/overview.htm. Sur la figure, les points sont les objets (les sites) et les axes sur la figure du milieu sont les descripteurs (les espèces).](ordinations.png)
 
 Il existe différentes méthodes d'ordination, on vous en présente trois:
 
@@ -162,10 +160,11 @@ Le premier argument (le seul ici) est notre matrice d'abondance brute.
 ca.varespec<-cca(varespec)
 ```
 
-Allons inspecter en détails l'objet cca qu'on vient de créer, puis visualisons l'ordination en 2D, en créant un graphique **biplot** avec la fonction `plot` pour visualiser les **sites** et les **espèces** le long des deux premiers axes. (étape 3)
+Visualisons d'abord l'ordination en 2D, en créant un graphique **biplot** avec la fonction `plot` pour visualiser les **sites** et les **espèces** le long des deux premiers axes. (étape 3)
+Ensuite, inspectons en détails l'objet cca qu'on vient de créer,
 ```{r}
-summary(ca.varespec)
 plot(ca.varespec)
+summary(ca.varespec)
 ```
 <br>
 *Les ordinations CA et PCA sont des eigenanalysis : les résultats sont basés sur le calcul d'eigenvector et de eigenvalue. Chaque axe de l'ordination est le résultat de la mise à l'échelle d'un eigenvector (vecteur propre) et possède une eigenvalue (valeur propre) correspondant à la quantité de variance qu'elle explique.*
@@ -181,7 +180,7 @@ Les axes 1 et 2 expliquent ensemble 42% de la variation dans nos données compos
 
 Les "**site scores**" et "**species scores**" correspondent aux coordonnées (position) des objets et des espèces sur les axes de l'ordination.
 
-Rappel : les axes ne représentent pas une variable biologique/écologique déterminée, mais peuvent être vu comme une "combinaison de variables". Contrairement à la PCA qui maximise la variance expliquée par le premier axe, **la CA maximise la correspondance entre les scores des sites et des espèces**. Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la correspondance entre les scores, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant.
+Rappel : les axes ne représentent pas une variable biologique/écologique déterminée, mais peuvent être vu comme une "combinaison de variables". Contrairement à la PCA qui maximise la variance expliquée par le premier axe, **la CA maximise la correspondance entre les scores des sites et des espèces**. (Cela peut être très utile pour interpréter les relations entre espèces et sites). Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la correspondance entre les scores, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant.
 
 ```{r}
 plot(ca.varespec)
