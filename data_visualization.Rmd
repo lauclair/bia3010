@@ -143,6 +143,53 @@ La fonction ggplot nécessite deux arguments: le dataset (jeu de données), puis
 
 (Revoir l'atelier 3 pour l'explication de l'ANOVA, incluant les postulats et critères d'utilisation, que je passe ici)
 
+```{r}
+library("ggplot2")
+
+head(iris)
+
+boxplot(Sepal.Width ~ Species,
+  data = iris)
+```
+
+On produit d'abord le modèle linéaire, et le test d'ANOVA, avec Sepal.Width comme variable dépendante et Species comme variable indépendante.
+
+```{r}
+modele.SW<-lm(Sepal.Width~Species,data=iris)
+
+#Test anova:
+anova(modele.SW)
+summary(modele.SW)
+
+# [[[ Commentaire anova ]]]
+```
+
+Ensuite, on effectue le test post-hoc Tukey:
+
+```{r}
+compSW<-aov(Sepal.Width~Species,data=iris)
+TukeyHSD(compSW)
+summary(compSW)
+
+# [[[ Commentaire Tukey ]]]
+```
+
+On peut ensuite construire notre figure.
+D'abord, la fonction ggplot. On spécifie le jeu de données, puis l'argument aes(), ici les axes x et y:
+
+```{r}
+ggplot(iris, aes(x=Species, y=Sepal.Width))
+```
+
+Où sont les données?
+Il faut les ajouter!
+
+C'est comme ça que ggplot() fonctionne. On crée la base de notre figure, puis on y ajoute les données à l'aide des fonctions geom_*. Par exemple, geom_points nous permet d'ajouter des données sous forme de scatterplots (donc des points), tandis que geom_line nous permet d'ajouter une ligne. Dans notre cas, nous voulons montrer nos données sous forme de boxplot, donc nous utilisons geom_boxplot. Il ne faut pas oublier d'ajouter un "+" après chaque fonction:
+
+```{r}
+ggplot(iris, aes(x=Species, y=Sepal.Width)) +
+geom_boxplot()
+```
 
 # Régression linéaire (Sabrina)
 
