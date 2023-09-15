@@ -326,62 +326,226 @@ annotate("text", x = 3, y = 4.5, label = "ANOVA, F(2)=49.16, p<0.001")
 
 
 
-# Ordinations (Jocelyn)
+
+
+# Ordinations
+
+Comme pour les analyses univariées, cet atelier est seulement axé sur la création de graphiques. Pour une introduction aux analyses multivariées (ordinations, PERMANOVA, Procrustes), consulter l'atelier 6.
+
 
 ## Importer les données multivariées
 ```{r}
 library(vegan)
-data(varespec) # matrice de communautés
-data(varechem) # données environnementales
-varechem <- scale(varechem) # centrer-réduire
+data(dune) # matrice de communautés
+data(dune.env) # données environnementales
 ```
+
+Transformation Hellinger
+```{r}
+dune.hel <- decostand(dune, method="hellinger")
+```
+
+Faire une PCA (avec la fonction `prcomp` cette fois-ci, car l'objet qu'on va créer peut être "lu" plus tard par la fonction `ggord`)
+```{r}
+pca.dune <- prcomp(dune.hel)
+summary(pca.dune)
+```
+
+Pour comparaison, PCA avec fonction `rda`. Même variance extraite par chaque axe. 
+```{r}
+pca2.dune <- rda(dune.hel)
+summary(pca2.dune)
+```
+
+On va maintenant faire un graphique pour notre PCA avec les fonctions `ggord` du package **ggord** `ggplot`.
+pour installer la librairie ggord : https://rdrr.io/github/fawda123/ggord/
+
+```{r}
+library(ggord)
+```
+
+
+```{r}
+pca.plot <- ggord(pca.dune, xlims=c(-1,1), ylims=c(-1,1))
+pca.plot
+```
+
+L'objet créé (ici pca.plot) est un objet ggplot qui peut être modifié par la suite avec les arguments de ggplot.
+
+Créer un thème custom pour ggplot (à éditer...)
+```{r}
+super_theme <- theme(
+        panel.background = element_blank(),
+        panel.border = element_blank(),
+        panel.grid = element_blank(),
+        axis.line = element_line("gray25"),
+        text = element_text(size = 12),
+        axis.text = element_text(size = 10, colour = "gray25"),
+        axis.title = element_text(size = 14, colour = "gray25"),
+        legend.title = element_text(size = 14),
+        legend.text = element_text(size = 14),
+        legend.key = element_blank())
+```
+
+```{r}
+pca.plot + super_theme
+```
+
+
+
+CI-DESSOUS, TESTS/CRAP
+
+
+# Ordinations
+
+Comme pour les analyses univariées, cet atelier est seulement axé sur la création de graphiques. Pour une introduction aux analyses multivariées (ordinations, PERMANOVA, Procrustes), consulter l'atelier 6.
+
+## Importer les données multivariées
+```{r}
+#library(vegan)
+#data(varespec) # matrice de communautés
+#data(varechem) # données environnementales
+#varechem <- scale(varechem) # centrer-réduire
+```
+
+
+## PCA
+
+Ordination
+```{r}
+#varespec.hel <- decostand(varespec, method="hellinger") # Tranformation hellinger des données
+#pca.varespec <- rda(varespec.hel) # PCA
+#summary(pca.varespec)
+```
+envfit
+```{r}
+#(envfit.pca <- envfit(pca.varespec, varechem))
+```
+
+Les fonctions `biplot` est très simple et parfait pour créer rapidement des graphiques afin d'explorer nos données.
+```{r}
+#biplot(pca.varespec)
+```
+
+On peut personnaliser le biplot pour le rendre plus compréhensible, mettre en valeur certains éléments et le rendre plus esthétique.
+```{r}
+#make basic plot
+#biplot(pca.varespec, display = c("sites", "species"), type = c("text","points"))
+
+
+
+#Add hulls
+#ordihull(my.rda,
+#         group = iris$Species,
+#         col = c(1,2,3))
+
+#get names of species
+## levels() extracts fator levels
+## from the column
+#spp.names <- levels(iris$Species)
+
+#Add legend
+#legend("topright",
+#       col = c(1,2,3), 
+#       lty = 1,
+#       legend = spp.names)
+```
+
+fonction `ordiplot`...
+```{r}
+
+```
+
+
+
+
+
+
+```{r}
+#pca2.varespec <- prcomp(varespec)
+```
+
+
+
+
+
+D'abord, on doit créer un graphique de base pour en extraire les informations.
+
+
+
+
+```{r}
+#plotA <- ordiplot(pca.varespec)
+```
+
+
+
+```{r}
+#plotgg1 <- ggplot() + 
+ #   geom_vline(xintercept = c(0), color = "grey70", linetype = 2) +
+  #  geom_hline(yintercept = c(0), color = "grey70", linetype = 2) +  
+   # xlab("PCA 1") +
+    #ylab("PCA 2") +  
+    #scale_x_continuous(sec.axis = dup_axis(labels=NULL, name=NULL)) +
+    #scale_y_continuous(sec.axis = dup_axis(labels=NULL, name=NULL)) +    
+    #geom_point(data=sites.scores)
+  
+#plotgg1
+```
+
+
+
+```{r}
+#ggplot(pca.varespec)
+```
+
 
 ## CA (Analyse de correspondance)
 
 Faire l'ordination
 ```{r}
-ca.varespec<-cca(varespec)
+#ca.varespec<-cca(varespec)
 ```
 Tests statistiques avec la fonction **envfit**
 ```{r}
-envfit.varechem<-envfit(ca.varespec, varechem)
+#envfit.varechem<-envfit(ca.varespec, varechem)
 ```
 
 ### Fonction plot
 
 ```{r}
-plot(ca.varespec)
+#plot(ca.varespec)
 ```
 
 On pourrait aussi choisir de ne visualiser que les sites ou que les espèces.
 ```{r}
-par(mfrow = c(1, 2))
-plot(ca.varespec, display = "sites")
-plot(ca.varespec, display = "species")
+#par(mfrow = c(1, 2))
+#plot(ca.varespec, display = "sites")
+#plot(ca.varespec, display = "species")
 ```
 
 ```{r}
-par(mfrow=c(1,2))
-plot(ca.varespec, scaling=1, type="none", main='CA - biplot scaling 1', 
-     xlab=c("CA1 (%)", round((ca.varespec$CA$eig[1]/sum(ca.varespec$CA$eig))*100,2)),
-     ylab=c("CA2 (%)", round((ca.varespec$CA$eig[2]/sum(ca.varespec$CA$eig))*100,2)))
-points(scores(ca.varespec, display="sites", choices=c(1,2), scaling=1), pch=21, col="black", bg="steelblue", cex=1.2)
-text(scores(ca.varespec, display="species", choices=c(1), scaling=1),
-     scores(ca.varespec, display="species", choices=c(2), scaling=1),
-     labels=rownames(scores(ca.varespec, display="species", scaling=1)),col="red", cex=0.8)
+#par(mfrow=c(1,2))
+#plot(ca.varespec, scaling=1, type="none", main='CA - biplot scaling 1', 
+#     xlab=c("CA1 (%)", round((ca.varespec$CA$eig[1]/sum(ca.varespec$CA$eig))*100,2)),
+#     ylab=c("CA2 (%)", round((ca.varespec$CA$eig[2]/sum(ca.varespec$CA$eig))*100,2)))
+#points(scores(ca.varespec, display="sites", choices=c(1,2), scaling=1), pch=21, col="black", bg="steelblue", cex=1.2)
+#text(scores(ca.varespec, display="species", choices=c(1), scaling=1),
+#     scores(ca.varespec, display="species", choices=c(2), scaling=1),
+#     labels=rownames(scores(ca.varespec, display="species", scaling=1)),col="red", cex=0.8)
 ```
 
 Incorporer les vecteurs environnementaux à la figure d'ordination
 ```{r}
-plot(ca.varespec, display = "sites")
-plot(envfit.varechem)
-plot(envfit.varechem, p.max = 0.05, col = "red")#Les correlations significatives apparaissent en rouge
+#plot(ca.varespec, display = "sites")
+#plot(envfit.varechem)
+#plot(envfit.varechem, p.max = 0.05, col = "red")#Les correlations significatives apparaissent en rouge
 ```
 
 
 ### Fonction ordiplot
 ```{r}
-ordiplot(ca.varespec)
+#ordiplot(ca.varespec)
 ```
 
 ```{r}
@@ -396,18 +560,6 @@ ordiplot(ca.varespec)
 ```
 
 
-### ggplot2 + ggord
-
-```{r}
-library(ggplot2)
-#library(ggord)
-```
-
-
-```{r}
-#ggord(ca.varespec, ca.varespec, grp_in = NULL, axes = c("1", "2"))
-```
-
 
 ## PCA
 
@@ -416,4 +568,5 @@ library(ggplot2)
 La fonction biplot ne peut être qu'utilisée avec ordination linéaire comme PCA.
 
 --> afficher d'autres axes que 1 et 2....
+--> afficher les espèces aux scores élevés
 --> envfit
