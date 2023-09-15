@@ -87,13 +87,13 @@ diversite <- cbind(richesse, shannon)
 ```
 <br>
 
-On peut maintenant tester, par exemple, si les différentes mesures de diversité alpha diffèrent entre des groupes de communautés ou si elles sont corrélés à des variables environnementales... mais ça ce sont des analyses univariées...
+On peut maintenant tester, par exemple, si les différentes mesures de diversité alpha diffèrent entre des groupes de communautés ou si elles sont corrélés à des variables environnementales, à un axe d'ordination (on y reviendra)... mais ça ce sont des analyses univariées...
 
 <br>
 
 # Questions nécessitant des analyses multivariées
 
-Deux questions de recherche fréquentes:
+Trois questions de recherche fréquentes:
 
 Q1- Est-ce que les différences de composition en espèces dans vos sites sont associées à des gradients environnementaux?
 
@@ -121,43 +121,51 @@ Or, cet espace comporte autant de dimensions que de descripteurs (espèces) et i
 
 ![Source : Michael W. Palmer; https://ordination.okstate.edu/overview.htm. Sur la figure, les points sont les objets (les sites) et les axes sur la figure du milieu sont les descripteurs (les espèces).](ordinations.png)
 
-Il existe différentes méthodes d'ordination: 
-- l'analyse de correspondance (CA);
-- l'analyse en composantes principales (PCA);
-- l'analyse en coordonnées principales (PCoA);
-- la mise à l'échelle multidimensionnelle non-métrique (nMDS; non présentée ici).
+Il existe différentes méthodes d'ordination, on vous en présente trois:
 
++ l'analyse de correspondance (CA);
+
++ l'analyse en composantes principales (PCA);
+
++ l'analyse en coordonnées principales (PCoA);
+
+ 
 <br>
 
 # CA : L'analyse de correspondance
 
 Les données qu'on fourni pour une CA sont sous forme de *matrice de communautés*, soit avec des **données d'abondances** brutes (sans pré-transformation) ou des **données binaires de présence-absence**.
 
-Pour faire une ordination de type CA, toutes les données doivent être dans la même dimension physique (même unité) et ne pas contenir de données négatives, ni de NA.
+Pour faire une ordination de type CA, toutes les données doivent avoir la même unitée (être dans la même dimension physique) et ne pas contenir de données négatives, ni de NA.
 
 *L'analyse de correspondance est une méthode d'ordination appropriée pour analyser des jeux de données contenant des espèces à distribution unimodale (par ex. dont l'abondance suit une distribution normale le long d'un gradient environnemental).*
 
-Elle s'effectue en trois étapes dont voici le résumé (nous n'entrerons pas dans tous les détails ici):
+Elle s'effectue en trois étapes, ici résumées :
 
 1- Conversion de la matrice d'abondance (données brutes) en matrice Q de contributions de Pearson (calcul des **distances Chi2** entre objets). La table de contribution de Pearson contient l'information pour ordonner les sites dans l'espace multidimensionnel.
 
-La distance de Chi2 exclut les **doubles zéros**, ces derniers sont souvent présents dans les données de communautés et peuvent poser problème. Avec la CA, si vous avez deux sites qui ne possèdent pas une espèce de lichens A, cette absence d'espèce A ne contribuera pas à la ressemblance entre les 2 sites (alors qu'une présence commune d'une espèce B aux 2 sites contribue à leur ressemblance). 
+La distance de Chi2 exclut les **doubles zéros**, ces derniers sont souvent présents dans les données de communautés et peuvent poser problème. Avec la CA, si vous avez deux sites qui ne possèdent pas une espèce de lichens A, cette absence d'espèce A ne contribuera pas à la ressemblance entre les 2 sites (alors qu'une présence commune d'une espèce B aux 2 sites contribue à leur ressemblance).
 
 2- Décomposition de la table de contributions de Pearson en valeurs propres (eigenvalues) et en vecteurs propres (eigenvectors). Les vecteurs propres sont ce qui permet de réduire l'espace multidimensionnel en quelques axes qui expliquent le mieux la variation entre les sites.
 
 3- Visualisation en deux dimensions.
 
+**L'important à retenir c'est que la CA calcule des distances Chi-carré entre les objets (sites), et cette conversion permet de créer de nouveaux axes et de situer les sites et les espèces sur ces axes. La distance chi-carré élimine aussi le problème des doubles zéros.**
+
 ## Faire une CA dans R
 
-Avec le package vegan, on peut utiliser la fonction `cca` pour calculer une ordination CA. Cette fonction exécute les étapes 1 et 2. Le premier argument (le seul ici) est notre matrice d'abondance brute.
+Avec le package vegan, on peut utiliser la fonction `cca` pour calculer une ordination CA. Cette fonction exécute les étapes 1 et 2. 
+Le premier argument (le seul ici) est notre matrice d'abondance brute.
 ```{r}
 ca.varespec<-cca(varespec)
 ```
 
-Allons inspecter en détails l'objet cca qu'on vient de créer.
+Allons inspecter en détails l'objet cca qu'on vient de créer, puis visualisons l'ordination en 2D, en créant un graphique **biplot** avec la fonction `plot` pour visualiser les **sites** et les **espèces** le long des deux premiers axes. (étape 3)
 ```{r}
 summary(ca.varespec)
+plot(ca.varespec)
 ```
+<br>
 *Les ordinations CA et PCA sont des eigenanalysis : les résultats sont basés sur le calcul d'eigenvector et de eigenvalue. Chaque axe de l'ordination est le résultat de la mise à l'échelle d'un eigenvector (vecteur propre) et possède une eigenvalue (valeur propre) correspondant à la quantité de variance qu'elle explique.*
 
 **Proportion explained** : *Cette valeur représente, pour chaque axe, la proportion de la variance totale expliquée par les descripteurs dans l'ordination. Elle est calculée en divisant la valeur propre par l'inertie*
@@ -169,11 +177,10 @@ Ici, le premier axe explique 25% de la variation dans vos données, le deuxième
 
 Les axes 1 et 2 expliquent ensemble 42% de la variation dans nos données compositionnelles. 
 
-Les "**site scores**" et "**species scores**" correspondent aux coordonnées (position) des objets et des espèces dans l'espace multidimensionnel.
+Les "**site scores**" et "**species scores**" correspondent aux coordonnées (position) des objets et des espèces sur les axes de l'ordination.
 
-Rappel : les axes/vecteurs ne représente pas une variable biologique/écologique déterminée, mais peuvent être vu comme une "combinaison de variables". Contrairement à la PCA qui maximise la variance expliquée par le premier axe, **la CA maximise la correspondance entre les scores des sites et des espèces**. Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la correspondance entre les scores, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant.
+Rappel : les axes ne représentent pas une variable biologique/écologique déterminée, mais peuvent être vu comme une "combinaison de variables". Contrairement à la PCA qui maximise la variance expliquée par le premier axe, **la CA maximise la correspondance entre les scores des sites et des espèces**. Le deuxième axe est perpendiculaire au 1er et calculé encore pour maximiser la correspondance entre les scores, et ainsi de suite... Les axes suivants sont orthogonaux entre eux (leur corrélation est nulle) et leur importance explicative de la variance va en diminuant.
 
-On peut ensuite créer un graphique **biplot** avec la fonction `plot` pour visualiser les **sites** et les **espèces** le long des deux premiers axes. (étape 3)
 ```{r}
 plot(ca.varespec)
 ```
@@ -197,12 +204,14 @@ Dans les deux types de scaling, **les proportions de variance expliquées par le
 ```{r}
 summary(ca.varespec, scaling =1)
 ```
+<br>
 
 ```{r}
 par(mfrow = c(1, 2))
 plot(ca.varespec, scaling = 2, main = "biplot scaling 2" ) 
 plot(ca.varespec, scaling = 1, main = "biplot scaling 1" ) 
 ```
+<br>
 
 Au final, la différence dans l'interprétation est assez subtile. L'avantage du scaling 2 (à part être le scaling par défaut!) permet de voir la corrélation entre espèces, ce qui peut donner des pistes de réflexions (mais pas des résultats statistiques!) quant aux dynamiques des communautés.
 
@@ -228,11 +237,14 @@ varechem <- scale(varechem)
 
 Calculer les régressions.
 ```{r}
-envfit.ca <- envfit(ca.varespec, varechem)
+(envfit.ca <- envfit(ca.varespec, varechem))
 ```
 Pour chaque variable environnementale :
+
 + les valeurs **CA1 et CA2** représentent la *direction des vecteurs* le long des deux axes de l'ordination
+
 + le **r2** donne la *force de la corrélation* entre les variables environnementales et les deux axes spécifiés de l'ordination
+
 + la **valeur P** [Pr(>r)] donne la *signification statistique* (déterminée par permutation, donc change à chq fois qu'on la calcule).
 
 Il est aussi possible de visualiser les résultats statistiques du tableau, en incorporant les vecteurs des gradients environnementaux sur vos ordinations!
@@ -245,13 +257,15 @@ plot(envfit.ca)
 plot(ca.varespec)
 plot(envfit.ca, p.max = 0.05, col = "forestgreen") # Les correlations significatives apparaissent en vert
 ```
-Sur le biplot, la longueur d'un vecteur renseigne sur la force de la corrélation (r2) entre la variable environnementale et les axes de l'ordination, tandis que la direction du vecteur fait pointer celui-ci vers les objets (sites) ayant des valeurs plus élevés pour cette variable.
+<br>
 
-*Attention, subtilité! Les variables dont la corrélation est forte *n'expliquent pas nécessairement la différence dans la composition en espèces de nos sites*, mais sont plutôt *associées à la variation extraite par les axes de l'ordination*. Les ordinations avec contraintes (ou canoniques) permettent par exemple de tester directement l'influence d'une matrice environnementale sur une matrice de commnautés; mais nous ne les aborderons pas ici. *
+Sur le biplot, la **longueur d'un vecteur** renseigne sur la *force de la corrélation (r2)* entre la variable environnementale et les axes de l'ordination, tandis que la **direction du vecteur** fait pointer celui-ci vers les *objets (sites) ayant des valeurs plus élevés* pour cette variable.
 
-Dans le cadre de vos projets, la fonction `envfit` peut être très utile pour interpréter écologiquement les axes et les patrons d'ordination des sites et des espèces, émettre d'autres hypothèses, etc.
+Interprétation : Ici, on voit que les sites 3 et 4 ont une composition en espèces relativement similaire où on retrouve plus fréquemment l'espèce Flaniva, et dont le sol contient plus d'aluminium et de fer que les sites dans le quadrant en haut à droite.
 
-Ici, on voit que les sites 3 et 4 ont une composition en espèces relativement similaire où on retrouve plus fréquemment l'espèce Flaniva, et dont le sol contient plus d'aluminium et de fer que les sites dans le quadrant en haut à droite.
+Attention, subtilité! Les variables dont la corrélation est forte *n'expliquent pas nécessairement la différence dans la composition en espèces de nos sites*, mais sont plutôt *associées à la variation extraite par les axes de l'ordination*. Les ordinations avec contraintes (ou canoniques) permettent par exemple de tester directement l'influence d'une matrice environnementale sur une matrice de commnautés; mais nous ne les aborderons pas ici.
+
+--> Dans le cadre de vos projets, la fonction `envfit` peut être très utile pour interpréter écologiquement les axes et les patrons d'ordination des sites et des espèces, émettre d'autres hypothèses, etc.
 
 Ce type de figure contient beaucoup d'informations et peut être difficile à interpréter. Mais il s'agit d'une bonne façon d'explorer et/ou de visualiser nos données. 
 
@@ -279,6 +293,8 @@ varespec.hel <- decostand(varespec, method="hellinger")
 pca.varespec <- rda(varespec.hel)
 summary(pca.varespec)
 ```
+<br>
+
 Encore une fois, ce qui nous intéresse surtout ici c'est la proportion de la variance expliquée par chaque axe.
 
 À noter que les types de scaling 1 et 2 (défaut) suivent la même logique que dans la CA.
@@ -290,6 +306,7 @@ plot(pca.varespec)
 #OU
 biplot(pca.varespec)
 ```
+<br>
 
 ## envfit
 ```{r}
@@ -301,6 +318,7 @@ plot(pca.varespec)
 plot(envfit.pca)
 plot(envfit.pca, p.max = 0.05, col = "red")
 ```
+<br>
 
 ## PCA sur données environnementales
 
@@ -310,11 +328,13 @@ pca.varechem <- rda(varechem)
 summary(pca.varechem)
 plot(pca.varechem)
 ```
+<br>
+
 ## Extraire les scores des sites ou des espèces
 
 On peut aussi extraire les scores d'une composante principale pour transformer cet axe en nouvelle variable unique pouvant être utilisée dans un modèle linéaire. Cette nouvelle variable (ex. PC1) représente X % de la variance globale dans les conditions environnementales (ou dans la composition en espèces).
 
-La PCA est une méthode bien adaptée pour extraire les scores car ce type d'ordination maximise la variation expliquée par les axes.
+La PCA est une méthode bien adaptée pour extraire les scores car ce type d'ordination maximise la variation expliquée par les axes, puis permet d'utiliser des variables avec différentes unités (si centrées-réduites).
 
 On pourrait par exemple vouloir extraire le score des sites de l'axe PC1 en une nouvelle variable représentant la variance globale dans les caractéristiques du sol ("car_sol"), pour ensuite tester la corrélation par régression à une autre variable (disons la diversité shannon en lichens des sites calculée précédemment; variable "diversite$shannon").
 
@@ -334,6 +354,8 @@ div.sol.2 <- lm(diversite.df$shannon ~ site.scores.df$car_sol_2)
 summary(div.sol.1)
 summary(div.sol.2)
 ```
+<br>
+
 Conclusion? Si on se fie uniquement à la première composante principale extraite, les caractéristiques physico-chimiques du sol, prises dans leur ensemble, ne semblent par influencer la diversité (shannon) en espèces de lichens. Mais si on regarde la deuxième PC, il y a une corrélation entre caractéristiques générales du sol et diversité des lichens... On se souvient lors de l'envfit sur la PCA des communautés que les variables du sol qui étaient corrélées aux axes de l'ordination étaient Fe, Al, Humdepth, Mn, Ca, etc. Or dans cette PCA des variables du sol, ces variables semblent associées au gradient de la PC2...
 
 Autre exemple, on pourrait extraire les scores des sites sur un axe de PCA de communautés, pour tester la corrélation entre la variation globale dans la composition en arthropodes herbivores et le taux d'herbivorie. (Est-ce que le taux d'herbivorie est influencée par la composition en herbivores composent les communautés?)
@@ -358,7 +380,7 @@ head(varespec)
 head(varespec.hellinger)
 ```
 Mais on a toujours une matrice de communautés et non de distance.
-La fonction **vegdist** de vegan permet de créer une matrice de distance (ici euclidienne) à partir d'une matrice de communauté.
+La fonction `vegdist` de vegan permet de créer une matrice de distance (ici euclidienne) à partir d'une matrice de communauté.
 ```{r}
 varespec.hel <- vegdist(varespec.hellinger, method='euclid')
 ```
@@ -373,6 +395,7 @@ Comparer le format des deux matrices. Noter que la matrice de distance est carr�
 head(varespec)
 varespec.hel
 ```
+<br>
 
 Ce n'est pas vraiment utile de faire une PCoA avec une matrice de distance hellinger ou de distance chi-carré, car cela revient pratiquement à faire un PCA ou un CA, respectivement.
 
@@ -393,6 +416,7 @@ envfit
 ```{r}
 (varespec.pcoa.env <- envfit(varespec.pcoa, varechem))
 ```
+<br>
 
 Biplot
 ```{r}
@@ -423,7 +447,7 @@ Il peut être difficile de choisir quelle méthode d'ordination pour répondre �
 + fonction :`rda` (librairie vegan)
 + input : matrice de communautés
 + distance : euclidienne (mais pour régler prob de double-0, transformation Hellinger)
-+ à utiliser si : On veut extraire le plus de variance possible avec nos axes; extraire les scores des sites ou des espèces en une nouvelle variable pour tester sa corrélation dans un modèle linéaire; on veut donner moins de poids aux espèces rares dans la distinction de nos communautés; nos données contiennent plus de sites que d'espèces (vs PCoA).
++ à utiliser si : On veut extraire les scores des sites ou des espèces en une nouvelle variable pour tester sa corrélation dans un modèle linéaire; on veut donner moins de poids aux espèces rares dans la distinction de nos communautés; nos données contiennent plus de sites que d'espèces (vs PCoA); on veut extraire le plus de variance possible avec nos axes.
 
 ## PCoA
 + données : quantitatives, qualitatives, mixtes
@@ -431,7 +455,7 @@ Il peut être difficile de choisir quelle méthode d'ordination pour répondre �
 + input : matrice de distance
 + distance : au choix (ex. bray-curtis)
 + à utiliser si : Nos données contiennent plus d'espèces que de sites (vs. PCA); on veut utiliser une des nombreuses autres distances que euclidienne et chi-carré en fonction de nos données; on a des données qualitatives.
-+ bray-curtis : ignore les double zéros; donne plus de poids aux espèces communes vs chi2; affecté par la taille des échantillons (performe mieux avec faible diversité spécifique et petits échantillons).
++ bray-curtis : ignore les double zéros; donne plus de poids aux espèces communes; affecté par la taille des échantillons (performe mieux avec faible diversité spécifique et petits échantillons).
 
 <br>
 
@@ -505,12 +529,13 @@ Une façon facile et pratique de visualiser nos groupes, ici aménagement, est d
 ```{r}
 plot(disper.dune)
 ```
+<br>
 
 # Tests procrustes
 
-## Q3- Est-ce que deux matrices d'abondances aux mêmes sites (ex. arthropodes et plantes) sont corrélées?
+## Q3- Est-ce que deux matrices d'abondances aux mêmes sites sont corrélées?
 
-+ Les deux matrices de communautés doivent contenir le **même nombre de lignes** (les sites), mais n'ont pas besoin d'avoir le même nombre de colonnes (les espèces).
+Les deux matrices de communautés doivent contenir le **même nombre de lignes** (les sites), mais n'ont pas besoin d'avoir le même nombre de colonnes (les espèces).
 
 Faire une ordination du même type pour chacune de vos deux matrices de communautés.
 
@@ -523,6 +548,7 @@ pro.ca.pca
 plot(pro.ca.pca, kind = 1, type = "text")
 plot(pro.ca.pca, kind = 2)
 ```
+<br>
 Vous visualisez l’ordination résultante : il y aura une ligne entre les paires de points correspondant au même site. Si les lignes sont petites, c’est que les ressemblances entre les sites en composition de la communauté 1 sont similaires aux ressemblances entre les sites en composition de la communauté 2.
 
 Test de signification avec la fonction `protest` pour vérifier si la corrélation entre les deux matrices est significative.
