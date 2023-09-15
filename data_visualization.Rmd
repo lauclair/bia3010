@@ -132,14 +132,14 @@ summary(iris)
 ```
 
 # ANOVA (Sabrina)
-La fonction de base plot() peut être utile pour visualiser rapidement un jeu de données, par exemple avec un histogramme. Par contre, vous verrez que son utilisation peut devenir  limitée lorsqu'il s'agit de réaliser des figures plus complexes ou simplement modifier certains paramètres graphiques. 
+La fonction de base `plot()` peut être utile pour visualiser rapidement un jeu de données, par exemple avec un histogramme. Par contre, vous verrez que son utilisation peut devenir  limitée lorsqu'il s'agit de réaliser des figures plus complexes ou simplement modifier certains paramètres graphiques. 
 
-C'est pour cela que nous suggérons d'utiliser la fonction ggplot(), du package "ggplot2". Cette fonction permet de réaliser des graphiques de façon plus intuitive et permet de les mettre en page plus facilement qu'avec la fonction plot(). Elle est aussi mieux documentée, il est donc plus facile de comprendre et utiliser les différents aspects de la fonction. Google est d'ailleurs votre meilleur allié pour la réalisation de vos figures!
+C'est pour cela que nous suggérons d'utiliser la fonction `ggplot()`, du package "ggplot2". Cette fonction permet de réaliser des graphiques de façon plus intuitive et permet de les mettre en page plus facilement qu'avec la fonction `plot()`. Elle est aussi mieux documentée, il est donc plus facile de comprendre et utiliser les différents aspects de la fonction. Google est d'ailleurs votre meilleur allié pour la réalisation de vos figures!
 
-Contrairement à la fonction plot(), ggplot() fonctionne par couches. 
-Une figure ggplot() commence avec la fonction ggplot(). Elle sert à "préparer" la figure: on spécifie le jeu de données à utiliser, puis on choisit les variables qui formeront nos axes. 
+Contrairement à la fonction `plot()`, `ggplot()` fonctionne par couches. 
+Une figure `ggplot()` commence avec la fonction `ggplot()`. Elle sert à "préparer" la figure: on spécifie le jeu de données à utiliser, puis on choisit les variables qui formeront nos axes. 
 
-La fonction ggplot nécessite deux arguments: le dataset (jeu de données), puis l'argument "aes()". Ce dernier nous permet d'assigner des variables du dataset aux composantes du graphique (par exemple, les axes x et y). Voici un exemple, toujours avec le jeu de données Iris. Nous allons tester si la largeur des sépales diffère entre les espèces.
+La fonction `ggplot()` nécessite deux arguments: le dataset (jeu de données), puis l'argument `aes()`. Ce dernier nous permet d'assigner des variables du dataset aux composantes du graphique (par exemple, les axes x et y). Voici un exemple, toujours avec le jeu de données Iris. Nous allons tester si la largeur des sépales diffère entre les espèces.
 
 (Revoir l'atelier 3 pour l'explication de l'ANOVA, incluant les postulats et critères d'utilisation, que je passe ici)
 
@@ -152,7 +152,7 @@ boxplot(Sepal.Width ~ Species,
   data = iris)
 ```
 
-On produit d'abord le modèle linéaire, et le test d'ANOVA, avec Sepal.Width comme variable dépendante et Species comme variable indépendante.
+On produit d'abord le modèle linéaire, et le test d'ANOVA, avec `Sepal.Width` comme variable dépendante et `Species` comme variable indépendante.
 
 ```{r}
 modele.SW<-lm(Sepal.Width~Species,data=iris)
@@ -175,7 +175,7 @@ summary(compSW)
 ```
 
 On peut ensuite construire notre figure.
-D'abord, la fonction ggplot. On spécifie le jeu de données, puis l'argument aes(), ici les axes x et y:
+D'abord, la fonction `ggplot()`. On spécifie le jeu de données, puis l'argument `aes()`, ici les axes x et y:
 
 ```{r}
 ggplot(iris, aes(x=Species, y=Sepal.Width))
@@ -184,7 +184,7 @@ ggplot(iris, aes(x=Species, y=Sepal.Width))
 Où sont les données?
 Il faut les ajouter!
 
-C'est comme ça que ggplot() fonctionne. On crée la base de notre figure, puis on y ajoute les données à l'aide des fonctions geom_*. Par exemple, geom_points nous permet d'ajouter des données sous forme de scatterplots (donc des points), tandis que geom_line nous permet d'ajouter une ligne. Dans notre cas, nous voulons montrer nos données sous forme de boxplot, donc nous utilisons geom_boxplot. Il ne faut pas oublier d'ajouter un "+" après chaque fonction:
+C'est comme ça que `ggplot()` fonctionne. On crée la base de notre figure, puis on y ajoute les données à l'aide des fonctions `geom_*`. Par exemple, `geom_points` nous permet d'ajouter des données sous forme de scatterplots (donc des points), tandis que `geom_line` nous permet d'ajouter une ligne. Dans notre cas, nous voulons montrer nos données sous forme de boxplot, donc nous utilisons `geom_boxplot`. Il ne faut pas oublier d'ajouter un `+` après chaque fonction:
 
 ```{r}
 ggplot(iris, aes(x=Species, y=Sepal.Width)) +
@@ -192,7 +192,7 @@ geom_boxplot()
 ```
 
 
-Pour ajouter/modifier d'autres éléments, il faut ajouter des couches. Ainsi, on peut changer les titres d'axes (labs pour labels), changer le thème de notre graphique (theme_bw est plus minimaliste), retirer la grille et centrer le titre:
+Pour ajouter/modifier d'autres éléments, il faut ajouter des couches. Ainsi, on peut changer les titres d'axes (labs pour labels), changer le thème de notre graphique (`theme_bw` est plus minimaliste), retirer la grille et centrer le titre:
 
 ```{r}
 ggplot(iris, aes(x=Species, y=Sepal.Width)) +
@@ -217,8 +217,8 @@ theme_bw()+
 theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
 ```
 
-On a donc changé le fill (intérieur) et color (trait) de nos boxplot, à même la fonction boxplot().
-On pourrait aussi changer la couleur des boîtes en fonction de l'espèce d'iris (qui est aussi notre variable x). Dans ce cas, il faut ajouter un argument aes() à la fonction boxplot, pour assigner notre variable à un aesthetic. Dans ce cas, notre variable Species:
+On a donc changé le `fill` (intérieur) et `color` (trait) de nos boxplot, à même la fonction `boxplot()`.
+On pourrait aussi changer la couleur des boîtes en fonction de l'espèce d'iris (qui est aussi notre variable x). Dans ce cas, il faut ajouter un argument `aes()` à la fonction `boxplot()`, pour assigner notre variable à un aesthetic. Dans ce cas, notre variable `Species`:
 
 ```{r}
 #Fill:
@@ -242,7 +242,7 @@ theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 ```
 
 
-Il y a aussi des palettes de couleurs prédéfinies dans R, qu'on peut utiliser avec la fonction scale_fill_brewer (j'ai choisi la palette "Accent"):
+Il y a aussi des palettes de couleurs prédéfinies dans R, qu'on peut utiliser avec la fonction `scale_fill_brewer` (j'ai choisi la palette "Accent"):
 
 ```{r}
 ggplot(iris, aes(x=Species, y=Sepal.Width)) +
@@ -266,7 +266,7 @@ theme_bw()+
 theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 ```
 
-Puisque ggplot() fonctionne par couche, on peut aussi choisir d'ajouter les données brutes à notre figure. Par exemple, on ajoute avant geom_boxplot() une autre couche de données avec geom_point(), dans lequel on peut spécifier, encore une fois, l'argument aes() pour assigner la variable qui sera colorée. L'argument position définit le niveau de "jitter", qui correspond à des points qui sont "jitter", c'est-à-dire un peu "éparpillés" sur l'axe x. Ensuite, on pourrait ajouter l'argument alpha=0.5 dans la fonction boxplot(), pour les rendre semi-transparents:
+Puisque `ggplot()` fonctionne par couche, on peut aussi choisir d'ajouter les données brutes à notre figure. Par exemple, on ajoute avant `geom_boxplot()` une autre couche de données avec `geom_point()`, dans lequel on peut spécifier, encore une fois, l'argument `aes()` pour assigner la variable qui sera colorée. L'argument position définit le niveau de "jitter", c'est-à-dire des points un peu "éparpillés" sur l'axe x. Ensuite, on pourrait ajouter l'argument `alpha=0.5` dans la fonction `boxplot()`, pour les rendre semi-transparents:
 
 ```{r}
 ggplot(iris, aes(x=Species, y=Sepal.Width)) +
@@ -280,7 +280,7 @@ theme_bw()+
 theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))
 ```
 
-On peut aussi ajouter des lettres pour montrer nos résultats de comparaison (voir https://statdoe.com/one-way-anova-and-box-plot-in-r/ pour la méthode). En gros, la fonction multcompLetters4 assigne les lettres en fonction des groupes du test de Tukey, puis on constuit une table qui contient ces lettres (LettresSW dans l'exemple), la variable Species, ainsi que la position de la lettre (en haut du quartile pour chaque boîte/valeur de Species).  
+On peut aussi ajouter des lettres pour montrer nos résultats de comparaison (voir https://statdoe.com/one-way-anova-and-box-plot-in-r/ pour la méthode). En gros, la fonction `multcompLetters4` assigne les lettres en fonction des groupes du test de Tukey, puis on constuit une table qui contient ces lettres (`LettresSW` dans l'exemple), la variable `Species`, ainsi que la position de la lettre (en haut du quartile pour chaque boîte/valeur de `Species`).  
 
 ```{r}
 library(dplyr)
@@ -302,7 +302,7 @@ LettresSW$cld <- cld$Letters
 print(LettresSW)
 ```
 
-On ajoute nos lettres au boxplot avec la fonction geom_text(), avec comme argument aes() la table que l'on vient de créer. On peut aussi ajouter la statistique de test, en utilisant les coordonnées dans notre figure.
+On ajoute nos lettres au boxplot avec la fonction `geom_text()`, avec comme argument `aes()` la table que l'on vient de créer. On peut aussi ajouter la statistique de test, en utilisant les coordonnées dans notre figure.
 
 ```{r}
 ggplot(iris, aes(x=Species, y=Sepal.Width)) +
