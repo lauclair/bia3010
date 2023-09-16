@@ -377,6 +377,15 @@ pca2.dune <- rda(dune.hel)
 summary(pca2.dune)
 ```
 
+PERMANOVA
+```{r}
+dune.dist <- vegdist(decostand(dune, method='hellinger'), method='euclid')
+disper.dune <- betadisper(dune.dist, dune.env$Management)
+anova(disper.dune)
+permanova.dune <- adonis2(dune.dist ~ Management, data = dune.env)
+permanova.dune
+```
+
 Extraire les scores des espèces
 ```{r}
 site.scores<-pca.dune$x
@@ -410,12 +419,12 @@ On revient aux deux premiers axes. Faisons quelques petits changements.
 ```{r}
 pca.plot <- ggord(pca.dune, xlims=c(-0.75,1), ylims=c(-0.75,0.75),
                   axes=c(1,2),
-                  size=3, # taille des points (sites)
+                  size=4, # taille des points (sites)
                   obslab=TRUE, # pour passer de points (par défaut) à texte
                   arrow=NULL,# enlever les flèches (par défaut) pour les espèces
                   txt=NULL, # enlever le texte (par défaut) pour les espèces
                   addpts=sp.scores.df, # Ajouter les points correspondant aux scores des espèces pour mieux choisir quelles espèces mettre en graphique
-                  addsize=3, # taille des points (espèces)
+                  addsize=4, # taille des points (espèces)
                   ptslab=TRUE, # changer de points à texte
                   addcol="forestgreen") # couleur des espèces
                   #addpch=1,
@@ -423,41 +432,93 @@ pca.plot <- ggord(pca.dune, xlims=c(-0.75,1), ylims=c(-0.75,0.75),
 pca.plot
 ```
 
-Maintenant on veut juste garder les espèces qui ont les plus hauts scores (en valeur absolue) sur les axes 1 et 2.
-Explorons visuellement le graphique et choisissons les espèces à garder.
+Il y a beaucoup d'espèces affichées au milieu et c'est illisible. En plus, les espèces au milieu ne contribuent pas à la distinction compositionnelle des sites. On va donc garder seulement n espèces dont les scores ont la valeur absolue la plus élevée, pour chacun des deux axes qu'on met en graphique (ici PC1 et PC2).
 
+On va créer un nouveau dataframe contenant seulement ces espèces, en utilisant quelques fonctions de la librairie **dplyr**.
 ```{r}
-
+A <- top_n(sp.scores.df, 3, PC1) # sélectionne les 3 espèces dont le score est le plus élevé sur l'axe 1.
+B <- top_n(sp.scores.df, -3, PC1) # sélectionne les 3 espèces dont le score est le plus bas sur l'axe 1.
+C <- top_n(sp.scores.df, 3, PC2) # sélectionne les 3 espèces dont le score est le plus élevé sur l'axe 2.
+D <- top_n(sp.scores.df, -3, PC2) # sélectionne les 3 espèces dont le score est le plus bas sur l'axe 2.
+sp.scores.skim <- bind_rows(A,B,C,D) # merge les sub dataframe A, B, C et D.
+sp.scores.skim <- distinct(sp.scores.skim) # on ne garde que les rangées (espèces) qui sont uniques (pour éviter qu'une même espèce s'y retrouve en copies)
 ```
 
-
 ```{r}
-sp.scores.df.skimmed <- sp.scores.df
-```
-
-
-
-```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-1,1), ylims=c(-1,1),
+pca.plot <- ggord(pca.dune, xlims=c(-0.75,1), ylims=c(-0.75,0.75),
                   axes=c(1,2),
-                  size=3, # taille des points (sites)
+                  size=4, # taille des points (sites)
                   obslab=TRUE, # pour passer de points (par défaut) à texte
                   arrow=NULL,# enlever les flèches (par défaut) pour les espèces
                   txt=NULL, # enlever le texte (par défaut) pour les espèces
-                  addpts=sp.scores.df, # Ajouter les points correspondant aux scores des espèces pour mieux choisir quelles espèces mettre en graphique
-                  addsize=3, # taille des points (espèces)
+                  addpts=sp.scores.skim, # Ajouter les points des espèces aux plus hauts/bas scores
+                  addsize=4, # taille des points (espèces)
                   ptslab=TRUE, # changer de points à texte
                   addcol="forestgreen") # couleur des espèces
                   #addpch=1,
                   #labcol="red") #
 pca.plot
 ```
+
+Maintenant, on va ajouter des ellipses autour des sites appartenant à des groupes similaires.
+```{r}
+pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
+                  axes=c(1,2),
+                  grp_in=dune.env$Management, # ajout des ellipses regroupant les sites par type de Management
+                  ellipse_pro=0.95, # valeur de confiance pour les ellipses
+                  alpha_el=0.3,
+                  size=4, # taille des points (sites)
+                  obslab=TRUE, # pour passer de points (par défaut) à texte
+                  arrow=NULL,# enlever les flèches (par défaut) pour les espèces
+                  txt=NULL, # enlever le texte (par défaut) pour les espèces
+                  addpts=sp.scores.skim, # Ajouter les points des espèces aux plus hauts/bas scores
+                  addsize=4, # taille des points (espèces)
+                  ptslab=TRUE, # changer de points à texte
+                  addcol="black", # couleur des espèces
+                  alpha = 1)
+pca.plot + scale_fill_brewer(palette="Accent")
+```
+
+Au lieu d'afficher le nom des sites, on pourrait vouloir afficher des points ou des symboles différents pour chaque type de groupement.
+```{r}
+pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
+                  axes=c(1,2),
+                  grp_in=dune.env$Management, # ajout des ellipses regroupant les sites par type de Management
+                  ellipse_pro=0.95, # valeur de confiance pour les ellipses
+                  alpha_el=0.3,
+                  size=4, # taille des points (sites)
+                  arrow=NULL,# enlever les flèches (par défaut) pour les espèces
+                  txt=NULL, # enlever le texte (par défaut) pour les espèces
+                  addpts=sp.scores.skim, # Ajouter les points des espèces aux plus hauts/bas scores
+                  addsize=4, # taille des points (espèces)
+                  ptslab=TRUE, # changer de points à texte
+                  addcol="black", # couleur des espèces
+                  alpha = 1)
+pca.plot
+```
+Changer les couleurs des groupes
+
+On va extraire les codes des couleurs d'une palette de R ColorBrewer avec la fonction `brewer.pal`
+
+```{r}
+library(RColorBrewer)
+brewer.pal(n = 4, name = "Dark2") # Hexadecimal color specification 
+```
+
+Et on va incorp
+```{r}
+pca.plot + scale_fill_brewer(palette="Dark2") 
+```
+```{r}
+pca.plot + scale_fill_brewer(palette="Dark2")
+```
+
 
 Créer un thème custom pour ggplot (à éditer...)
 ```{r}
 super_theme <- theme(
         panel.background = element_blank(),
-        panel.border = element_blank(),
+        #panel.border = element_blank(),
         panel.grid = element_blank(),
         axis.line = element_line("gray25"),
         text = element_text(size = 12),
