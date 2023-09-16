@@ -720,182 +720,39 @@ names(ca.ggordiplot)
 ca.ellipses <- ca.ggordiplot$df_ellipse
 ```
 
-On va mettre des ellipses pour les groupes, changer les symboles des sites en fonction des groupes.
+On va mettre des ellipses pour les groupes et changer les symboles des sites en fonction des groupes.
 ```{r}
 ca.plot <- 
-  ggplot(data = site.scores.ca, aes(x = CA1, y = CA2), color = Management) +
+  ggplot(data = site.scores.ca, aes(x = CA1, y = CA2), color = Management) + 
+  geom_point(aes(shape=Management), size=3) +
+  xlab("PCA 1") + ylab("PCA 2") +
   expand_limits(x=c(-2,2.5), y=c(-1,3)) +
-  geom_point(size=2, color = "black") +
-  geom_text(data = sp.scores.skim.ca, aes(x = CA1, y = CA2, label= rownames(sp.scores.skim.ca)), color = "red") +
+  geom_text(data = sp.scores.skim.ca, aes(x = CA1, y = CA2), shape = NULL, label= rownames(sp.scores.skim.ca), color = "red") +
   geom_segment(data = vect.ca.env,
-               aes(x = 0, xend = CA1, y = 0, yend = CA2),
-               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
-  geom_text_repel(data = vect.ca.env, aes(x = CA1, y = CA2, label = variable.env, size = 3), show.legend = FALSE) +
- geom_path(data = ca.ellipses, aes(x = x, y = y, color = Group), show.legend = FALSE)
+              aes(x = 0, xend = CA1, y = 0, yend = CA2),
+              arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
+  geom_text_repel(data = vect.ca.env, aes(x = CA1, y = CA2, label = variable.env, size = 3), show.legend = FALSE)+
+  geom_path(data = ca.ellipses, aes(x = x, y = y, color = Group), show.legend = FALSE)+
+  scale_shape_manual('Groups', values = c(15,16,17,18)) +
+  scale_color_manual('Groups', ) +
+  scale_color_brewer(palette="Dark2") 
 ca.plot
 ```
 
-
-
-
-
-
-Ordination
 ```{r}
-#varespec.hel <- decostand(varespec, method="hellinger") # Tranformation hellinger des données
-#pca.varespec <- rda(varespec.hel) # PCA
-#summary(pca.varespec)
-```
-envfit
-```{r}
-#(envfit.pca <- envfit(pca.varespec, varechem))
+ggplot(data = site.scores.ca, aes(x = CA1, y = CA2, color = Management, shape = Management)) + 
+  geom_point(size = 3) +
+  xlab("PCA 1") + ylab("PCA 2")
 ```
 
-Les fonctions `biplot` est très simple et parfait pour créer rapidement des graphiques afin d'explorer nos données.
+
+Enfin, on rajoute notre thème personnalisé....
 ```{r}
-#biplot(pca.varespec)
-```
-
-On peut personnaliser le biplot pour le rendre plus compréhensible, mettre en valeur certains éléments et le rendre plus esthétique.
-```{r}
-#make basic plot
-#biplot(pca.varespec, display = c("sites", "species"), type = c("text","points"))
-
-
-
-#Add hulls
-#ordihull(my.rda,
-#         group = iris$Species,
-#         col = c(1,2,3))
-
-#get names of species
-## levels() extracts fator levels
-## from the column
-#spp.names <- levels(iris$Species)
-
-#Add legend
-#legend("topright",
-#       col = c(1,2,3), 
-#       lty = 1,
-#       legend = spp.names)
-```
-
-fonction `ordiplot`...
-```{r}
-
+ca.plot + super_theme
 ```
 
 
 
+scale_shape_manual('Groups', values = c(15,16,17,18)) + 
 
 
-
-```{r}
-#pca2.varespec <- prcomp(varespec)
-```
-
-
-
-
-
-D'abord, on doit créer un graphique de base pour en extraire les informations.
-
-
-
-
-```{r}
-#plotA <- ordiplot(pca.varespec)
-```
-
-
-
-```{r}
-#plotgg1 <- ggplot() + 
- #   geom_vline(xintercept = c(0), color = "grey70", linetype = 2) +
-  #  geom_hline(yintercept = c(0), color = "grey70", linetype = 2) +  
-   # xlab("PCA 1") +
-    #ylab("PCA 2") +  
-    #scale_x_continuous(sec.axis = dup_axis(labels=NULL, name=NULL)) +
-    #scale_y_continuous(sec.axis = dup_axis(labels=NULL, name=NULL)) +    
-    #geom_point(data=sites.scores)
-  
-#plotgg1
-```
-
-
-
-```{r}
-#ggplot(pca.varespec)
-```
-
-
-## CA (Analyse de correspondance)
-
-Faire l'ordination
-```{r}
-#ca.varespec<-cca(varespec)
-```
-Tests statistiques avec la fonction **envfit**
-```{r}
-#envfit.varechem<-envfit(ca.varespec, varechem)
-```
-
-### Fonction plot
-
-```{r}
-#plot(ca.varespec)
-```
-
-On pourrait aussi choisir de ne visualiser que les sites ou que les espèces.
-```{r}
-#par(mfrow = c(1, 2))
-#plot(ca.varespec, display = "sites")
-#plot(ca.varespec, display = "species")
-```
-
-```{r}
-#par(mfrow=c(1,2))
-#plot(ca.varespec, scaling=1, type="none", main='CA - biplot scaling 1', 
-#     xlab=c("CA1 (%)", round((ca.varespec$CA$eig[1]/sum(ca.varespec$CA$eig))*100,2)),
-#     ylab=c("CA2 (%)", round((ca.varespec$CA$eig[2]/sum(ca.varespec$CA$eig))*100,2)))
-#points(scores(ca.varespec, display="sites", choices=c(1,2), scaling=1), pch=21, col="black", bg="steelblue", cex=1.2)
-#text(scores(ca.varespec, display="species", choices=c(1), scaling=1),
-#     scores(ca.varespec, display="species", choices=c(2), scaling=1),
-#     labels=rownames(scores(ca.varespec, display="species", scaling=1)),col="red", cex=0.8)
-```
-
-Incorporer les vecteurs environnementaux à la figure d'ordination
-```{r}
-#plot(ca.varespec, display = "sites")
-#plot(envfit.varechem)
-#plot(envfit.varechem, p.max = 0.05, col = "red")#Les correlations significatives apparaissent en rouge
-```
-
-
-### Fonction ordiplot
-```{r}
-#ordiplot(ca.varespec)
-```
-
-```{r}
-#pl <- ordiplot(ca.varespec, type = "none", 
-               #xlab=c("CA1", round((ca.varespec$CA$eig[1]/sum(ca.varespec$CA$eig))*100, 2)), 
-               #ylab = "PC2 (16,1%)")
-#points(pl, "sites", pch=21, col="black", bg="forestgreen")
-#text(pl, "species", col="black", cex=0.9)
-#text(pl, "species", col="black", cex=0.9, 
-#     select = c("a.PRPE","a.ACSP","a.COCO","A.BEAL","h.RUID","h.ABBA","h.COCO","h.COCA","h.VILA","a.ACSA","a.ABBA","a.ALRU","A.BEPA","A.ABBA","h.DRIN"))
-#ordihull(pca_comm, env_scaled$milieu, label = T, draw ="polygon", col=c("darkgreen","grey"), alpha=0.4, lwd = 1, kind=sd)
-```
-
-
-
-## PCA
-
-### Fonction biplot
-
-La fonction biplot ne peut être qu'utilisée avec ordination linéaire comme PCA.
-
---> afficher d'autres axes que 1 et 2....
---> afficher les espèces aux scores élevés
---> envfit
