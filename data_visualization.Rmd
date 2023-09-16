@@ -623,8 +623,16 @@ Cet atelier n'est pas fait pour vous montrer à utiliser une esthétique particu
 Faire une CA avec la fonction `cca`.
 ```{r}
 ca.dune <- cca(dune)
+ca.summary <- summary(ca.dune)
 summary(ca.dune)
 ```
+
+Extraction de la proportion de la variance expliquée par les deux premiers axes.
+```{r}
+prop.expl.ca1 <- ca.summary$cont$importance[2, "CA1"]
+prop.expl.ca2 <- ca.summary$cont$importance[2, "CA2"]
+```
+
 
 envfit
 ```{r}
@@ -724,8 +732,8 @@ On va mettre des ellipses pour les groupes et changer les symboles des sites en 
 ```{r}
 ca.plot <- 
   ggplot(data = site.scores.ca, aes(x = CA1, y = CA2), color = Management) + 
-  geom_point(aes(shape=Management), size=3) +
-  xlab("PCA 1") + ylab("PCA 2") +
+  geom_point(aes(shape = Management, color = Management), size=3) +
+  xlab("CA1 (25.34%)") + ylab("CA2 (18.92%)") +
   expand_limits(x=c(-2,2.5), y=c(-1,3)) +
   geom_text(data = sp.scores.skim.ca, aes(x = CA1, y = CA2), shape = NULL, label= rownames(sp.scores.skim.ca), color = "red") +
   geom_segment(data = vect.ca.env,
@@ -733,22 +741,15 @@ ca.plot <-
               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
   geom_text_repel(data = vect.ca.env, aes(x = CA1, y = CA2, label = variable.env, size = 3), show.legend = FALSE)+
   geom_path(data = ca.ellipses, aes(x = x, y = y, color = Group), show.legend = FALSE)+
-  scale_shape_manual('Groups', values = c(15,16,17,18)) +
-  scale_color_manual('Groups', ) +
+  scale_shape_manual(values = c(15,16,17,18)) +
+  #scale_color_manual('Groups', values = pca.colors) +
   scale_color_brewer(palette="Dark2") 
 ca.plot
 ```
 
+Enfin, on pourrait rajouter notre thème personnalisé, mais optons pour un existant.
 ```{r}
-ggplot(data = site.scores.ca, aes(x = CA1, y = CA2, color = Management, shape = Management)) + 
-  geom_point(size = 3) +
-  xlab("PCA 1") + ylab("PCA 2")
-```
-
-
-Enfin, on rajoute notre thème personnalisé....
-```{r}
-ca.plot + super_theme
+ca.plot + theme_bw()
 ```
 
 
