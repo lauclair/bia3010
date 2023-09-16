@@ -471,11 +471,6 @@ vect <- data.frame(pca.envfit[["vectors"]][["arrows"]])
 vect$species<-rownames(vect)
 ```
 
-```{r}
-gg_envfit(ord = pca.dune, env = dune.env, perm = 999, pt.size = 2, alpha = 0.05)
-```
-
-
 
 ```{r}
 pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
