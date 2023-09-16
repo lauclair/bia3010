@@ -570,7 +570,7 @@ pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   ptslab=TRUE,
                   addcol="black",
                   alpha = 1)
-pca.plot <- pca.plot + # ici j'enregistre l'ensemble des arguments précédents et suivants dans mon objet pca.plot
+pca.plot <- pca.plot + # ici j'enregistre l'ensemble des arguments précédents et suivants dans mon objet pca.plot.
     scale_shape_manual('Groups', values = c(15,16,17,18)) + 
     coord_fixed() +
     geom_segment(data = vect,
@@ -596,7 +596,7 @@ super_theme <- theme(
         legend.key = element_blank())
 ```
 
-Ajouter ce thème au graphique
+Ajouter ce thème au graphique.
 ```{r}
 pca.plot + super_theme
 ```
@@ -616,7 +616,14 @@ ggsave("pca.png", path="./figures/")
 
 Cet atelier n'est pas fait pour vous montrer à utiliser une esthétique particulière, mais bien pour vous familiariser avec les options (infinies...) permettant de personnaliser un graphique d'ordination. Amusez-vous les artistes!!
 
-## PCA
+# CA
+
+
+
+
+
+
+
 
 Ordination
 ```{r}
