@@ -356,9 +356,9 @@ data(dune) # matrice de communautés
 data(dune.env) # données environnementales
 ```
 
+Ce jeu de données contient une matrice d'abondance (dune) d'espèces végétales avec leur classe de couverture pour 20 sites. Le dataframe (dune.env) contient 5 variables denvironnementales.
 
-Description des données...
-
+# PCA et PERMANOVA
 
 Transformation Hellinger
 ```{r}
@@ -371,13 +371,13 @@ pca.dune <- prcomp(dune.hel)
 summary(pca.dune)
 ```
 
-Dans l'atelier 6, nous avons fait nos PCA avec la fonction `rda`. Lorsqu'on compare le sommaire des deux analyses, on voit que les deux fonctions donnent les mêmes résultats. La variance expliquée par chaque axe est la même. 
+Dans l'atelier 6, nous avons fait nos PCA avec la fonction `rda`. Lorsqu'on compare le sommaire des deux analyses, on voit que les deux fonctions donnent les mêmes résultats.
 ```{r}
 pca2.dune <- rda(dune.hel)
 summary(pca2.dune)
 ```
 
-PERMANOVA
+PERMANOVA. On va tester si la composition végétale diffère entre différents type d'aménagement (facteur; variable quantitative) des sites.
 ```{r}
 dune.dist <- vegdist(decostand(dune, method='hellinger'), method='euclid')
 disper.dune <- betadisper(dune.dist, dune.env$Management)
@@ -386,15 +386,19 @@ permanova.dune <- adonis2(dune.dist ~ Management, data = dune.env)
 permanova.dune
 ```
 
-Extraire les scores des espèces
+Le test montre que le type d'aménagement a un effet statistiquement significatif sur la composition en espèces végétales des sites.
+
+## Graphique pour présenter la PCA avec les différents types d'aménagement.
+
+Extraire les scores des sites et des espèces, à partir de l'objet créer par `prcomp`. Cela va nous permettre de mettre éventuellement seulemenet les espèces désirées sur le graphique.
 ```{r}
-site.scores<-pca.dune$x
+site.scores<-pca.dune$x 
 site.scores.df <- data.frame(site.scores)
 sp.scores<-pca.dune$rotation
 sp.scores.df <- data.frame(sp.scores)
 ```
 
-On va maintenant faire un graphique pour notre PCA avec les fonctions `ggord` du package **ggord**.
+Ouverture des librairies nécessaires à la création du graphique.
 Si problème avec installation de la librairie ggord : https://rdrr.io/github/fawda123/ggord/
 ```{r}
 library(ggord)
@@ -402,12 +406,14 @@ library(ggplot2)
 library(ggrepel) # pour éviter overlap du texte
 ```
 
-Le graphique créé par la fonction `ggord` est un objet ggplot. Cet objet (ici appelé pca.plot) peut être personnalisé, et peut ensuite servir de base pour continuer de créer le graphique en ajoutant (+) des couches avec ggplot.
+On va d'abord commencer le graphique avec la fonctions `ggord` du package du même nom.
+
+Le graphique créé par la fonction `ggord` est un objet ggplot. Cet objet (ici appelé pca.plot) peut être personnalisé à même la fonction `ggord`, et peut aussi servir de base sur laquelle ajouter des couches avec ggplot.
 ```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-1,1), ylims=c(-1,1)) # xlims et ylims définissent les limites dans l'affichage des axe (les valeurs entre parenthèses correspondent à l'échelle numérique des axes).
-pca.plot
+pca.plot <- ggord(pca.dune, xlims=c(-1,1), ylims=c(-1,1)) # xlims et ylims définissent les limites dans l'affichage des axe (les valeurs entre parenthèses correspondent à l'échelle numérique des axes). On ajuste au fur et à mesure, au besoin.
+pca.plot # À la fin de chaque chunk, l'objet graphique est appelé pour qu'on visualise le rendu à chaque fois.
 ```
-On remarque que la fonction`ggord` inclut par défaut la proportion de la variance expliquée par les axes. C'est super!
+On remarque que la fonction`ggord` inclut par défaut la **proportion de la variance expliquée par les axes**. C'est super!
 
 Par défaut, la fonction `ggord` va mettre en graphique les deux premiers axes de l'ordination. Mais si on s'intéresse à différents axes, on peut spécifier lesquels mettre en graphique.
 ```{r}
@@ -416,26 +422,30 @@ pca.plot <- ggord(pca.dune, xlims=c(-1,1), ylims=c(-1,1),
 pca.plot
 ```
 
-On revient aux deux premiers axes. Faisons quelques petits changements.
+On revient aux deux premiers axes. Faisons quelques petits changements. Les changements sont marqués d'un "#" à côté de la ligne.
 ```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
-                  axes=c(1,2),
-                  size=4, # taille des points (sites)
-                  obslab=TRUE, # pour passer de points (par défaut) à texte
-                  arrow=NULL,# enlever les flèches (par défaut) pour les espèces
-                  txt=NULL, # enlever le texte (par défaut) pour les espèces
-                  addpts=sp.scores.df, # Ajouter les points correspondant aux scores des espèces pour mieux choisir quelles espèces mettre en graphique
-                  addsize=4, # taille des points (espèces)
-                  ptslab=TRUE, # changer de points à texte
-                  addcol="forestgreen") # couleur des espèces
-                  #addpch=1,
-                  #labcol="red") #
+pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9), # ajustement des limites
+                  axes=c(1,2), # retour aux axes 1 et 2
+                  size=3, # diminution de la taille des points (sites)
+                  arrow=NULL,# enlever les flèches (qui viennent par défaut) pour les espèces
+                  labcol="forestgreen") # changer la couleur du texte pour les espèces
 pca.plot
 ```
 
-Il y a beaucoup d'espèces affichées au milieu et c'est illisible. En plus, les espèces au milieu ne contribuent pas à la distinction compositionnelle des sites. On va donc garder seulement n espèces dont les scores ont la valeur absolue la plus élevée, pour chacun des deux axes qu'on met en graphique (ici PC1 et PC2).
+Faisons d'autres changements!
+```{r}
+pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9), 
+                  axes=c(1,2), 
+                  size=3, 
+                  obslab=TRUE, # pour passer de points pour les sites (par défaut) à texte (nom des sites)
+                  arrow=NULL,
+                  labcol="forestgreen") # changer la couleur du texte pour les espèces
+pca.plot
+```
 
-On va créer un nouveau dataframe contenant seulement ces espèces, en utilisant quelques fonctions de la librairie **dplyr**.
+Il y a beaucoup d'espèces affichées au milieu et c'est illisible. En plus, les espèces au milieu ne contribuent pas beaucoup à la distinction compositionnelle des sites. On va donc garder seulement les quelques espèces dont les scores ont la valeur absolue la plus élevée, pour chacun des deux axes, qu'on met en graphique (ici PC1 et PC2).
+
+D'abord, on va créer un nouveau dataframe contenant seulement ces espèces, en utilisant quelques fonctions de la librairie **dplyr**.
 ```{r}
 A <- top_n(sp.scores.df, 3, PC1) # sélectionne les 3 espèces dont le score est le plus élevé sur l'axe 1.
 B <- top_n(sp.scores.df, -3, PC1) # sélectionne les 3 espèces dont le score est le plus bas sur l'axe 1.
@@ -445,107 +455,93 @@ sp.scores.skim <- bind_rows(A,B,C,D) # merge les sub dataframe A, B, C et D.
 sp.scores.skim <- distinct(sp.scores.skim) # on ne garde que les rangées (espèces) qui sont uniques (pour éviter qu'une même espèce s'y retrouve en copies)
 ```
 
+Mise en graphique de ces espèces seulement
 ```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
-                  axes=c(1,2),
-                  size=4, # taille des points (sites)
-                  obslab=TRUE, # pour passer de points (par défaut) à texte
-                  arrow=NULL,# enlever les flèches (par défaut) pour les espèces
+pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9), 
+                  axes=c(1,2), 
+                  size=3, 
+                  obslab=TRUE,
+                  arrow=NULL,
                   txt=NULL, # enlever le texte (par défaut) pour les espèces
-                  addpts=sp.scores.skim, # Ajouter les points des espèces aux plus hauts/bas scores
-                  addsize=4, # taille des points (espèces)
-                  ptslab=TRUE, # changer de points à texte
+                  addpts=sp.scores.skim, # Ajouter les espèces aux plus hauts et faibles scores
+                  addsize=3, # taille des points des espèces
                   addcol="forestgreen") # couleur des espèces
-                  #addpch=1,
-                  #labcol="red") #
+                  # on enlève l'argument labcol
+pca.plot
+```
+```{r}
+pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9), 
+                  axes=c(1,2), 
+                  size=3, 
+                  obslab=TRUE,
+                  arrow=NULL,
+                  txt=NULL, 
+                  addpts=sp.scores.skim, 
+                  addsize=4, # augmenter la taille du texte des espèces
+                  ptslab=TRUE, # changer de points à texte pour les espèces
+                  addcol="forestgreen")
 pca.plot
 ```
 
-envfit
+On va ajouter les résultats d'un `envfit`. D'abord, on fait le test.
 ```{r}
 (pca.envfit <- envfit(pca.dune, dune.env))
 ```
 
+Pour incorporer les vecteurs résultant de ce test, il faut d'abord les extraire et les mettre dans un dataframe.
 ```{r}
 vect <- data.frame(pca.envfit[["vectors"]][["arrows"]])
-vect$species<-rownames(vect)
+vect$variable.env<-rownames(vect)
 ```
 
 
 ```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
-                  axes=c(1,2),
-                  size=4, # taille des points (sites)
-                  obslab=TRUE, # pour passer de points (par défaut) à texte
-                  arrow=NULL,# enlever les flèches (par défaut) pour les espèces
-                  txt=NULL, # enlever le texte (par défaut) pour les espèces
-                  addpts=sp.scores.skim, # Ajouter les points des espèces aux plus hauts/bas scores
-                  addsize=4, # taille des points (espèces)
-                  ptslab=TRUE, # changer de points à texte
-                  addcol="forestgreen") # couleur des espèces
-                  #addpch=1,
-                  #labcol="red") #
+pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9), 
+                  axes=c(1,2), 
+                  size=3, 
+                  obslab=TRUE,
+                  arrow=NULL,
+                  txt=NULL, 
+                  addpts=sp.scores.skim, 
+                  addsize=4, 
+                  ptslab=TRUE, 
+                  addcol="forestgreen")
 pca.plot + 
-  coord_fixed() + ## need aspect ratio of 1!
-  geom_segment(data = vect,
-               aes(x = 0, xend = PC1, y = 0, yend = PC2),
-               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
-  geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = species, size = 3), show.legend = FALSE)
-```
-
-
-
-Maintenant, on va ajouter des ellipses autour des sites appartenant à des groupes similaires.
-```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
-                  axes=c(1,2),
-                  grp_in=dune.env$Management, # ajout des ellipses regroupant les sites par type de Management
-                  grp_title = "Management",
-                  ellipse_pro=0.95, # valeur de confiance pour les ellipses
-                  alpha_el=0.3,
-                  size=4, # taille des points (sites)
-                  obslab=TRUE, # pour passer de points (par défaut) à texte
-                  arrow=NULL,# enlever les flèches (par défaut) pour les espèces
-                  txt=NULL, # enlever le texte (par défaut) pour les espèces
-                  addpts=sp.scores.skim, # Ajouter les points des espèces aux plus hauts/bas scores
-                  addsize=4, # taille des points (espèces)
-                  ptslab=TRUE, # changer de points à texte
-                  addcol="black", # couleur des espèces
-                  alpha = 1)
-pca.plot + scale_fill_brewer(palette="Accent") +
-    coord_fixed() +
-    geom_segment(data = vect,
-               aes(x = 0, xend = PC1, y = 0, yend = PC2),
-               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
-    geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = species, size = 3), show.legend = FALSE)
-
-```
-
-Au lieu d'afficher le nom des sites, on pourrait vouloir afficher des points ou des symboles différents pour chaque type de groupement.
-```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
-                  axes=c(1,2),
-                  grp_in=dune.env$Management, # ajout des ellipses regroupant les sites par type de Management
-                  grp_title = "Management",
-                  ellipse_pro=0.95, # valeur de confiance pour les ellipses
-                  alpha_el=0.3,
-                  size=4, # taille des points (sites)
-                  arrow=NULL,# enlever les flèches (par défaut) pour les espèces
-                  txt=NULL, # enlever le texte (par défaut) pour les espèces
-                  addpts=sp.scores.skim, # Ajouter les points des espèces aux plus hauts/bas scores
-                  addsize=4, # taille des points (espèces)
-                  ptslab=TRUE, # changer de points à texte
-                  addcol="black", # couleur des espèces
-                  alpha = 1)
-pca.plot + scale_shape_manual('Groups', values = c(15,16,17,18)) +# Assurer vous d'avoir le même nombre de valeur que de groupes  
   coord_fixed() +
   geom_segment(data = vect,
                aes(x = 0, xend = PC1, y = 0, yend = PC2),
                arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
-  geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = species, size = 3), show.legend = FALSE)
+  geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = variable.env, size = 3), show.legend = FALSE)
 ```
 
-Voici une légende indiquant quels symboles sont associées aux différentes valeurs numériques de la couche `scale_shape_manual` 
+Maintenant, on va ajouter des ellipses autour des sites appartenant à des groupes similaires. On va aussi revenir à des symboles au lieu du nom des sites et changer la couleur du texte des espèces.
+```{r}
+pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
+                  axes=c(1,2),
+                  grp_in=dune.env$Management, # ajout des ellipses en fonction du type de Management
+                  grp_title = "Management",
+                  ellipse_pro=0.95, # valeur de confiance pour les ellipses
+                  alpha_el=0.3, # transparence des ellipses
+                  size=3, 
+                  obslab=FALSE, # changement de texte à points pour sites
+                  arrow=NULL,
+                  txt=NULL, 
+                  addpts=sp.scores.skim, 
+                  addsize=4, 
+                  ptslab=TRUE,
+                  addcol="black", # couleur des espèces
+                  alpha = 1)
+pca.plot + 
+    scale_shape_manual('Groups', values = c(15,16,17,18)) + # Symboles pour les espèces en fonction de leur groupe. Assurer vous d'avoir un nombre de symboles correspondant au nombre de groupes.
+    coord_fixed() +
+    geom_segment(data = vect,
+               aes(x = 0, xend = PC1, y = 0, yend = PC2),
+               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
+    geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = variable.env, size = 3), show.legend = FALSE)
+
+```
+
+Voici une légende indiquant quels symboles sont associées aux différentes valeurs numériques de la couche `scale_shape_manual`.
 
 ![](ggplot_scale_shape-6.png)
 
@@ -553,36 +549,37 @@ Changer les couleurs des groupes
 On va extraire les codes des couleurs d'une palette de R ColorBrewer avec la fonction `brewer.pal`
 ```{r}
 library(RColorBrewer)
-brewer.pal(n = 4, name = "Dark2") # Hexadecimal color specification 
+pca.colors <- brewer.pal(n = 4, name = "Dark2") # Hexadecimal color specification 
 ```
 
-Et on va incorporer ces codes de couleurs dans un argument + on déplace la légende vers le haut.
+Et on va incorporer ces codes de couleurs dans un argument et on déplace la légende vers le haut.
 ```{r}
 pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   axes=c(1,2),
-                  grp_in=dune.env$Management, # ajout des ellipses regroupant les sites par type de Management
+                  grp_in=dune.env$Management, 
                   grp_title = "Management",
-                  cols=c("#1B9E77","#D95F02","#7570B3","#E7298A"),
-                  ellipse_pro=0.95, # valeur de confiance pour les ellipses
+                  cols=pca.colors, # ajout des couleurs choisies
+                  ellipse_pro=0.95,
                   alpha_el=0.3,
-                  size=4, # taille des points (sites)
-                  arrow=NULL,# enlever les flèches (par défaut) pour les espèces
-                  txt=NULL, # enlever le texte (par défaut) pour les espèces
-                  addpts=sp.scores.skim, # Ajouter les points des espèces aux plus hauts/bas scores
-                  addsize=4, # taille des points (espèces)
-                  ptslab=TRUE, # changer de points à texte
-                  addcol="black", # couleur des espèces
+                  size=3, 
+                  obslab=FALSE, 
+                  arrow=NULL,
+                  txt=NULL, 
+                  addpts=sp.scores.skim, 
+                  addsize=4, 
+                  ptslab=TRUE,
+                  addcol="black",
                   alpha = 1)
-pca.plot <- pca.plot + scale_shape_manual('Groups', values = c(15,16,17,18)) +
-    coord_fixed() + ## need aspect ratio of 1!
+pca.plot <- pca.plot + # ici j'enregistre l'ensemble des arguments précédents et suivants dans mon objet pca.plot
+    scale_shape_manual('Groups', values = c(15,16,17,18)) + 
+    coord_fixed() +
     geom_segment(data = vect,
                aes(x = 0, xend = PC1, y = 0, yend = PC2),
                arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
-    geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = species, size = 3), show.legend = FALSE) +
-    theme(legend.position = 'top') 
+    geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = variable.env, size = 3), show.legend = FALSE)+
+    theme(legend.position = 'top') # mettre la légende en haut
 pca.plot
 ```
-
 
 Créer un thème custom pour ggplot.
 ```{r}
@@ -599,24 +596,25 @@ super_theme <- theme(
         legend.key = element_blank())
 ```
 
+Ajouter ce thème au graphique
 ```{r}
 pca.plot + super_theme
 ```
 
 On va rajouter du texte!
 ```{r}
-pca.plot <- pca.plot + annotate("text", x = 1.1, y = 0.7, label = "PERMANOVA\nR2=30%\n p=0.007") +
+pca.plot + annotate("text", x = 1.1, y = 0.7, label = "PERMANOVA\nR2=30%\n p=0.007") +
     super_theme
-pca.plot
 ```
 
-
-On sauvegarde l'image en png. Par défaut, gg 
+Satisfait? On sauvegarde l'image en png. Par défaut, ggplot enregistre le dernier graphique créé. Ici je copie-colle mon code de graphique ci haut, puis sauvegarde ce graphique avec la fonction `ggsave`.
 ```{r}
-pca.plot
+pca.plot + annotate("text", x = 1.1, y = 0.7, label = "PERMANOVA\nR2=30%\n p=0.007") +
+    super_theme
 ggsave("pca.png", path="./figures/")
 ```
 
+Cet atelier n'est pas fait pour vous montrer à utiliser une esthétique particulière, mais bien pour vous familiariser avec les options (infinies...) permettant de personnaliser un graphique d'ordination. Amusez-vous les artistes!!
 
 ## PCA
 
