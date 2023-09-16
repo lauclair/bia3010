@@ -358,7 +358,7 @@ data(dune.env) # données environnementales
 
 Ce jeu de données contient une matrice d'abondance (dune) d'espèces végétales avec leur classe de couverture pour 20 sites. Le dataframe (dune.env) contient 5 variables denvironnementales.
 
-# PCA et PERMANOVA
+# PCA
 
 Transformation Hellinger
 ```{r}
@@ -614,11 +614,126 @@ pca.plot + annotate("text", x = 1.1, y = 0.7, label = "PERMANOVA\nR2=30%\n p=0.0
 ggsave("pca.png", path="./figures/")
 ```
 
-Cet atelier n'est pas fait pour vous montrer à utiliser une esthétique particulière, mais bien pour vous familiariser avec les options (infinies...) permettant de personnaliser un graphique d'ordination. Amusez-vous les artistes!!
+Cet atelier n'est pas fait pour vous montrer à utiliser une esthétique particulière, mais bien pour vous familiariser avec les options (infinies...) permettant de personnaliser un graphique d'ordination. Vous allez voir des figures d'ordination dans la littérature. Essayez de reproduire l'esthétique qui vous semble la plus appropriée... ou, tout simplement, amusez-vous les artistes!!
 
 # CA
 
+## Préparation des données
 
+Faire une CA avec la fonction `cca`.
+```{r}
+ca.dune <- cca(dune)
+summary(ca.dune)
+```
+
+envfit
+```{r}
+(ca.envfit <- envfit(ca.dune, dune.env))
+```
+
+Pour incorporer les vecteurs résultant de ce test, il faut d'abord les extraire et les mettre dans un dataframe.
+```{r}
+vect.ca.env <- data.frame(ca.envfit[["vectors"]][["arrows"]])
+vect.ca.env$variable.env<-rownames(vect.ca.env)
+```
+
+PERMANOVA. On va tester si la composition végétale diffère entre différents type d'aménagement (facteur; variable quantitative) des sites.
+```{r}
+dune.dist.chi2 <- vegdist(dune, method='chisq')
+disper.dune.chi2 <- betadisper(dune.dist.chi2, dune.env$Management)
+anova(disper.dune.chi2)
+permanova.dune.ca <- adonis2(dune.dist.chi2 ~ Management, data = dune.env)
+permanova.dune.ca
+```
+
+Extraire les scores de CA avec la fonction `scores`
+```{r}
+site.scores.dune.ca <- scores(ca.dune, display="sites", choices=c(1,2))
+Management <- dune.env$Management
+site.scores.ca <- cbind(site.scores.dune.ca, Management)
+sp.scores.dune.ca <- scores(ca.dune, display="species", choices=c(1,2))
+site.scores.dune.ca <- data.frame(site.scores.dune.ca)
+sp.scores.dune.ca <- data.frame(sp.scores.dune.ca)
+```
+
+Comme on a fait acvec les scores des espèces de la PCA, on ne garde que les plus hautes valeurs absolues.
+```{r}
+A.ca <- top_n(sp.scores.dune.ca, 3, CA1)
+B.ca <- top_n(sp.scores.dune.ca, -3, CA1)
+C.ca <- top_n(sp.scores.dune.ca, 3, CA2)
+D.ca <- top_n(sp.scores.dune.ca, -3, CA2)
+sp.scores.skim.ca <- bind_rows(A.ca,B.ca,C.ca,D.ca)
+sp.scores.skim.ca <- distinct(sp.scores.skim.ca)
+```
+
+Graphique avec fonction `plot`
+```{r}
+plot(ca.dune)
+ordiellipse(ca.dune, dune.env$Management, display = "sites", kind = "sd", label = T)
+```
+
+## ggplot
+
+On commence le graphique ggplot
+```{r}
+ca.plot <- 
+  ggplot() +
+  expand_limits(x=c(-4,4), y=c(-1,3)) +
+  geom_text(data = site.scores.dune.ca, aes(x = CA1, y = CA2, label= rownames(site.scores.dune.ca)), color = "black") +
+  geom_text(data = sp.scores.dune.ca, aes(x = CA1, y = CA2, label= rownames(sp.scores.dune.ca)), color = "red")
+ca.plot
+```
+
+On va rajouter les vecteurs de note envfit.
+```{r}
+ca.plot <- 
+  ggplot() +
+  expand_limits(x=c(-2,2.5), y=c(-1,3)) +
+  geom_text(data = site.scores.dune.ca, aes(x = CA1, y = CA2, label= rownames(site.scores.dune.ca)), color = "black") +
+  geom_text(data = sp.scores.dune.ca, aes(x = CA1, y = CA2, label= rownames(sp.scores.dune.ca)), color = "red") +
+  geom_segment(data = vect.ca.env,
+               aes(x = 0, xend = CA1, y = 0, yend = CA2),
+               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
+  geom_text_repel(data = vect.ca.env, aes(x = CA1, y = CA2, label = variable.env, size = 3), show.legend = FALSE)
+ca.plot
+```
+
+On va mettre des points pour les sites et mettre seulement les espèces aux plus grands scores.
+```{r}
+ca.plot <- 
+  ggplot() +
+  expand_limits(x=c(-2,2.5), y=c(-1,3)) +
+  geom_point(data = site.scores.dune.ca, aes(x = CA1, y = CA2), size=2, color = "black") +
+  geom_text(data = sp.scores.skim.ca, aes(x = CA1, y = CA2, label= rownames(sp.scores.skim.ca)), color = "red") +
+  geom_segment(data = vect.ca.env,
+               aes(x = 0, xend = CA1, y = 0, yend = CA2),
+               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
+  geom_text_repel(data = vect.ca.env, aes(x = CA1, y = CA2, label = variable.env, size = 3), show.legend = FALSE)
+ca.plot
+```
+
+On va utiliser la fonction `ggordiplot` de la librairie ggordiplots pour extraire les données des ellipses. (on peut aussi extraire les données de hulls et spiders.)
+```{r}
+library(ggordiplots)
+ca.ggordiplot <- gg_ordiplot(ca.dune, groups = dune.env$Management, kind = "sd", conf = 0.95, pt.size = 3)
+names(ca.ggordiplot)
+ca.ellipses <- ca.ggordiplot$df_ellipse
+```
+
+On va mettre des ellipses pour les groupes, changer les symboles des sites en fonction des groupes.
+```{r}
+ca.plot <- 
+  ggplot(data = site.scores.ca, aes(x = CA1, y = CA2), color = Management) +
+  expand_limits(x=c(-2,2.5), y=c(-1,3)) +
+  geom_point(size=2, color = "black") +
+  geom_text(data = sp.scores.skim.ca, aes(x = CA1, y = CA2, label= rownames(sp.scores.skim.ca)), color = "red") +
+  geom_segment(data = vect.ca.env,
+               aes(x = 0, xend = CA1, y = 0, yend = CA2),
+               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
+  geom_text_repel(data = vect.ca.env, aes(x = CA1, y = CA2, label = variable.env, size = 3), show.legend = FALSE) +
+ geom_path(data = ca.ellipses, aes(x = x, y = y, color = Group), show.legend = FALSE)
+ca.plot
+```
 
 
 
