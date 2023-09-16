@@ -660,7 +660,7 @@ Ici, le résultat du test de dispersion indique que la différence dans la compo
 
 Extraire les scores de CA avec la fonction `scores`
 ```{r}
-site.scores.dune.ca <- scores(ca.dune, display="sites", choices=c(1,2)) # ici on garde que les scores des axes 1 et 2 mais on aurait pu extraire tous les scores aussi
+site.scores.dune.ca <- scores(ca.dune, display="sites", choices=c(1,2)) # ici on garde que les scores des axes 1 et 2 mais on aurait pu extraire tous les scores aussi.
 site.scores.dune.ca <- data.frame(site.scores.dune.ca)
 Management <- dune.env$Management
 site.scores.ca <- cbind(site.scores.dune.ca, Management)
@@ -750,7 +750,6 @@ ca.plot <-
   geom_text_repel(data = vect.ca.env, aes(x = CA1, y = CA2, label = variable.env, size = 3), color = "firebrick1", fontface = "bold", show.legend = FALSE) +
   scale_shape_manual(values = c(15,16,17,18)) +
   geom_path(data = ca.ellipses, aes(x = x, y = y, color = Group), show.legend = FALSE) + # ajout des ellipses
-  #scale_color_manual('Groups', values = pca.colors) +
   scale_color_brewer(palette="Dark2") # changement des couleurs des ellipses et des sites
 ca.plot
 ```
@@ -846,14 +845,9 @@ pcoa.plot <-
   geom_text_repel(data = vect.pcoa.env, aes(x = Dim1, y = Dim3, label = variable.env, size = 3), color = "firebrick1", fontface = "bold", show.legend = FALSE) +
   scale_shape_manual(values = c(15,16,17,18)) +
   geom_path(data = pcoa.ellipses, aes(x = x, y = y, color = Group), show.legend = FALSE) + 
-  #scale_color_manual('Groups', values = pca.colors) +
   scale_color_brewer(palette="Dark2")
 pcoa.plot
 ggsave("pcoa.png", path="./figures/")
 ```
-
-
-
-
 
 - FIN - 
