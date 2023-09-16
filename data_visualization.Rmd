@@ -505,6 +505,7 @@ Maintenant, on va ajouter des ellipses autour des sites appartenant à des group
 pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   axes=c(1,2),
                   grp_in=dune.env$Management, # ajout des ellipses regroupant les sites par type de Management
+                  grp_title = "Management",
                   ellipse_pro=0.95, # valeur de confiance pour les ellipses
                   alpha_el=0.3,
                   size=4, # taille des points (sites)
@@ -530,6 +531,7 @@ Au lieu d'afficher le nom des sites, on pourrait vouloir afficher des points ou 
 pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   axes=c(1,2),
                   grp_in=dune.env$Management, # ajout des ellipses regroupant les sites par type de Management
+                  grp_title = "Management",
                   ellipse_pro=0.95, # valeur de confiance pour les ellipses
                   alpha_el=0.3,
                   size=4, # taille des points (sites)
@@ -559,11 +561,12 @@ library(RColorBrewer)
 brewer.pal(n = 4, name = "Dark2") # Hexadecimal color specification 
 ```
 
-Et on va incorporer ces codes de couleurs dans un argument
+Et on va incorporer ces codes de couleurs dans un argument + on déplace la légende vers le haut.
 ```{r}
 pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   axes=c(1,2),
                   grp_in=dune.env$Management, # ajout des ellipses regroupant les sites par type de Management
+                  grp_title = "Management",
                   cols=c("#1B9E77","#D95F02","#7570B3","#E7298A"),
                   ellipse_pro=0.95, # valeur de confiance pour les ellipses
                   alpha_el=0.3,
@@ -580,7 +583,8 @@ pca.plot <- pca.plot + scale_shape_manual('Groups', values = c(15,16,17,18)) +
     geom_segment(data = vect,
                aes(x = 0, xend = PC1, y = 0, yend = PC2),
                arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
-    geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = species, size = 3), show.legend = FALSE)
+    geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = species, size = 3), show.legend = FALSE) +
+    theme(legend.position = 'top') 
 pca.plot
 ```
 
@@ -604,13 +608,19 @@ super_theme <- theme(
 pca.plot + super_theme
 ```
 
-
+On va rajouter du texte!
 ```{r}
-pca.plot + super_theme
+pca.plot <- pca.plot + annotate("text", x = 1.1, y = 0.7, label = "PERMANOVA\nR2=30%\n p=0.007") +
+    super_theme
+pca.plot
+```
+
+
+On sauvegarde l'image en png. Par défaut, gg 
+```{r}
+pca.plot
 ggsave("pca.png", path="./figures/")
 ```
-```
-
 
 
 ## PCA
