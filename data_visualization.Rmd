@@ -399,6 +399,7 @@ Si problème avec installation de la librairie ggord : https://rdrr.io/github/fa
 ```{r}
 library(ggord)
 library(ggplot2)
+library(ggrepel) # pour éviter overlap du texte
 ```
 
 Le graphique créé par la fonction `ggord` est un objet ggplot. Cet objet (ici appelé pca.plot) peut être personnalisé, et peut ensuite servir de base pour continuer de créer le graphique en ajoutant (+) des couches avec ggplot.
@@ -460,6 +461,47 @@ pca.plot <- ggord(pca.dune, xlims=c(-0.75,1), ylims=c(-0.75,0.75),
 pca.plot
 ```
 
+envfit
+```{r}
+(pca.envfit <- envfit(pca.dune, dune.env))
+```
+
+```{r}
+vect <- data.frame(pca.envfit[["vectors"]][["arrows"]])
+vect$species<-rownames(vect)
+```
+
+```{r}
+gg_envfit(ord = pca.dune, env = dune.env, perm = 999, pt.size = 2, alpha = 0.05)
+```
+
+
+
+```{r}
+pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
+                  axes=c(1,2),
+                  #vecs=vect,
+                  size=4, # taille des points (sites)
+                  obslab=TRUE, # pour passer de points (par défaut) à texte
+                  arrow=NULL,# enlever les flèches (par défaut) pour les espèces
+                  txt=NULL, # enlever le texte (par défaut) pour les espèces
+                  addpts=sp.scores.skim, # Ajouter les points des espèces aux plus hauts/bas scores
+                  addsize=4, # taille des points (espèces)
+                  ptslab=TRUE, # changer de points à texte
+                  addcol="forestgreen") # couleur des espèces
+                  #addpch=1,
+                  #labcol="red") #
+pca.plot + 
+  coord_fixed() + ## need aspect ratio of 1!
+  geom_segment(data = vect,
+               aes(x = 0, xend = PC1, y = 0, yend = PC2),
+               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
+  geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = species, size = 3), show.legend = FALSE)
+  
+```
+
+
+
 Maintenant, on va ajouter des ellipses autour des sites appartenant à des groupes similaires.
 ```{r}
 pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
@@ -494,27 +536,42 @@ pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   ptslab=TRUE, # changer de points à texte
                   addcol="black", # couleur des espèces
                   alpha = 1)
-pca.plot
+pca.plot + scale_shape_manual('Groups', values = c(15,16,17,18))# Assurer vous d'avoir le même nombre de valeur que de groupes
 ```
+
+Voici une légende indiquant quels symboles sont associées aux différentes valeurs numériques de la couche `scale_shape_manual` 
+
+![](ggplot_scale_shape-6.png)
+
 Changer les couleurs des groupes
-
 On va extraire les codes des couleurs d'une palette de R ColorBrewer avec la fonction `brewer.pal`
-
 ```{r}
 library(RColorBrewer)
 brewer.pal(n = 4, name = "Dark2") # Hexadecimal color specification 
 ```
 
-Et on va incorp
+Et on va incorporer ces codes de couleurs dans un argument
 ```{r}
-pca.plot + scale_fill_brewer(palette="Dark2") 
-```
-```{r}
-pca.plot + scale_fill_brewer(palette="Dark2")
+pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
+                  axes=c(1,2),
+                  grp_in=dune.env$Management, # ajout des ellipses regroupant les sites par type de Management
+                  cols=c("#1B9E77","#D95F02","#7570B3","#E7298A"),
+                  ellipse_pro=0.95, # valeur de confiance pour les ellipses
+                  alpha_el=0.3,
+                  size=4, # taille des points (sites)
+                  arrow=NULL,# enlever les flèches (par défaut) pour les espèces
+                  txt=NULL, # enlever le texte (par défaut) pour les espèces
+                  addpts=sp.scores.skim, # Ajouter les points des espèces aux plus hauts/bas scores
+                  addsize=4, # taille des points (espèces)
+                  ptslab=TRUE, # changer de points à texte
+                  addcol="black", # couleur des espèces
+                  alpha = 1)
+pca.plot <- pca.plot + scale_shape_manual('Groups', values = c(15,16,17,18))
+pca.plot
 ```
 
 
-Créer un thème custom pour ggplot (à éditer...)
+Créer un thème custom pour ggplot.
 ```{r}
 super_theme <- theme(
         panel.background = element_blank(),
@@ -535,23 +592,6 @@ pca.plot + super_theme
 
 
 
-
-
-
-CI-DESSOUS, TESTS/CRAP
-
-
-# Ordinations
-
-Comme pour les analyses univariées, cet atelier est seulement axé sur la création de graphiques. Pour une introduction aux analyses multivariées (ordinations, PERMANOVA, Procrustes), consulter l'atelier 6.
-
-## Importer les données multivariées
-```{r}
-#library(vegan)
-#data(varespec) # matrice de communautés
-#data(varechem) # données environnementales
-#varechem <- scale(varechem) # centrer-réduire
-```
 
 
 ## PCA
