@@ -345,7 +345,107 @@ scale_x_discrete(labels=c("I. setosa", "I. versicolor", "I. virginica"))
 Essayons avec un type d'analyse différent, les GLM binomiaux. 
 Nous allons utiliser le jeu de données "survie". Encore une fois, référez-vous à l'atelier sur les modèles GLM pour bien comprendre les analyses, j'y vais plus grossièrement ici.
 
+Nous aurons besoin de:
+
+```{r}
+library(ggeffects)
+```
+
 D'abord, télécharger le jeu de données "survie.csv", puis l'ouvrir dans R:
+
+```{r}
+surv <- read.delim2('survie.csv', header = TRUE, sep = ';', dec = '.')
+head(surv)
+```
+
+
+
+On a donc des données de masse, d'âge et de sexe (sous forme 0/1, mâle=1 et femelle=0), ainsi que ce qui sera notre variable réponse, la survie. Celle-ci est aussi notée 0/1, car évidemment, c'est une variable binaire. Puisque celle-ci ne suit pas une loi normale, nous devons utiliser un GLM.
+
+Prenez bien le temps de comprendre comment fonctionne la régression logistique. L'interprétation des coefficients n'est pas aussi directe ou intuitive que pour la régression linéaire. Comme vous vous souvenez sûrement, les paramètres sont dans une échelle différente que l'échelle de la "réalité": la pente nous donne plutôt le changement dans le logit de la probabilité, pour un changement d'une unité de la variable explicative.  
+
+Rappel: Les GLM fonctionnent avec ce qu'on appelle une fonction de lien ("logit", dans le cas d'une variable binaire - il en existe d'autre pour les autres distributions, comme celle de poisson ou gamma). Cette transformatiom permet de passer de l'échelle des valeurs observées (soit 0 et 1), à une échelle qui est linéaire, qui nous permet de "linéariser" un modèle à variable réponse binaire. Ainsi:
+Les valeurs observées de y (0 et 1) sont transformées avec la fonction de lien f() pour être sur la même échelle que le prédicteur linéaire (a+bxi).
+Les paramètres du modèle, nécessairement, sont dans cette échelle transformée. C'est pour cela qu'on ne peut pas calculer directement les valeurs prédites, comme avec la régression linéaire. Plutôt, les valeurs prédites par le modèle sont obtenues en appliquant l'inverse de la transformation, donc l’inverse de la fonction de lien (f−1), au prédicteur linéaire. Ainsi, Probabilité(succès)= logit−1(a+bx).
+
+On peut convertir les paramètres du modèle logistique en *ratios des cotes*, en calculant e^-b, b étant la valeur d'un paramètre donné dans un modèle (voir https://statisticsbyjim.com/probability/odds-ratio/). Ce ratio des cotes nous indique le changement de cote associé à l'augmentation d'une unité de notre variable indépendante, par exemple, l'âge (s'il s'agit d'une autre variable binaire, par exemple le sexe, l'augmentation d'unité signifie qu'on passe de zéro, soit les femelles, à 1, soit les mâles − l'ordonnée à l'origine représente le 0 de toutes les variables).
+
+En gros, 
+
+Si le ratio des cotes est >1, la probabilité de succès (dans notre cas, la survie) augmente avec l'augmentation de notre variable dépendante. 
+
+Si le ratio des cotes est <1, la probabilité de succès (dans notre cas, la survie) diminue avec l'augmentation de notre variable dépendante. 
+
+Calculer le ratio des cotes e^-b nous permet d'avoir une idée générale de l'effet d'une variable indépendante sur notre variable réponse.
+
+
+Mais ce qui vous intéresse dans le cadre de cet atelier, c'est de visualiser les effets desdites variables!
+
+Pour simplifier les calculs, on peut utiliser la fonction `ggpredict()` du package `ggeffects`. Celle-ci nous calcule les probabilités de survie (ou de succès) ainsi qu'un intervalle de confiance. On peut ensuite utiliser ces probabilités pour réaliser une figure avec `ggplot()`.
+
+Reprenons notre jeu de données.
+
+
+```{r}
+
+head(surv)
+
+```
+
+On peut commencer avec la question suivante: *quel est l'effet de la masse sur la probabilité de survie?*
+
+Pour faire notre modèle, on utilise la fonction `glm`, qui ressemble à la fonction `lm` que nous avons utilisée plus tôt. Avec `glm`, on ajoute l'argument `family = binomial`, qui spécifie la distribution avec laquelle nous travaillons, soit la distribution binomiale. 
+
+```{r}
+modele.masse <- with(surv, glm(survie ~ masse, family = binomial))
+
+summary(modele.masse)
+
+#Quel serait le ratio des cotes?
+
+b.masse<-modele.masse$coefficients['masse']
+
+exp(b.masse)
+
+```
+
+La masse aurait donc un effet positif sur la probabilité de survie. Essayons de visualiser ce résultat.
+
+J'utilise la fonction `ggpredict` du package `ggeffects`. On spéficie d'abord le modèle à prédire, ensuite la variable que l'on souhaite visualiser en x.
+
+```{r}
+
+predictions.masse<-ggpredict(modele.masse, "masse")
+
+predictions.masse
+
+```
+
+Dans le récapitulatif, on voit l'étendue des valeurs de masse, ainsi que la probabilité de survie prédite pour chaque valeur de masse. De plus, un intervalle de confiance à 95% a été calculé. On a donc ce qu'il faut pour réaliser notre figure.
+
+Nous utiliserons comme source de données, la table de prédictions que nous venons de sortir.
+
+
+```{r}
+
+plot.masse <- ggplot()+
+geom_line(data=predictions.masse, aes(x=x, y=predicted))
+
+```
+
+On voit que la valeur maximale de l'axe y est de 1, qui correspondrait à une probabilité de 100%. Il est important d'ajouter notre invervalle de confiance, avec `geom_ribbon`. On utilise à nouveau notre table de prédictions, puisqu'elle contient les intervalles de confiance. Avec `aes(ymin = conf.low, ymax = conf.high)`, on délimite les limites haut et bas de notre ruban. Ces limites correspondent aux valeurs d'intervalle calculées. Avec `alpha = .2`, le ruban est plus translucide: 
+
+```{r}
+
+plot.masse <- ggplot()+
+geom_line(data = predictions.masse, aes(x=x, y=predicted))+
+geom_ribbon(data = predictions.masse, show.legend = FALSE, aes(x=x, y=predicted, ymin = conf.low, ymax = conf.high), alpha = .2)
+
+```
+
+C'est bien, mais notre figure est pas mal tout nue!
+
+On peut ajouter notre thème `theme_bw()`, et identifier nos axes:
 
 
 
