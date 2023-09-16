@@ -349,7 +349,6 @@ scale_x_discrete(labels=c("I. setosa", "I. versicolor", "I. virginica"))
 
 Comme pour les analyses univariées, cet atelier est seulement axé sur la création de graphiques. Pour une introduction aux analyses multivariées (ordinations, PERMANOVA, Procrustes), consulter l'atelier 6.
 
-
 ## Importer les données multivariées
 ```{r}
 library(vegan)
@@ -372,26 +371,87 @@ pca.dune <- prcomp(dune.hel)
 summary(pca.dune)
 ```
 
-Pour comparaison, PCA avec fonction `rda`. Même variance extraite par chaque axe. 
+Dans l'atelier 6, nous avons fait nos PCA avec la fonction `rda`. Lorsqu'on compare le sommaire des deux analyses, on voit que les deux fonctions donnent les mêmes résultats. La variance expliquée par chaque axe est la même. 
 ```{r}
 pca2.dune <- rda(dune.hel)
 summary(pca2.dune)
 ```
 
-On va maintenant faire un graphique pour notre PCA avec les fonctions `ggord` du package **ggord** `ggplot`.
-pour installer la librairie ggord : https://rdrr.io/github/fawda123/ggord/
-
+Extraire les scores des espèces
 ```{r}
-library(ggord)
+site.scores<-pca.dune$x
+site.scores.df <- data.frame(site.scores)
+sp.scores<-pca.dune$rotation
+sp.scores.df <- data.frame(sp.scores)
 ```
 
-
+On va maintenant faire un graphique pour notre PCA avec les fonctions `ggord` du package **ggord**.
+Si problème avec installation de la librairie ggord : https://rdrr.io/github/fawda123/ggord/
 ```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-1,1), ylims=c(-1,1))
+library(ggord)
+library(ggplot2)
+```
+
+Le graphique créé par la fonction `ggord` est un objet ggplot. Cet objet (ici appelé pca.plot) peut être personnalisé, et peut ensuite servir de base pour continuer de créer le graphique en ajoutant (+) des couches avec ggplot.
+```{r}
+pca.plot <- ggord(pca.dune, xlims=c(-1,1), ylims=c(-1,1)) # xlims et ylims définissent les limites dans l'affichage des axe (les valeurs entre parenthèses correspondent à l'échelle numérique des axes).
+pca.plot
+```
+On remarque que la fonction`ggord` inclut par défaut la proportion de la variance expliquée par les axes. C'est super!
+
+Par défaut, la fonction `ggord` va mettre en graphique les deux premiers axes de l'ordination. Mais si on s'intéresse à différents axes, on peut spécifier lesquels mettre en graphique.
+```{r}
+pca.plot <- ggord(pca.dune, xlims=c(-1,1), ylims=c(-1,1),
+                  axes=c(1,3)) # Ici, on met en graphique les axes 1 et 3.
 pca.plot
 ```
 
-L'objet créé (ici pca.plot) est un objet ggplot qui peut être modifié par la suite avec les arguments de ggplot.
+On revient aux deux premiers axes. Faisons quelques petits changements.
+```{r}
+pca.plot <- ggord(pca.dune, xlims=c(-0.75,1), ylims=c(-0.75,0.75),
+                  axes=c(1,2),
+                  size=3, # taille des points (sites)
+                  obslab=TRUE, # pour passer de points (par défaut) à texte
+                  arrow=NULL,# enlever les flèches (par défaut) pour les espèces
+                  txt=NULL, # enlever le texte (par défaut) pour les espèces
+                  addpts=sp.scores.df, # Ajouter les points correspondant aux scores des espèces pour mieux choisir quelles espèces mettre en graphique
+                  addsize=3, # taille des points (espèces)
+                  ptslab=TRUE, # changer de points à texte
+                  addcol="forestgreen") # couleur des espèces
+                  #addpch=1,
+                  #labcol="red") #
+pca.plot
+```
+
+Maintenant on veut juste garder les espèces qui ont les plus hauts scores (en valeur absolue) sur les axes 1 et 2.
+Explorons visuellement le graphique et choisissons les espèces à garder.
+
+```{r}
+
+```
+
+
+```{r}
+sp.scores.df.skimmed <- sp.scores.df
+```
+
+
+
+```{r}
+pca.plot <- ggord(pca.dune, xlims=c(-1,1), ylims=c(-1,1),
+                  axes=c(1,2),
+                  size=3, # taille des points (sites)
+                  obslab=TRUE, # pour passer de points (par défaut) à texte
+                  arrow=NULL,# enlever les flèches (par défaut) pour les espèces
+                  txt=NULL, # enlever le texte (par défaut) pour les espèces
+                  addpts=sp.scores.df, # Ajouter les points correspondant aux scores des espèces pour mieux choisir quelles espèces mettre en graphique
+                  addsize=3, # taille des points (espèces)
+                  ptslab=TRUE, # changer de points à texte
+                  addcol="forestgreen") # couleur des espèces
+                  #addpch=1,
+                  #labcol="red") #
+pca.plot
+```
 
 Créer un thème custom pour ggplot (à éditer...)
 ```{r}
