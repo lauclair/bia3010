@@ -850,4 +850,6 @@ pcoa.plot
 ggsave("pcoa.png", path="./figures/")
 ```
 
+AJOUTER % VARIATION DES AXES DE LA PCOA!
+
 - FIN - 
