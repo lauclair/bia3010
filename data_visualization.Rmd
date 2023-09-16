@@ -418,7 +418,7 @@ pca.plot
 
 On revient aux deux premiers axes. Faisons quelques petits changements.
 ```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-0.75,1), ylims=c(-0.75,0.75),
+pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   axes=c(1,2),
                   size=4, # taille des points (sites)
                   obslab=TRUE, # pour passer de points (par défaut) à texte
@@ -446,7 +446,7 @@ sp.scores.skim <- distinct(sp.scores.skim) # on ne garde que les rangées (espè
 ```
 
 ```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-0.75,1), ylims=c(-0.75,0.75),
+pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   axes=c(1,2),
                   size=4, # taille des points (sites)
                   obslab=TRUE, # pour passer de points (par défaut) à texte
@@ -480,7 +480,6 @@ gg_envfit(ord = pca.dune, env = dune.env, perm = 999, pt.size = 2, alpha = 0.05)
 ```{r}
 pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   axes=c(1,2),
-                  #vecs=vect,
                   size=4, # taille des points (sites)
                   obslab=TRUE, # pour passer de points (par défaut) à texte
                   arrow=NULL,# enlever les flèches (par défaut) pour les espèces
@@ -497,7 +496,6 @@ pca.plot +
                aes(x = 0, xend = PC1, y = 0, yend = PC2),
                arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
   geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = species, size = 3), show.legend = FALSE)
-  
 ```
 
 
@@ -518,7 +516,13 @@ pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   ptslab=TRUE, # changer de points à texte
                   addcol="black", # couleur des espèces
                   alpha = 1)
-pca.plot + scale_fill_brewer(palette="Accent")
+pca.plot + scale_fill_brewer(palette="Accent") +
+    coord_fixed() +
+    geom_segment(data = vect,
+               aes(x = 0, xend = PC1, y = 0, yend = PC2),
+               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
+    geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = species, size = 3), show.legend = FALSE)
+
 ```
 
 Au lieu d'afficher le nom des sites, on pourrait vouloir afficher des points ou des symboles différents pour chaque type de groupement.
@@ -536,7 +540,12 @@ pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   ptslab=TRUE, # changer de points à texte
                   addcol="black", # couleur des espèces
                   alpha = 1)
-pca.plot + scale_shape_manual('Groups', values = c(15,16,17,18))# Assurer vous d'avoir le même nombre de valeur que de groupes
+pca.plot + scale_shape_manual('Groups', values = c(15,16,17,18)) +# Assurer vous d'avoir le même nombre de valeur que de groupes  
+  coord_fixed() +
+  geom_segment(data = vect,
+               aes(x = 0, xend = PC1, y = 0, yend = PC2),
+               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
+  geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = species, size = 3), show.legend = FALSE)
 ```
 
 Voici une légende indiquant quels symboles sont associées aux différentes valeurs numériques de la couche `scale_shape_manual` 
@@ -566,7 +575,12 @@ pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   ptslab=TRUE, # changer de points à texte
                   addcol="black", # couleur des espèces
                   alpha = 1)
-pca.plot <- pca.plot + scale_shape_manual('Groups', values = c(15,16,17,18))
+pca.plot <- pca.plot + scale_shape_manual('Groups', values = c(15,16,17,18)) +
+    coord_fixed() + ## need aspect ratio of 1!
+    geom_segment(data = vect,
+               aes(x = 0, xend = PC1, y = 0, yend = PC2),
+               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
+    geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = species, size = 3), show.legend = FALSE)
 pca.plot
 ```
 
@@ -591,6 +605,11 @@ pca.plot + super_theme
 ```
 
 
+```{r}
+pca.plot + super_theme
+ggsave("pca.png", path="./figures/")
+```
+```
 
 
 
