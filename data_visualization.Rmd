@@ -339,9 +339,13 @@ scale_x_discrete(labels=c("I. setosa", "I. versicolor", "I. virginica"))
 
 
 
-# Autres modèles univariés... (Sabrina, à voir si c'est pertinent)
+# GLM
 
 
+Essayons avec un type d'analyse différent, les GLM binomiaux. 
+Nous allons utiliser le jeu de données "survie". Encore une fois, référez-vous à l'atelier sur les modèles GLM pour bien comprendre les analyses, j'y vais plus grossièrement ici.
+
+D'abord, télécharger le jeu de données "survie.csv", puis l'ouvrir dans R:
 
 
 
