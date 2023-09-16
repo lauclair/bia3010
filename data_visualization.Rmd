@@ -719,7 +719,7 @@ ca.plot <-
   expand_limits(x=c(-2,2.5), y=c(-1,3)) +
   geom_point(aes(shape = Management, color = Management), size=3) + # on change de geom_text à geom_point pour les sites
   xlab("CA1 (25.34%)") + ylab("CA2 (18.92%)") +
-  geom_text(data = sp.scores.skim.ca, aes(x = CA1, y = CA2), shape = NULL, label=rownames(sp.scores.skim.ca), color = "black") + # on garde geom_text pour les espèces mais on change de dataframe
+  geom_text_repel(data = sp.scores.skim.ca, aes(x = CA1, y = CA2), label=rownames(sp.scores.skim.ca), color = "black") + # on garde geom_text pour les espèces mais on change de dataframe
   geom_segment(data = vect.ca.env, # ajout des vecteurs envfit
                aes(x = 0, xend = CA1, y = 0, yend = CA2),
                arrow = arrow(length = unit(0.75, "cm")), color = "black") +
@@ -743,7 +743,7 @@ ca.plot <-
   expand_limits(x=c(-2,2.5), y=c(-1,3)) +
   geom_point(aes(shape = Management, color = Management), size=3) +
   xlab("CA1 (25.34%)") + ylab("CA2 (18.92%)") +
-  geom_text(data = sp.scores.skim.ca, aes(x = CA1, y = CA2), shape = NULL, label=rownames(sp.scores.skim.ca), color = "black") +
+  geom_text_repel(data = sp.scores.skim.ca, aes(x = CA1, y = CA2), label=rownames(sp.scores.skim.ca), color = "black") +
   geom_segment(data = vect.ca.env, # ajout des vecteurs envfit
                aes(x = 0, xend = CA1, y = 0, yend = CA2),
                arrow = arrow(length = unit(0.75, "cm")), color = "black") +
@@ -839,7 +839,7 @@ pcoa.plot <-
   expand_limits(x=c(-0.35,0.6), y=c(-0.35,0.35)) +
   geom_point(aes(shape = Management, color = Management), size=3) +
   xlab("PCoA1 (X%)") + ylab("PCoA3 (X%)") +
-  geom_text(data = sp.scores.skim.pcoa, aes(x = X1, y = X3), shape = NULL, label=rownames(sp.scores.skim.pcoa), color = "black") +
+  geom_text_repel(data = sp.scores.skim.pcoa, aes(x = X1, y = X3), label=rownames(sp.scores.skim.pcoa), color = "black") +
   geom_segment(data = vect.pcoa.env, 
                aes(x = 0, xend = Dim1, y = 0, yend = Dim3),
                arrow = arrow(length = unit(0.75, "cm")), color = "black") +
@@ -849,8 +849,10 @@ pcoa.plot <-
   #scale_color_manual('Groups', values = pca.colors) +
   scale_color_brewer(palette="Dark2")
 pcoa.plot
+ggsave("pcoa.png", path="./figures/")
 ```
-```
+
+
 
 
 
