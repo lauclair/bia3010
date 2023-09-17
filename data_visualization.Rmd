@@ -431,6 +431,7 @@ Nous utiliserons comme source de données, la table de prédictions que nous ven
 plot.masse <- ggplot()+
 geom_line(data=predictions.masse, aes(x=x, y=predicted))
 
+plot.masse
 ```
 
 On voit que la valeur maximale de l'axe y est de 1, qui correspondrait à une probabilité de 100%. Il est important d'ajouter notre invervalle de confiance, avec `geom_ribbon`. On utilise à nouveau notre table de prédictions, puisqu'elle contient les intervalles de confiance. Avec `aes(ymin = conf.low, ymax = conf.high)`, on délimite les limites haut et bas de notre ruban. Ces limites correspondent aux valeurs d'intervalle calculées. Avec `alpha = .2`, le ruban est plus translucide: 
@@ -440,6 +441,8 @@ On voit que la valeur maximale de l'axe y est de 1, qui correspondrait à une pr
 plot.masse <- ggplot()+
 geom_line(data = predictions.masse, aes(x=x, y=predicted))+
 geom_ribbon(data = predictions.masse, show.legend = FALSE, aes(x=x, y=predicted, ymin = conf.low, ymax = conf.high), alpha = .2)
+
+plot.masse
 
 ```
 
