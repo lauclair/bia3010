@@ -44,7 +44,7 @@ Pour connaître le nom des colonnes:
 names(iris)
 ```
 
-Pour vérifier la classe de chaque variable dans le *dataset*:
+Pour vérifier la classe de chaque variable dans la table de données:
 ```{r}
 str(iris)
 ```
@@ -108,6 +108,8 @@ Voici quelques aspects à considérer pour présenter vos figures:
 
 + **Titre des axes**: doivent comprendre les variables et leur unité de mesure. 
 
++ **Les données**: les données brutes (non transformées!) doivent être présentées.
+
 + **Barres d'erreurs, intervalles de confiance et/ou de prédiction**: pour un graphe à barres, ajouter les barres d'erreur afin de représenter la variabilité associée aux données. Pour les figures de régression, il est important d'ajouter l'intervalle de confiance ou de prédiction (dans le cas des résultats d'un modèle linéaire généralisé binomial).
 
 + **Légende dans la figure**: une petite légende peut être nécessaire pour distinguer les traitements (couleur, type de ligne, etc.)
@@ -126,14 +128,14 @@ Les données ou les figures qui ne contribuent pas directement à l'histoire pri
 
 <br>
 
-# Coder des graphiques avec ggplot (Sabrina)
+# Coder des graphiques avec ggplot
 
 ## Observer la stucture des données univariées
 ```{r}
 summary(iris)
 ```
 
-# ANOVA (Sabrina)
+# ANOVA
 La fonction de base `plot()` peut être utile pour visualiser rapidement un jeu de données, par exemple avec un histogramme. Par contre, vous verrez que son utilisation peut devenir  limitée lorsqu'il s'agit de réaliser des figures plus complexes ou simplement modifier certains paramètres graphiques. 
 
 C'est pour cela que nous suggérons d'utiliser la fonction `ggplot()`, du package "ggplot2". Cette fonction permet de réaliser des graphiques de façon plus intuitive et permet de les mettre en page plus facilement qu'avec la fonction `plot()`. Elle est aussi mieux documentée, il est donc plus facile de comprendre et utiliser les différents aspects de la fonction. Google est d'ailleurs votre meilleur allié pour la réalisation de vos figures!
