@@ -842,6 +842,11 @@ facet_wrap(~facet, labeller = labeller(facet = c( "57.64" = "58 jours", "59.98" 
 plot.masse.sexe.age2
 ```
 
+Vous pouvez vous pratiquer en complétant la première option!
+
+```{r}
+plot.masse.sexe.age1
+```
 
 
 
