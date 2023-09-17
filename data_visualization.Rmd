@@ -634,7 +634,122 @@ plot.masse.sexe
 
 ```
 
-test
+
+On doit ajouter nos intervalles de confiance:
+
+```{r}
+
+plot.masse.sexe <- ggplot()+
+geom_line(data = predictions.masse.sexe, aes(x=x, y=predicted, color=group), show.legend = TRUE)+
+geom_ribbon(data = predictions.masse.sexe, show.legend = FALSE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = 0.2)
+plot.masse.sexe
+
+
+```
+
+La légende doit aussi être modifiée. `scale_color_manual` traite la couleur du trait formé par `geom_line()`, et `scale_fill_manual`, le remplissage du ruban `geom_ribbon`. 
+En même temps, avec ces mêmes fonctions, on peut spécifier le titre de la légende (on n'écrit pas "Légende"!), le nom des groupes (la variable `sex` est codée 0 / 1, donc on doit ajouter manuellement ces noms). On peut aussi changer les couleurs. 
+
+```{r}
+
+plot.masse.sexe <- ggplot()+
+geom_line(data = predictions.masse.sexe, aes(x=x, y=predicted, color=group), show.legend = TRUE)+
+geom_ribbon(data = predictions.masse.sexe, show.legend = TRUE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = 0.2)+
+scale_color_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
+scale_fill_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))
+
+plot.masse.sexe
+
+```
+
+Il est important que les noms et les `aes()` soient constants pour chaque ligne de notre figure `ggplot()`. Sinon, des légendes supplémentaires sont créées:
+
+```{r}
+
+plot.masse.sexe <- ggplot()+
+geom_line(data = predictions.masse.sexe, aes(x=x, y=predicted, color=group), show.legend = TRUE)+
+geom_ribbon(data = predictions.masse.sexe, show.legend = TRUE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = 0.2)+
+scale_color_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
+scale_fill_manual(name = "Coucou", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))
+
+plot.masse.sexe
+
+```
+
+On peut ajouter les éléments graphiques que nous avions codés pour la figure de notre premier modèle:
+`geom_line(linewidth=1.1)`
+`labs()`
+`theme_bw()`
+`theme()`
+`scale_y_continuous(labels = scales::percent, limits = c(-0.02, 1.02))`
+
+
+```{r}
+
+plot.masse.sexe <- ggplot()+
+geom_line(data = predictions.masse.sexe, aes(x=x, y=predicted, color=group), show.legend = TRUE, linewidth=1.1)+
+geom_ribbon(data = predictions.masse.sexe, show.legend = TRUE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = 0.2)+
+scale_color_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
+scale_fill_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
+labs(	x="Masse (g)", 
+	y="Probabilité de survie",
+	title="Probabilité de survie de (?) en fonction de la masse, pour les individus mâles et femelles")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
+scale_y_continuous(labels = scales::percent, limits = c(-0.02, 1.02))
+plot.masse.sexe
+
+```
+
+Le titre est devenu plus long et pourrait déborder de la figure (cela dépendra des paramètres choisis au moment d'exporter la figure). On peut utiliser `\n` pour indiquer précisément l'endroit où couper notre texte:
+
+
+
+```{r}
+
+plot.masse.sexe <- ggplot()+
+geom_line(data = predictions.masse.sexe, aes(x=x, y=predicted, color=group), show.legend = TRUE, linewidth=1.1)+
+geom_ribbon(data = predictions.masse.sexe, show.legend = TRUE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = 0.2)+
+scale_color_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
+scale_fill_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
+labs(	x="Masse (g)", 
+	y="Probabilité de survie",
+	title="Probabilité de survie de (?) en fonction de la\nmasse, pour les individus mâles et femelles")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
+scale_y_continuous(labels = scales::percent, limits = c(-0.02, 1.02))
+plot.masse.sexe
+
+```
+
+On peut ajouter nos données brutes pour terminer la figure. 
+
+Je dois faire une dernière étape pour afficher correctement les données brutes.
+
+surv$sex<-as.integer(surv$sex)
+surv$sex<-as.factor(surv$sex)
+
+
+```{r}
+
+plot.masse.sexe <- ggplot()+
+geom_line(data = predictions.masse.sexe, aes(x=x, y=predicted, color=group), show.legend = TRUE, linewidth=1.1)+
+scale_color_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
+geom_ribbon(data = predictions.masse.sexe, show.legend = TRUE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = 0.2)+
+scale_fill_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
+geom_point(data=surv, aes(x=masse, y=survie, col=sex), alpha = .4, position = position_jitter(0.1, height = 0.01))+
+labs(	x="Masse (g)", 
+	y="Probabilité de survie",
+	title="Probabilité de survie de (?) en fonction de la\nmasse, pour les individus mâles et femelles")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
+scale_y_continuous(labels = scales::percent, limits = c(-0.02, 1.02))+
+scale_x_continuous(breaks = seq(96, 106, by = 2))
+plot.masse.sexe
+
+
+
+```
 
 # Ordinations
 
