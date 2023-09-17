@@ -592,7 +592,7 @@ Remarquez dans le récapitulatif: *Adjusted for: sex = 0.50*
 Rappelez-vous comment est construit un modèle GLM:
 ![](fct_lien_glm.png)
 
-Les différents termes (paramètres)*(la valeur de x) sont additionnés pour obtenir la variable réponse. 
+Les différents termes (paramètres β)*(la valeur de x) sont additionnés pour obtenir la variable réponse. 
 
 Donc, quand on lui demande de calculer la probabilité de survie en fonction de la masse, la fonction `ggpredit()` utilise par défaut la valeur moyenne de l'autre variable. Il set donc la valeur de `sexe` à 0,5. On obtient comme figure: 
 
