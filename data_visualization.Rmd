@@ -726,9 +726,13 @@ On peut ajouter nos données brutes pour terminer la figure.
 
 Je dois faire une dernière étape pour afficher correctement les données brutes.
 
-surv$sex<-as.integer(surv$sex)
+```{r}
 surv$sex<-as.factor(surv$sex)
+```
 
+Sinon, il traite `sex` comme étant une variable continue (ce qu'elle est), et on ne peut pas appliquer les paramètres graphiques correctement!
+
+(Idéalement, faire cela avant l'analyse...!)
 
 ```{r}
 
@@ -750,6 +754,97 @@ plot.masse.sexe
 
 
 ```
+
+
+
+
+Si on avait une troisième variable dans notre modèle, par exemple l'âge:
+
+```{r}
+head(surv)
+```
+
+On peut l'ajouter à notre modèle:
+
+```{r}
+modele.masse.sexe.age <- with(surv, glm(survie ~ masse + sex + age, family = binomial))
+
+summary(modele.masse.sexe.age)
+
+```
+
+Ok, cette variable n'est pas significative non plus. Mais encore une fois, essayons de la visualiser **pour l'exercice**.
+
+
+On débute avec le calcul des prédictions, en ajoutant la variable `age`:
+
+```{r}
+predictions.masse.sexe.age<-ggpredict(modele.masse.sexe.age, c("masse","sex","age"))
+
+predictions.masse.sexe.age
+```
+
+Nous obtenons 6 tables de prédictions. Puisque `age` est une variable continue, `ggpredict` nous a choisi 3 valeurs de `age` représentatives de la distribution et a calculé un y prédit pour chacunes de ces valeurs et pour les 2 niveaux de `sex`. 
+
+Ici nous avons deux options. Puisque nous avons une troisième variable indépendante à représenter, on peut lui assigner un `aes()`, par exemple `linetype`. 
+
+Nous avons donc, dans nos tables de prédiction:
+
+`masse` = `x` = `x`
+`survie` = `y` = `predicted`
+`sex` = `color` = `group`
+
+Dans la table de prédiction, bien que ce ne soit pas affiché, la troisième variable indépendante est appelée `facet`, comme on peut remarquer dans
+
+```{r}
+str(predictions.masse.sexe.age)
+```
+
+Dans ce cas, on ajoute l'`aes()` `linetype` à `geom_line` assigné à `facet`:
+
+```{r}
+plot.masse.sexe.age1 <- ggplot()+
+geom_line(data = predictions.masse.sexe.age, aes(x=x, y=predicted, color=group, linetype=facet), show.legend = TRUE, linewidth=1.1)
+plot.masse.sexe.age1
+```
+
+On peut voir dans la légende les 3 valeurs de `age` qui ont été utilisées pour le calcul.
+
+La deuxième option serait d'utiliser des facettes. Ceci crée des graphiques côte à côte avec différents niveaux d'une variable choisie. Dans ce cas, j'enlève l'`aes()` qu'on vient d'ajouter, et j'ajoute la fonction `facet_wrap(~facet)`, qui crée 3 facettes avec notre "variable" `facet`:
+
+```{r}
+
+plot.masse.sexe.age2 <- ggplot()+
+geom_line(data = predictions.masse.sexe.age, aes(x=x, y=predicted, color=group), show.legend = TRUE, linewidth=1.1)+
+facet_wrap(~facet)
+plot.masse.sexe.age2
+
+```
+
+On peut terminer ce graphique, avec le même code que les précédents. J'ajoute `labeller` dans `facet_wrap` pour changer le titre des étiquettes. J'ai arrondi l'âge pour les étiquettes.
+
+```{r}
+
+plot.masse.sexe.age2 <- ggplot()+
+geom_line(data = predictions.masse.sexe.age, aes(x=x, y=predicted, color=group), show.legend = TRUE, linewidth=1.1)+
+scale_color_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
+geom_ribbon(data = predictions.masse.sexe, show.legend = TRUE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = 0.2)+
+scale_fill_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
+geom_point(data=surv, aes(x=masse, y=survie, col=sex), alpha = .4, position = position_jitter(0.1, height = 0.01))+
+labs(	x="Masse (g)", 
+	y="Probabilité de survie",
+	title="Probabilité de survie de (?) en fonction de la\nmasse et de l'âge, pour les individus mâles et femelles")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
+scale_y_continuous(labels = scales::percent, limits = c(-0.02, 1.02))+
+scale_x_continuous(breaks = seq(96, 106, by = 2))+
+facet_wrap(~facet, labeller = labeller(facet = c( "57.64" = "58 jours", "59.98" = "60 jours",  "62.32" = "62 jours"))) 
+plot.masse.sexe.age2
+```
+
+
+
+
 
 # Ordinations
 
