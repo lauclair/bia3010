@@ -192,7 +192,7 @@ geom_boxplot()
 ```
 
 
-Pour ajouter/modifier d'autres éléments, il faut ajouter des couches. Ainsi, on peut changer les titres d'axes (labs pour labels), changer le thème de notre graphique (`theme_bw` est plus minimaliste), retirer la grille et centrer le titre:
+Pour ajouter/modifier d'autres éléments, il faut ajouter des couches. Ainsi, on peut changer les titres d'axes (labs pour labels), changer le thème de notre graphique (`theme_bw` est plus minimaliste), et avec la fonction `theme()`, retirer la grille et centrer le titre:
 
 ```{r}
 ggplot(iris, aes(x=Species, y=Sepal.Width)) +
@@ -201,7 +201,7 @@ labs(	x="Espèce",
 	y="Largeur des sépales (cm)",
 	title="Largeur des sépales chez les espèces d'iris")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))
 ```
 
 
@@ -214,7 +214,7 @@ labs(	x="Espèce",
 	y="Largeur des sépales (mm)",
 	title="Largeur des sépales chez les espèces d'iris")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5)) 
 ```
 
 On a donc changé le `fill` (intérieur) et `color` (trait) de nos boxplot, à même la fonction `boxplot()`.
@@ -229,7 +229,7 @@ labs(	x="Espèce",
 	y="Largeur des sépales (mm)",
 	title="Largeur des sépales chez les espèces d'iris")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5)) 
 
 #Color:
 ggplot(iris, aes(x=Species, y=Sepal.Width)) +
@@ -238,7 +238,7 @@ labs(	x="Espèce",
 	y="Largeur des sépales (mm)",
 	title="Largeur des sépales chez les espèces d'iris")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) 
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5)) 
 ```
 
 
@@ -252,7 +252,7 @@ labs(	x="Espèce",
 	y="Largeur des sépales (mm)",
 	title="Largeur des sépales chez les espèces d'iris")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))
 
 #Qu'est-ce qui arrive si on change Fill pour Color, dans boxplot()? Il faut aussi changer scale_fill_brewer() pour scale_color_brewer():
 
@@ -263,7 +263,7 @@ labs(	x="Espèce",
 	y="Largeur des sépales (mm)",
 	title="Largeur des sépales chez les espèces d'iris")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))
 ```
 
 Puisque `ggplot()` fonctionne par couche, on peut aussi choisir d'ajouter les données brutes à notre figure. Par exemple, on ajoute avant `geom_boxplot()` une autre couche de données avec `geom_point()`, dans lequel on peut spécifier, encore une fois, l'argument `aes()` pour assigner la variable qui sera colorée. L'argument position définit le niveau de "jitter", c'est-à-dire des points un peu "éparpillés" sur l'axe x. Ensuite, on pourrait ajouter l'argument `alpha=0.5` dans la fonction `boxplot()`, pour les rendre semi-transparents:
