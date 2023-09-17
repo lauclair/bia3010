@@ -577,7 +577,7 @@ summary(modele.masse.sexe)
 
 Il ne semble pas avoir d'effet significatif du sexe sur la probabilité de survie. 
 
-**Mais, pour l'exercice, faison comme si l'effet était significatif et qu'on voulait l'illustrer dans une figure!**
+**Mais, pour l'exercice, faisons comme si l'effet était significatif et qu'on voulait l'illustrer dans une figure!**
 
 
 
