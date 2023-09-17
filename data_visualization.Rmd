@@ -351,7 +351,7 @@ Nous aurons besoin de:
 library(ggeffects)
 ```
 
-D'abord, télécharger le jeu de données "survie.csv", puis l'ouvrir dans R:
+D'abord, télécharger le jeu de données "survie.csv", puis l'ouvrir dans R (*le jeu provient du cours BIO8092).
 
 ```{r}
 surv <- read.delim2('survie.csv', header = TRUE, sep = ';', dec = '.')
@@ -360,7 +360,7 @@ head(surv)
 
 
 
-On a donc des données de masse, d'âge et de sexe (sous forme 0/1, mâle=1 et femelle=0), ainsi que ce qui sera notre variable réponse, la survie. Celle-ci est aussi notée 0/1, car évidemment, c'est une variable binaire. Puisque celle-ci ne suit pas une loi normale, nous devons utiliser un GLM.
+On a donc des données de masse, d'âge et de sexe (sous forme 0/1, mâle=1 et femelle=0), ainsi que ce qui sera notre variable réponse, la survie d'une bibitte quelconque. Celle-ci est aussi notée 0/1, car évidemment, c'est une variable binaire. Puisque celle-ci ne suit pas une loi normale, nous devons utiliser un GLM.
 
 Prenez bien le temps de comprendre comment fonctionne la régression logistique. L'interprétation des coefficients n'est pas aussi directe ou intuitive que pour la régression linéaire. Comme vous vous souvenez sûrement, les paramètres sont dans une échelle différente que l'échelle de la "réalité": la pente nous donne plutôt le changement dans le logit de la probabilité, pour un changement d'une unité de la variable explicative.  
 
@@ -577,7 +577,7 @@ summary(modele.masse.sexe)
 
 Il ne semble pas avoir d'effet significatif du sexe sur la probabilité de survie. 
 
-** Mais, pour l'exercice, faison comme si l'effet était significatif et qu'on voulait l'illustrer dans une figure! **
+**Mais, pour l'exercice, faison comme si l'effet était significatif et qu'on voulait l'illustrer dans une figure!**
 
 
 
