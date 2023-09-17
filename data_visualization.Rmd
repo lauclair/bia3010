@@ -448,7 +448,137 @@ plot.masse
 
 C'est bien, mais notre figure est pas mal tout nue!
 
-On peut ajouter notre thème `theme_bw()`, et identifier nos axes:
+On peut identifier nos axes + titre, ajouter le `theme_bw()`, enlever la grille + centrer le titre:
+
+```{r}
+
+plot.masse <- ggplot()+
+geom_line(data = predictions.masse, aes(x=x, y=predicted))+
+geom_ribbon(data = predictions.masse, show.legend = FALSE, aes(x=x, y=predicted, ymin = conf.low, ymax = conf.high), alpha = .2)+
+labs(	x="Masse (g)", 
+	y="Probabilité de survie",
+	title="Probabilité de survie de (?) en fonction de la masse")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))
+plot.masse
+
+```
+
+Les valeurs de notre axe y sont de 0 à 1. On peut transformer notre axe pour qu'il soit exprimé en % sur 100, avec `scale_y_continuous`. De plus, `ggplot()` a choisi de commencer notre axe un peu en haut de zéro (même si c'est moins évident sur cette figure - retournez voir celle sans le ruban) car il optimise l'espace que prend nos données sur le graphique. Il serait plus juste de commencer notre axe à zéro. J'ajoute l'argument `limits = c(0, 1)` dans `scale_y_continuous`.
+
+```{r}
+
+plot.masse <- ggplot()+
+geom_line(data = predictions.masse, aes(x=x, y=predicted))+
+geom_ribbon(data = predictions.masse, show.legend = FALSE, aes(x=x, y=predicted, ymin = conf.low, ymax = conf.high), alpha = .2)+
+labs(	x="Masse (g)", 
+	y="Probabilité de survie",
+	title="Probabilité de survie de (?) en fonction de la masse")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
+scale_y_continuous(labels = scales::percent, limits = c(0, 1))
+plot.masse
+
+```
+
+
+Si on voulait avoir moins de ticks sur l'axe des y (peut rendre la figure plus facilement lisible si elle est en petit format), on peut ajouter `breaks = seq(0, 1, by = 0.5)` dans `scale_y_continuous`, pour que les ticks soient à intervalle de 0.5:
+
+```{r}
+
+plot.masse <- ggplot()+
+geom_line(data = predictions.masse, aes(x=x, y=predicted))+
+geom_ribbon(data = predictions.masse, show.legend = FALSE, aes(x=x, y=predicted, ymin = conf.low, ymax = conf.high), alpha = .2)+
+labs(	x="Masse (g)", 
+	y="Probabilité de survie",
+	title="Probabilité de survie de (?) en fonction de la masse")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
+scale_y_continuous(labels = scales::percent, limits = c(0, 1), breaks = seq(0, 1, by = 0.5))
+plot.masse
+
+```
+
+Terminons la figure avec une jolie couleur, tiens:
+Dans `geom_line()`, j'ajoute `color=group` à l'argument `aes()`. On indique ainsi que le paramètre graphique de la couleur du trait sera associée aux "groupes". Pour l'instant, on n'a qu'un seul groupe, donc ça peut sembler abstrait. Par contre, c'est ce qui nous permet, avec `scale_color_manual()`, de changer la couleur de notre ligne. 
+
+Même chose pour le ruban: dans `geom_ribbon()`, j'ajoute `fill=group` à l'argument `aes()`, pour assigner le remplissage du ruban aux "groupes".
+
+
+```{r}
+
+plot.masse <- ggplot()+
+geom_line(data = predictions.masse, aes(x=x, y=predicted, color=group), show.legend = FALSE)+
+scale_color_manual(values=c("#7CAC36"))+
+geom_ribbon(data = predictions.masse, show.legend = FALSE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = .2)+
+scale_fill_manual(values=c("#D28D32"))+
+labs(	x="Masse (g)", 
+	y="Probabilité de survie",
+	title="Probabilité de survie de (?) en fonction de la masse")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
+scale_y_continuous(labels = scales::percent, limits = c(0, 1), breaks = seq(0, 1, by = 0.5))
+plot.masse
+
+```
+
+Remarquez que j'utilise `color` pour la ligne, et `fill` pour le ruban, comme nous avions abordé plus tôt avec les points dans l'ANOVA. En effet, on ne peut pas "fill" une ligne; en revanche, on peut "color" un ruban... Mais c'est sa bordure qui sera colorée:
+
+```{r}
+
+plot.masse<-ggplot()+
+geom_line(data = predictions.masse, aes(x=x, y=predicted, color=group), show.legend = FALSE)+
+scale_color_manual(values=c("#D28D32"))+
+geom_ribbon(data = predictions.masse, show.legend = FALSE, aes(x=x, y=predicted, color=group, ymin = conf.low, ymax = conf.high), alpha = .2)+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))
+plot.masse
+
+```
+
+On pourrait aussi ajouter une couche de données contenant les données brutes, avec `geom_point`. Toutefois, on souhaite afficher les données brutes issues de `surv`, et non les résultats de notre modèle `predictions.masse`. Donc comme avec notre ANOVA, on assigne nos `aes()` dans `geom_point(data=surv, aes(x=masse, y=survie))`. J'utilise `position = position_jitter()`, car cela permet de mieux voir les points qui sont collés tous à la même valeur, soit 0 et 1 (aussi, détail, mais pour cette figure, je dois aussi ajouter `height = 0.01` pour réduire le niveau de jitter appliqué en y, sinon le jitter s'énerve un peu trop et remplit tout l'espace - je crois que c'est lié au fait que notre variable n'a que deux valeurs...). De plus, vu que ça fait "déborder" les points un peu en dessous de 0 et un peu au dessus de 1, j'élargis les limites de l'axe y avec `limits = c(-0.02, 1.02))` dans `scale_y_continuous()`.
+
+On termine en changeant la couleur des points et en augmentant la taille du trait avec `linewidth=1.1` dans `geom_line`.
+
+```{r}
+
+
+plot.masse <- ggplot()+
+geom_line(data = predictions.masse, aes(x=x, y=predicted, color=group), show.legend = FALSE, linewidth=1.1)+
+scale_color_manual(values=c("#D28D32"))+
+geom_ribbon(data = predictions.masse, show.legend = FALSE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = .2)+
+scale_fill_manual(values=c("#D28D32"))+
+geom_point(data=surv, aes(x=masse, y=survie), alpha = .4, color = "cornsilk4", position = position_jitter(0.1, height = 0.01))+
+labs(	x="Masse (g)", 
+	y="Probabilité de survie",
+	title="Probabilité de survie de (?) en fonction de la masse")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
+scale_y_continuous(labels = scales::percent, limits = c(-0.02, 1.02))
+plot.masse
+
+
+
+```
+
+
+Dans le jeu de données, on retrouve aussi la variable `sexe`:
+
+```{r}
+head(surv)
+```
+
+On pourrait donc faire un deuxième modèle qui inclut l'effet du sexe de la bibitte dans sa probabilité de survie. 
+
+```{r}
+modele.masse.sexe <- with(surv, glm(survie ~ masse + sex, family = binomial))
+summary(modele.masse.sexe)
+```
+
+Il ne semble pas avoir d'effet significatif du sexe sur la probabilité de survie. 
+
+** Mais, pour l'exercice, faison comme si l'effet était significatif et qu'on voulait l'illustrer dans une figure! **
+
 
 
 
