@@ -100,17 +100,19 @@ hist(iris$Sepal.Width)
 
 # Conseils pour des figures et tableaux réussis
 
-Les figures sont des représentations visuelles des résultats. Elles rendent la lectures des résultats principaux plus facile et permettent de mettre en évidence des tendances ou motifs intéressants. On veut pouvoir la comprendre sans avoir à osciller entre la figure et le texte. Elles doivent contenir:
+Les figures sont des représentations visuelles des résultats. Elles rendent la lectures des résultats principaux plus facile et permettent de mettre en évidence des tendances ou motifs intéressants. On veut pouvoir la comprendre sans avoir à osciller entre la figure et le texte. Chaque figure devrait correspondre à un message général de votre étude. Chacune devrait répondre en totalité ou en partie à un  objectif.
 
-+ **Un titre descriptif**: les variables mesurées, les unités de mesure, le nom commun et en latin du taxon (si nécessaire). Le titre doit fournir assez d'information pour qu'on comprenne le contexte de la figure sans devoir se référer au texte.
+Voici quelques aspects à considérer pour présenter vos figures:
 
-+ **Titre des axes**: doivent comprendre la variable et son unité de mesure
++ **Un titre descriptif**: doit contenir les variables mesurées, les unités de mesure, le nom commun et en latin du taxon (si applicable). Le titre doit fournir assez d'information pour qu'on comprenne le contexte de la figure sans devoir se référer au texte.
 
-+ **Barres d'erreurs**: les inclure pour indiquer l'écart-type autour de la moyenne
++ **Titre des axes**: doivent comprendre les variables et leur unité de mesure. 
 
-+ **Légende**: une petite légende peut être nécessaire pour distinguer les traitements (couleur, type de ligne, etc.)
++ **Barres d'erreurs, intervalles de confiance et/ou de prédiction**: pour un graphe à barres, ajouter les barres d'erreur afin de représenter la variabilité associée aux données. Pour les figures de régression, il est important d'ajouter l'intervalle de confiance ou de prédiction (dans le cas des résultats d'un modèle linéaire généralisé binomial).
 
-+ **Indice de significativité**: la valeur p d'une relation, des astérisques au-dessus de graphes à barres pour indiquer si la relation est significative, etc.
++ **Légende dans la figure**: une petite légende peut être nécessaire pour distinguer les traitements (couleur, type de ligne, etc.)
+
++ **Indice de significativité**: on doit retrouver la valeur p d'une relation, des astérisques au-dessus de graphes à barres pour indiquer si la relation est significative, le R2 d'un modèle.
 
 Les tableaux sont un bon choix pour présenter de l'information numérique détaillée. Ils présentent habituellement des résultats plus complexes qui seraient trop encombrants à inclure dans une figure ou dans le texte. Généralement, si les données ne peuvent être présentées en une ou deux phrases, un tableau est nécessaire. Les lignes et les colonnes doivent contenir le nom de la variable ainsi que l'unité de mesure. Un tableau résumé des statistiques peut inclure, par exemple, la moyenne, l'écart-type, les intervalles de confiances, les degrés de liberté, la valeur p et autres statistiques (comme la *F value*).
 
