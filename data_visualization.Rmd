@@ -579,6 +579,56 @@ Il ne semble pas avoir d'effet significatif du sexe sur la probabilité de survi
 
 **Mais, pour l'exercice, faisons comme si l'effet était significatif et qu'on voulait l'illustrer dans une figure!**
 
+On calcule d'abord nos valeurs prédites de survie:
+
+```{r}
+predictions.masse.sexe.test<-ggpredict(modele.masse.sexe, c("masse"))
+
+predictions.masse.sexe.test
+```
+
+Remarquez dans le récapitulatif: *Adjusted for: sex = 0.50*
+
+Rappelez-vous comment est construit un modèle GLM:
+![](fct_lien_glm.png)
+
+Les différents termes (paramètres)*(la valeur de x) sont additionnés pour obtenir la variable réponse. 
+
+Donc, quand on lui demande de calculer la probabilité de survie en fonction de la masse, la fonction `ggpredit()` utilise par défaut la valeur moyenne de l'autre variable. Il set donc la valeur de `sexe` à 0,5. On obtient comme figure: 
+
+```{r}
+
+plot.masse.sexe.test <- ggplot()+
+geom_line(data = predictions.masse.sexe.test, aes(x=x, y=predicted, color=group), show.legend = FALSE, linewidth=1.1)+
+labs(title="Probabilité de survie ajustée pour sexe = 0.5")+
+theme(plot.title = element_text(hjust = 0.5))
+plot.masse.sexe.test
+
+```
+
+Dans notre cas, par contre, il serait plus intéressant de pouvour visualiser cette différence.
+
+Pour cela, il faut inclure la variable `sexe` dans la fonction `ggpredict`:
+
+```{r}
+
+predictions.masse.sexe<-ggpredict(modele.masse.sexe, c("masse","sex"))
+
+predictions.masse.sexe
+
+```
+
+Cette fois-ci, nous obtenons deux tables de valeurs prédites - une pour `sex = 0` (femelles) et une pour `sex = 1` (mâles). 
+
+Dans le précédent modèle, nous avions défini l'`aes(color=group)`, pour colorer notre ligne. La notion de groupe était plus abstraite, car il n'y avait en réalité qu'un seul groupe. Par contre, ici, dans `plot.masse.sexe`, nous en avons deux - les femelles et les mâles. Donc, quand on assigne `color` aux `group`, nous colorons les deux groupes de couleurs différentes:
+
+```{r}
+
+plot.masse.sexe <- ggplot()+
+geom_line(data = predictions.masse.sexe2, aes(x=x, y=predicted, color=group), show.legend = TRUE, linewidth=1.1)
+plot.masse.sexe
+
+```
 
 
 
