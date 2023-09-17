@@ -625,7 +625,7 @@ Dans le précédent modèle, nous avions défini l'`aes(color=group)`, pour colo
 ```{r}
 
 plot.masse.sexe <- ggplot()+
-geom_line(data = predictions.masse.sexe2, aes(x=x, y=predicted, color=group), show.legend = TRUE, linewidth=1.1)
+geom_line(data = predictions.masse.sexe, aes(x=x, y=predicted, color=group), show.legend = TRUE, linewidth=1.1)
 plot.masse.sexe
 
 ```
