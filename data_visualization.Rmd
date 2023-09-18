@@ -339,7 +339,7 @@ annotate("text", x = 3, y = 4.5, label = "ANOVA, F(2)=49.16, p<0.001")+
 scale_x_discrete(labels=c("I. setosa", "I. versicolor", "I. virginica"))
 ```
 
-# Régression linéaire (Sabrina)
+# Régression linéaire
 
 
 
