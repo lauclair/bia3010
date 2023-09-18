@@ -961,7 +961,7 @@ predictions.masse.sexe.age <- ggpredict(modele.masse.sexe.age, c("masse","sex","
 predictions.masse.sexe.age
 ```
 
-Nous obtenons 6 tables de prédictions. Puisque `age` est une variable continue, `ggpredict` nous a choisi 3 valeurs de `age` représentatives de la distribution et a calculé un y prédit pour chacunes de ces valeurs et pour les 2 niveaux de `sex`. 
+Nous obtenons 6 tables de prédictions. Puisque `age` est une variable continue, `ggpredict` nous a choisi 3 valeurs de `age` représentatives de la distribution et a calculé un `y` prédit pour chacunes de ces valeurs et pour les 2 niveaux de `sex`. 
 
 Ici nous avons deux options. Puisque nous avons une troisième variable indépendante à représenter, on peut lui assigner un `aes()`, par exemple `linetype`. 
 
