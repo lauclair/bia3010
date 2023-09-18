@@ -968,7 +968,9 @@ Ici nous avons deux options. Puisque nous avons une troisième variable indépen
 Nous avons donc, dans nos tables de prédiction:
 
 `masse` = `x` = `x`
+
 `survie` = `y` = `predicted`
+
 `sex` = `color` = `group`
 
 Dans la table de prédiction, bien que ce ne soit pas affiché, la troisième variable indépendante est appelée `facet`, comme on peut remarquer dans
