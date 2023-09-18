@@ -132,7 +132,7 @@ Les données ou les figures qui ne contribuent pas directement à l'histoire pri
 
 Avant de commencer, identifiez vos variables dépendantes et indépendantes. Puis, déterminez quels sont les types de ces variables avec lesquelles vous allez travailler.
 
-Sont-elles **catégoriques** (et **Nominales** ou **ordinales**), ou bien **numériques** (et **continues** ou **discrètes**)?
+Sont-elles **catégoriques** (et **nominales** ou **ordinales**), ou bien **numériques** (et **continues** ou **discrètes**)?
 
 C'est ce qui déterminera le choix de type de figure pour représenter vos données - un histogramme, un scatterplot, un boxplot, un barplot ? Autre?
 
@@ -141,10 +141,6 @@ Consultez ce lien pour mieux comprendre:
 https://statisticsbyjim.com/basics/data-types/
 
 <br>
-
-```{r}
-summary(iris)
-```
 
 # ANOVA
 La fonction de base `plot()` permet de visualiser rapidement un jeu de données, par exemple avec un histogramme. Par contre, vous verrez que son utilisation peut devenir limitée lorsqu'il s'agit de réaliser des figures plus complexes ou simplement modifier certains paramètres graphiques. 
