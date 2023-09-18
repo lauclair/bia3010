@@ -1414,7 +1414,7 @@ pca.plot +
   geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = variable.env, size = 3), show.legend = FALSE)
 ```
 
-Maintenant, on va ajouter des ellipses autour des sites appartenant à des groupes similaires. La fonction `ggord`est à même de calculer ces ellipses avec intervalle de confiance spécifiée. On va aussi revenir à des symboles au lieu du nom des sites et changer la couleur du texte des espèces. 
+Maintenant, on va ajouter des ellipses autour des sites appartenant à des groupes similaires. La fonction `ggord` est à même de calculer ces ellipses avec intervalle de confiance spécifiée. On va aussi revenir à des symboles au lieu du nom des sites et changer la couleur du texte des espèces. 
 ```{r}
 pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   axes=c(1,2),
@@ -1530,8 +1530,8 @@ summary(ca.dune)
 
 Extraction de la proportion de la variance expliquée par les deux premiers axes (pour s'y référer plus rapidement).
 ```{r}
-prop.expl.ca1 <- ca.summary$cont$importance[2, "CA1"]
-prop.expl.ca2 <- ca.summary$cont$importance[2, "CA2"]
+(prop.expl.ca1 <- ca.summary$cont$importance[2, "CA1"])
+(prop.expl.ca2 <- ca.summary$cont$importance[2, "CA2"])
 ```
 
 envfit
@@ -1543,6 +1543,7 @@ Pour incorporer les vecteurs résultant de ce test, il faut d'abord les extraire
 ```{r}
 vect.ca.env <- data.frame(ca.envfit[["vectors"]][["arrows"]])
 vect.ca.env$variable.env<-rownames(vect.ca.env)
+vect.ca.env
 ```
 
 PERMANOVA. On va tester si la composition végétale diffère entre différents type d'aménagement (facteur; variable quantitative) des sites.
@@ -1554,16 +1555,16 @@ permanova.dune.ca <- adonis2(dune.dist.chi2 ~ Management, data = dune.env)
 permanova.dune.ca
 ```
 
-Ici, le résultat du test de dispersion indique que la différence dans la composition végétale entre les types d'aménagement qui est "perçue" par la PERMANOVA pourrait être du à la différence dans la variance interne en composition des groupes.
+Ici, le résultat du test de dispersion indique que la différence dans la composition végétale entre les types d'aménagement qui est calculée par la PERMANOVA pourrait être du à la différence dans la variance interne en composition des groupes (les groupes ont une dispersion hétérogène).
 
-Extraire les scores de CA avec la fonction `scores`. Pour spécifier à ggplot quels sont les "points" à mettre en graphique.
+Extraire les scores de CA avec la fonction `scores`. Pour spécifier à ggplot quels sont les "points" ou le "texte" à mettre en graphique.
 ```{r}
 site.scores.dune.ca <- scores(ca.dune, display="sites", choices=c(1,2)) # ici on garde que les scores des axes 1 et 2 mais on aurait pu extraire tous les scores aussi.
 site.scores.dune.ca <- data.frame(site.scores.dune.ca)
 Management <- dune.env$Management
-site.scores.ca <- cbind(site.scores.dune.ca, Management)
+(site.scores.ca <- cbind(site.scores.dune.ca, Management)) # incorporer variable Management dans les scores (pour aider plus loin dans ggplot à changer l'aspect visuel des points des sites en fonction de leur Management)
 sp.scores.dune.ca <- scores(ca.dune, display="species", choices=c(1,2)) # idem scores axes 1 et 2 seulement
-sp.scores.dune.ca <- data.frame(sp.scores.dune.ca)
+(sp.scores.dune.ca <- data.frame(sp.scores.dune.ca))
 ```
 
 Comme on a fait acvec les scores des espèces de la PCA, on ne garde que les plus hautes valeurs absolues.
@@ -1573,7 +1574,7 @@ B.ca <- top_n(sp.scores.dune.ca, -3, CA1)
 C.ca <- top_n(sp.scores.dune.ca, 3, CA2)
 D.ca <- top_n(sp.scores.dune.ca, -3, CA2)
 sp.scores.skim.ca <- bind_rows(A.ca,B.ca,C.ca,D.ca)
-sp.scores.skim.ca <- distinct(sp.scores.skim.ca)
+(sp.scores.skim.ca <- distinct(sp.scores.skim.ca))
 ```
 
 Graphique simple avec les fonctions `plot` et `ordiplot`.
@@ -1618,7 +1619,7 @@ ca.plot <-
   geom_point(aes(shape = Management, color = Management), size=3) + # on change de geom_text à geom_point pour les sites
   xlab("CA1 (25.34%)") + ylab("CA2 (18.92%)") +
   geom_text_repel(data = sp.scores.skim.ca, aes(x = CA1, y = CA2), label=rownames(sp.scores.skim.ca), color = "black") + # on garde geom_text pour les espèces mais on change de dataframe
-  geom_segment(data = vect.ca.env, # ajout des vecteurs envfit
+  geom_segment(data = vect.ca.env,
                aes(x = 0, xend = CA1, y = 0, yend = CA2),
                arrow = arrow(length = unit(0.75, "cm")), color = "black") +
   geom_text_repel(data = vect.ca.env, aes(x = CA1, y = CA2, label = variable.env, size = 3), color = "firebrick1", fontface = "bold", show.legend = FALSE) +
@@ -1632,6 +1633,7 @@ library(ggordiplots)
 ca.ggordiplot <- gg_ordiplot(ca.dune, groups = dune.env$Management, kind = "sd", conf = 0.95, pt.size = 3) # on spécifie l'intervalle de confiance des ellipses
 names(ca.ggordiplot)
 ca.ellipses <- ca.ggordiplot$df_ellipse # extraction des valeurs des ellipses
+head(ca.ellipses)
 ```
 
 On prend les valeurs des ellipses qu'on vient d'extraire pour mettre en graphique dans ggplot ces ellipses. Om change aussi les couleurs de nos groupes.
@@ -1642,7 +1644,7 @@ ca.plot <-
   geom_point(aes(shape = Management, color = Management), size=3) +
   xlab("CA1 (25.34%)") + ylab("CA2 (18.92%)") +
   geom_text_repel(data = sp.scores.skim.ca, aes(x = CA1, y = CA2), label=rownames(sp.scores.skim.ca), color = "black") +
-  geom_segment(data = vect.ca.env, # ajout des vecteurs envfit
+  geom_segment(data = vect.ca.env,
                aes(x = 0, xend = CA1, y = 0, yend = CA2),
                arrow = arrow(length = unit(0.75, "cm")), color = "black") +
   geom_text_repel(data = vect.ca.env, aes(x = CA1, y = CA2, label = variable.env, size = 3), color = "firebrick1", fontface = "bold", show.legend = FALSE) +
@@ -1709,7 +1711,7 @@ B.pcoa <- top_n(sp.scores.pcoa, -3, X1)
 C.pcoa<- top_n(sp.scores.pcoa, 3, X3)
 D.pcoa <- top_n(sp.scores.pcoa, -3, X3)
 sp.scores.skim.pcoa <- bind_rows(A.pcoa,B.pcoa,C.pcoa,D.pcoa)
-sp.scores.skim.pcoa <- distinct(sp.scores.skim.pcoa)
+(sp.scores.skim.pcoa <- distinct(sp.scores.skim.pcoa))
 ```
 
 envfit SUR LES AXES 1 ET 3 (on n'oublie pas!)
@@ -1721,6 +1723,7 @@ Pour incorporer les vecteurs résultant de ce test, il faut d'abord les extraire
 ```{r}
 vect.pcoa.env <- data.frame(pcoa.envfit[["vectors"]][["arrows"]])
 vect.pcoa.env$variable.env <- rownames(vect.pcoa.env)
+vect
 ```
 
 PERMANOVA. On va tester si la composition végétale diffère entre différents type d'aménagement (facteur; variable quantitative) des sites.
@@ -1754,11 +1757,10 @@ pcoa.plot <-
   geom_text_repel(data = vect.pcoa.env, aes(x = Dim1, y = Dim3, label = variable.env, size = 3), color = "firebrick1", fontface = "bold", show.legend = FALSE) +
   scale_shape_manual(values = c(15,16,17,18)) +
   geom_path(data = pcoa.ellipses, aes(x = x, y = y, color = Group), show.legend = FALSE) + 
-  scale_color_brewer(palette="Dark2")
+  scale_color_brewer(palette="Dark2") +
+  super_theme
 pcoa.plot
 ggsave("pcoa.png", path="./figures/")
 ```
-
-AJOUTER % VARIATION DES AXES DE LA PCOA!
 
 - FIN - 
