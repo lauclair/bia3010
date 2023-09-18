@@ -1291,9 +1291,9 @@ On va créer un graphique pour présenter la PCA avec les différents types d'am
 Extraire les scores des sites et des espèces, à partir de l'objet créer par `prcomp`. Cela va nous permettre de mettre éventuellement seulement les espèces désirées sur le graphique.
 ```{r}
 site.scores<-pca.dune$x 
-site.scores.df <- data.frame(site.scores)
+(site.scores.df <- data.frame(site.scores))
 sp.scores<-pca.dune$rotation
-sp.scores.df <- data.frame(sp.scores)
+(sp.scores.df <- data.frame(sp.scores))
 ```
 
 Ouverture des librairies nécessaires à la création du graphique.
@@ -1337,7 +1337,7 @@ pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   size=3, 
                   obslab=TRUE, # pour passer de points pour les sites (par défaut) à texte (nom des sites)
                   arrow=NULL,
-                  labcol="forestgreen") # changer la couleur du texte pour les espèces
+                  labcol="forestgreen")
 pca.plot
 ```
 
@@ -1345,12 +1345,13 @@ Il y a beaucoup d'espèces affichées au milieu et c'est illisible. En plus, les
 
 D'abord, on va créer un nouveau dataframe contenant seulement ces espèces, en utilisant quelques fonctions de la librairie **dplyr**.
 ```{r}
+library(dplyr)
 A <- top_n(sp.scores.df, 3, PC1) # sélectionne les 3 espèces dont le score est le plus élevé sur l'axe 1.
 B <- top_n(sp.scores.df, -3, PC1) # sélectionne les 3 espèces dont le score est le plus bas sur l'axe 1.
 C <- top_n(sp.scores.df, 3, PC2) # sélectionne les 3 espèces dont le score est le plus élevé sur l'axe 2.
 D <- top_n(sp.scores.df, -3, PC2) # sélectionne les 3 espèces dont le score est le plus bas sur l'axe 2.
 sp.scores.skim <- bind_rows(A,B,C,D) # merge les sub dataframe A, B, C et D.
-sp.scores.skim <- distinct(sp.scores.skim) # on ne garde que les rangées (espèces) qui sont uniques (pour éviter qu'une même espèce s'y retrouve en copies)
+(sp.scores.skim <- distinct(sp.scores.skim)) # on ne garde que les rangées (espèces) qui sont uniques (pour éviter qu'une même espèce s'y retrouve en copies)
 ```
 
 Mise en graphique de ces espèces seulement
@@ -1367,6 +1368,7 @@ pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   # on enlève l'argument labcol
 pca.plot
 ```
+
 ```{r}
 pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9), 
                   axes=c(1,2), 
@@ -1381,7 +1383,7 @@ pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
 pca.plot
 ```
 
-On va ajouter les résultats d'un `envfit`. D'abord, on fait le test.
+On va ajouter les résultats d'un `envfit`. D'abord, on fait le test, en s'assurant qu'on calcule la régression sur les deux axes qu'on a choisit de mettre en graphique (par défaut, 1 et 2).
 ```{r}
 (pca.envfit <- envfit(pca.dune, dune.env))
 ```
@@ -1478,16 +1480,16 @@ pca.plot <- pca.plot + # ici j'enregistre l'ensemble des arguments précédents 
 pca.plot
 ```
 
-Créer un thème custom pour ggplot.
+## Créer un thème custom pour ggplot.
+
 ```{r}
 super_theme <- theme(
         panel.background = element_blank(),
-        #panel.border = element_blank(),
-        panel.grid = element_blank(),
-        axis.line = element_line("gray25"),
+        panel.grid = element_blank(), # grillage, ici aucun, mais on aurait pu mettre par ex.  element_line("black"),
+        axis.line = element_line("black"),
         text = element_text(size = 12),
-        axis.text = element_text(size = 10, colour = "gray25"),
-        axis.title = element_text(size = 14, colour = "gray25"),
+        axis.text = element_text(size = 10, colour = "gray25"), # taille des valeurs des axes
+        axis.title = element_text(size = 14, colour = "gray25"), # taille des titres des axes
         legend.title = element_text(size = 14),
         legend.text = element_text(size = 14),
         legend.key = element_blank())
@@ -1503,6 +1505,8 @@ On va rajouter du texte!
 pca.plot + annotate("text", x = 1.1, y = 0.7, label = "PERMANOVA\nR2=30%\n p=0.007") +
     super_theme
 ```
+
+## Sauvegarder
 
 Satisfait? On sauvegarde l'image en png. Par défaut, ggplot enregistre le dernier graphique créé. Ici on copie-colle le code du graphique ci haut, puis sauvegarde ce graphique avec la fonction `ggsave` dans un dossier qu'on a créé (figures/).
 ```{r}
@@ -1552,7 +1556,7 @@ permanova.dune.ca
 
 Ici, le résultat du test de dispersion indique que la différence dans la composition végétale entre les types d'aménagement qui est "perçue" par la PERMANOVA pourrait être du à la différence dans la variance interne en composition des groupes.
 
-Extraire les scores de CA avec la fonction `scores`
+Extraire les scores de CA avec la fonction `scores`. Pour spécifier à ggplot quels sont les "points" à mettre en graphique.
 ```{r}
 site.scores.dune.ca <- scores(ca.dune, display="sites", choices=c(1,2)) # ici on garde que les scores des axes 1 et 2 mais on aurait pu extraire tous les scores aussi.
 site.scores.dune.ca <- data.frame(site.scores.dune.ca)
@@ -1661,7 +1665,6 @@ ca.plot + theme_bw()
 ggsave("ca.png", path="./figures/")
 ```
 
-
 # PCoA
 
 ## Préparation des données
@@ -1677,6 +1680,18 @@ pcoa.dune <- cmdscale(dune.bray, k =(nrow(dune) - 1), eig = TRUE)
 summary(pcoa.dune)
 ```
 
+Dans cet exemple, on va s'intéresser aux axes 1 et 3, pour faire changement!
+
+Extraire les proportions expliquées par les axes d'intérêt (1 et 3).
+```{r}
+pcoa.eig2 <- eigenvals(pcoa.dune) # extraction des eigenvalues
+pcoa.eig2 <- abs(pcoa.eig2) # calcul de leurs valeurs absolues
+sum.pcoa.eig2 <- sum(pcoa.eig2) # total des eigenvalues
+pcoa.prop.exp <- pcoa.eig2/sum.pcoa.eig2 # proportion expliquée par chacun des axes
+(pcoa.axis1 <- pcoa.prop.exp[1])
+(pcoa.axis3 <- pcoa.prop.exp[3])
+```
+
 Extraire les scores de la PCoA.
 ```{r}
 site.scores.pcoa <- scores(pcoa.dune) # site scores
@@ -1687,7 +1702,7 @@ Management <- dune.env$Management
 site.scores.pcoa <- cbind(site.scores.pcoa, Management)
 ```
 
-Comme on a fait acec les scores des espèces de la PCA et de la CA, on ne garde que les plus hautes valeurs absolues, mais cette fois ci, des axes 1 et 3 (pour le plaisir)!.
+Comme on a fait acec les scores des espèces de la PCA et de la CA, on ne garde que les plus hautes valeurs absolues, mais cette fois ci, des axes 1 et 3!.
 ```{r}
 A.pcoa <- top_n(sp.scores.pcoa, 3, X1)
 B.pcoa <- top_n(sp.scores.pcoa, -3, X1)
@@ -1731,7 +1746,7 @@ pcoa.plot <-
   ggplot(data = site.scores.pcoa, aes(x = Dim1, y = Dim3), color = Management) + 
   expand_limits(x=c(-0.35,0.6), y=c(-0.35,0.35)) +
   geom_point(aes(shape = Management, color = Management), size=3) +
-  xlab("PCoA1 (X%)") + ylab("PCoA3 (X%)") +
+  xlab("PCoA1 (35.10%)") + ylab("PCoA3 (9.44%)") +
   geom_text_repel(data = sp.scores.skim.pcoa, aes(x = X1, y = X3), label=rownames(sp.scores.skim.pcoa), color = "black") +
   geom_segment(data = vect.pcoa.env, 
                aes(x = 0, xend = Dim1, y = 0, yend = Dim3),
