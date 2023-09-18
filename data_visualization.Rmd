@@ -485,8 +485,12 @@ On voit que la valeur maximale de l'axe y est de 1, qui correspondrait à une pr
 ```{r}
 
 plot.masse <- ggplot()+
-geom_line(data = predictions.masse, aes(x=x, y=predicted))+
-geom_ribbon(data = predictions.masse, show.legend = FALSE, aes(x=x, y=predicted, ymin = conf.low, ymax = conf.high), alpha = .2)
+geom_line(data = predictions.masse, 
+          aes(x = x, y = predicted))+
+geom_ribbon(data = predictions.masse, 
+            show.legend = FALSE, 
+            aes(x = x, y = predicted, ymin = conf.low, ymax = conf.high), 
+            alpha = .2)
 
 plot.masse
 
@@ -499,13 +503,19 @@ On peut identifier nos axes + titre, ajouter le `theme_bw()`, enlever la grille 
 ```{r}
 
 plot.masse <- ggplot()+
-geom_line(data = predictions.masse, aes(x=x, y=predicted))+
-geom_ribbon(data = predictions.masse, show.legend = FALSE, aes(x=x, y=predicted, ymin = conf.low, ymax = conf.high), alpha = .2)+
-labs(	x="Masse (g)", 
-	y="Probabilité de survie",
-	title="Probabilité de survie de (?) en fonction de la masse")+
+geom_line(data = predictions.masse, 
+          aes(x = x, y = predicted))+
+geom_ribbon(data = predictions.masse, 
+            show.legend = FALSE, 
+            aes(x = x, y = predicted, ymin = conf.low, ymax = conf.high), 
+            alpha = .2)+
+labs(x = "Masse (g)", 
+     y = "Probabilité de survie",
+     title = "Probabilité de survie de (?) en fonction de la masse")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))
+theme(panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(), 
+      plot.title = element_text(hjust = 0.5))
 
 plot.masse
 
@@ -516,14 +526,21 @@ Les valeurs de notre axe y sont de 0 à 1. On peut transformer notre axe pour qu
 ```{r}
 
 plot.masse <- ggplot()+
-geom_line(data = predictions.masse, aes(x=x, y=predicted))+
-geom_ribbon(data = predictions.masse, show.legend = FALSE, aes(x=x, y=predicted, ymin = conf.low, ymax = conf.high), alpha = .2)+
-labs(	x="Masse (g)", 
-	y="Probabilité de survie",
-	title="Probabilité de survie de (?) en fonction de la masse")+
+geom_line(data = predictions.masse, 
+          aes(x = x, y = predicted))+
+geom_ribbon(data = predictions.masse, 
+            show.legend = FALSE, 
+            aes(x = x, y = predicted, ymin = conf.low, ymax = conf.high), 
+            alpha = .2)+
+labs(x = "Masse (g)", 
+     y = "Probabilité de survie", 
+     title = "Probabilité de survie de (?) en fonction de la masse")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
-scale_y_continuous(labels = scales::percent, limits = c(0, 1))
+theme(panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(), 
+      plot.title = element_text(hjust = 0.5))+
+scale_y_continuous(labels = scales::percent, 
+                   limits = c(0, 1))
 
 plot.masse
 
@@ -535,14 +552,22 @@ Si on voulait avoir moins de ticks sur l'axe des y (peut rendre la figure plus f
 ```{r}
 
 plot.masse <- ggplot()+
-geom_line(data = predictions.masse, aes(x=x, y=predicted))+
-geom_ribbon(data = predictions.masse, show.legend = FALSE, aes(x=x, y=predicted, ymin = conf.low, ymax = conf.high), alpha = .2)+
-labs(	x="Masse (g)", 
-	y="Probabilité de survie",
-	title="Probabilité de survie de (?) en fonction de la masse")+
+geom_line(data = predictions.masse, 
+          aes(x = x, y = predicted))+
+geom_ribbon(data = predictions.masse, 
+            show.legend = FALSE, 
+            aes(x = x, y = predicted, ymin = conf.low, ymax = conf.high), 
+            alpha = .2)+
+labs(x = "Masse (g)", 
+     y = "Probabilité de survie",
+     title = "Probabilité de survie de (?) en fonction de la masse")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
-scale_y_continuous(labels = scales::percent, limits = c(0, 1), breaks = seq(0, 1, by = 0.5))
+theme(panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(), 
+      plot.title = element_text(hjust = 0.5))+
+scale_y_continuous(labels = scales::percent, 
+                   limits = c(0, 1), 
+                   breaks = seq(0, 1, by = 0.5))
 
 plot.masse
 
@@ -557,16 +582,25 @@ Même chose pour le ruban: dans `geom_ribbon()`, j'ajoute `fill=group` à l'argu
 ```{r}
 
 plot.masse <- ggplot()+
-geom_line(data = predictions.masse, aes(x=x, y=predicted, color=group), show.legend = FALSE)+
-scale_color_manual(values=c("#7CAC36"))+
-geom_ribbon(data = predictions.masse, show.legend = FALSE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = .2)+
-scale_fill_manual(values=c("#D28D32"))+
-labs(	x="Masse (g)", 
-	y="Probabilité de survie",
-	title="Probabilité de survie de (?) en fonction de la masse")+
+geom_line(data = predictions.masse, 
+          aes(x = x, y = predicted, color = group), 
+          show.legend = FALSE)+
+scale_color_manual(values = c("#7CAC36"))+
+geom_ribbon(data = predictions.masse, 
+            show.legend = FALSE, 
+            aes(x = x, y = predicted, fill = group, ymin = conf.low, ymax = conf.high), 
+            alpha = .2)+
+scale_fill_manual(values = c("#D28D32"))+
+labs(x = "Masse (g)", 
+     y = "Probabilité de survie", 
+     title = "Probabilité de survie de (?) en fonction de la masse")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
-scale_y_continuous(labels = scales::percent, limits = c(0, 1), breaks = seq(0, 1, by = 0.5))
+theme(panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(), 
+      plot.title = element_text(hjust = 0.5))+
+scale_y_continuous(labels = scales::percent, 
+                   limits = c(0, 1), 
+                   breaks = seq(0, 1, by = 0.5))
 
 plot.masse
 
@@ -576,12 +610,19 @@ Remarquez que j'utilise `color` pour la ligne, et `fill` pour le ruban, comme no
 
 ```{r}
 
-plot.masse<-ggplot()+
-geom_line(data = predictions.masse, aes(x=x, y=predicted, color=group), show.legend = FALSE)+
-scale_color_manual(values=c("#D28D32"))+
-geom_ribbon(data = predictions.masse, show.legend = FALSE, aes(x=x, y=predicted, color=group, ymin = conf.low, ymax = conf.high), alpha = .2)+
+plot.masse <- ggplot()+
+geom_line(data = predictions.masse, 
+          aes(x = x, y = predicted, color = group), 
+          show.legend = FALSE)+
+scale_color_manual(values = c("#D28D32"))+
+geom_ribbon(data = predictions.masse, 
+            show.legend = FALSE, 
+            aes(x = x, y = predicted, color = group, ymin = conf.low, ymax = conf.high), 
+            alpha = .2)+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))
+theme(panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(), 
+      plot.title = element_text(hjust = 0.5))
 
 plot.masse
 
@@ -595,17 +636,30 @@ On termine en changeant la couleur des points et en augmentant la taille du trai
 
 
 plot.masse <- ggplot()+
-geom_line(data = predictions.masse, aes(x=x, y=predicted, color=group), show.legend = FALSE, linewidth=1.1)+
-scale_color_manual(values=c("#D28D32"))+
-geom_ribbon(data = predictions.masse, show.legend = FALSE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = .2)+
-scale_fill_manual(values=c("#D28D32"))+
-geom_point(data=surv, aes(x=masse, y=survie), alpha = .4, color = "cornsilk4", position = position_jitter(0.1, height = 0.01))+
-labs(	x="Masse (g)", 
-	y="Probabilité de survie",
-	title="Probabilité de survie de (?) en fonction de la masse")+
+geom_line(data = predictions.masse, 
+          aes(x = x, y = predicted, color = group), 
+          show.legend = FALSE, 
+          linewidth = 1.1)+
+scale_color_manual(values = c("#D28D32"))+
+geom_ribbon(data = predictions.masse, 
+            show.legend = FALSE, 
+            aes(x = x, y = predicted, fill = group, ymin = conf.low, ymax = conf.high), 
+            alpha = .2)+
+scale_fill_manual(values = c("#D28D32"))+
+geom_point(data = surv, 
+           aes(x = masse, y = survie), 
+           alpha = .4, 
+           color = "cornsilk4", 
+           position = position_jitter(0.1, height = 0.01))+
+labs(x = "Masse (g)", 
+     y = "Probabilité de survie",
+     title = "Probabilité de survie de (?) en fonction de la masse")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
-scale_y_continuous(labels = scales::percent, limits = c(-0.02, 1.02))
+theme(panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(), 
+      plot.title = element_text(hjust = 0.5))+
+scale_y_continuous(labels = scales::percent, 
+                   limits = c(-0.02, 1.02))
 
 plot.masse
 
@@ -634,7 +688,7 @@ Il ne semble pas avoir d'effet significatif du sexe sur la probabilité de survi
 On calcule d'abord nos valeurs prédites de survie:
 
 ```{r}
-predictions.masse.sexe.test<-ggpredict(modele.masse.sexe, c("masse"))
+predictions.masse.sexe.test <- ggpredict(modele.masse.sexe, c("masse"))
 
 predictions.masse.sexe.test
 ```
@@ -651,8 +705,11 @@ Donc, quand on lui demande de calculer la probabilité de survie en fonction de 
 ```{r}
 
 plot.masse.sexe.test <- ggplot()+
-geom_line(data = predictions.masse.sexe.test, aes(x=x, y=predicted, color=group), show.legend = FALSE, linewidth=1.1)+
-labs(title="Probabilité de survie ajustée pour sexe = 0.5")+
+geom_line(data = predictions.masse.sexe.test, 
+          aes(x = x, y = predicted, color = group), 
+          show.legend = FALSE, 
+          linewidth=1.1)+
+labs(title = "Probabilité de survie ajustée pour sexe = 0.5")+
 theme(plot.title = element_text(hjust = 0.5))
 
 plot.masse.sexe.test
@@ -665,7 +722,7 @@ Pour cela, il faut inclure la variable `sexe` dans la fonction `ggpredict`:
 
 ```{r}
 
-predictions.masse.sexe<-ggpredict(modele.masse.sexe, c("masse","sex"))
+predictions.masse.sexe <- ggpredict(modele.masse.sexe, c("masse","sex"))
 
 predictions.masse.sexe
 
@@ -678,7 +735,10 @@ Dans le précédent modèle, nous avions défini l'`aes(color=group)`, pour colo
 ```{r}
 
 plot.masse.sexe <- ggplot()+
-geom_line(data = predictions.masse.sexe, aes(x=x, y=predicted, color=group), show.legend = TRUE, linewidth=1.1)
+geom_line(data = predictions.masse.sexe, 
+          aes(x = x, y = predicted, color = group), 
+          show.legend = TRUE, 
+          linewidth=1.1)
 
 plot.masse.sexe
 
@@ -690,8 +750,13 @@ On doit ajouter nos intervalles de confiance:
 ```{r}
 
 plot.masse.sexe <- ggplot()+
-geom_line(data = predictions.masse.sexe, aes(x=x, y=predicted, color=group), show.legend = TRUE)+
-geom_ribbon(data = predictions.masse.sexe, show.legend = FALSE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = 0.2)
+geom_line(data = predictions.masse.sexe, 
+          aes(x = x, y = predicted, color = group), 
+          show.legend = TRUE)+
+geom_ribbon(data = predictions.masse.sexe, 
+            show.legend = FALSE, 
+            aes(x = x, y = predicted, fill = group, ymin = conf.low, ymax = conf.high), 
+            alpha = 0.2)
 
 plot.masse.sexe
 
@@ -704,10 +769,19 @@ En même temps, avec ces mêmes fonctions, on peut spécifier le titre de la lé
 ```{r}
 
 plot.masse.sexe <- ggplot()+
-geom_line(data = predictions.masse.sexe, aes(x=x, y=predicted, color=group), show.legend = TRUE)+
-geom_ribbon(data = predictions.masse.sexe, show.legend = TRUE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = 0.2)+
-scale_color_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
-scale_fill_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))
+geom_line(data = predictions.masse.sexe, 
+          aes(x = x, y = predicted, color = group), 
+          show.legend = TRUE)+
+geom_ribbon(data = predictions.masse.sexe, 
+            show.legend = TRUE, 
+            aes(x = x, y = predicted, fill = group, ymin = conf.low, ymax = conf.high), 
+            alpha = 0.2)+
+scale_color_manual(name = "Sexe", 
+                   labels = c("Femelle", "Mâles"), 
+                   values = c("0" = "#D28D32", "1" = "darkblue"))+
+scale_fill_manual(name = "Sexe", 
+                  labels = c("Femelle", "Mâles"), 
+                  values = c("0" = "#D28D32", "1" = "darkblue"))
 
 plot.masse.sexe
 
@@ -718,10 +792,19 @@ Il est important que les noms et les `aes()` soient constants pour chaque ligne 
 ```{r}
 
 plot.masse.sexe <- ggplot()+
-geom_line(data = predictions.masse.sexe, aes(x=x, y=predicted, color=group), show.legend = TRUE)+
-geom_ribbon(data = predictions.masse.sexe, show.legend = TRUE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = 0.2)+
-scale_color_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
-scale_fill_manual(name = "Coucou", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))
+geom_line(data = predictions.masse.sexe, 
+          aes(x = x, y = predicted, color = group), 
+          show.legend = TRUE)+
+geom_ribbon(data = predictions.masse.sexe, 
+            show.legend = TRUE, 
+            aes(x = x, y = predicted, fill = group, ymin = conf.low, ymax = conf.high), 
+            alpha = 0.2)+
+scale_color_manual(name = "Sexe", 
+                   labels = c("Femelle", "Mâles"), 
+                   values = c("0" = "#D28D32", "1" = "darkblue"))+
+scale_fill_manual(name = "Coucou", 
+                  labels = c("Femelle", "Mâles"), 
+                  values = c("0" = "#D28D32", "1" = "darkblue"))
 
 plot.masse.sexe
 
@@ -738,16 +821,28 @@ On peut ajouter les éléments graphiques que nous avions codés pour la figure 
 ```{r}
 
 plot.masse.sexe <- ggplot()+
-geom_line(data = predictions.masse.sexe, aes(x=x, y=predicted, color=group), show.legend = TRUE, linewidth=1.1)+
-geom_ribbon(data = predictions.masse.sexe, show.legend = TRUE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = 0.2)+
-scale_color_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
-scale_fill_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
-labs(	x="Masse (g)", 
-	y="Probabilité de survie",
-	title="Probabilité de survie de (?) en fonction de la masse, pour les individus mâles et femelles")+
+geom_line(data = predictions.masse.sexe, aes(x=x, y = predicted, color = group), 
+          show.legend = TRUE, 
+          linewidth = 1.1)+
+geom_ribbon(data = predictions.masse.sexe, 
+            show.legend = TRUE, 
+            aes(x = x, y = predicted, fill = group, ymin = conf.low, ymax = conf.high), 
+            alpha = 0.2)+
+scale_color_manual(name = "Sexe", 
+                   labels = c("Femelle", "Mâles"), 
+                   values = c("0" = "#D28D32", "1" = "darkblue"))+
+scale_fill_manual(name = "Sexe", 
+                  labels = c("Femelle", "Mâles"), 
+                  values = c("0" = "#D28D32", "1" = "darkblue"))+
+labs(x = "Masse (g)", 
+     y = "Probabilité de survie",
+     title = "Probabilité de survie de (?) en fonction de la masse, pour les individus mâles et femelles")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
-scale_y_continuous(labels = scales::percent, limits = c(-0.02, 1.02))
+theme(panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(), 
+      plot.title = element_text(hjust = 0.5))+
+scale_y_continuous(labels = scales::percent, 
+                   limits = c(-0.02, 1.02))
 
 plot.masse.sexe
 
@@ -760,16 +855,29 @@ Le titre est devenu plus long et pourrait déborder de la figure (cela dépendra
 ```{r}
 
 plot.masse.sexe <- ggplot()+
-geom_line(data = predictions.masse.sexe, aes(x=x, y=predicted, color=group), show.legend = TRUE, linewidth=1.1)+
-geom_ribbon(data = predictions.masse.sexe, show.legend = TRUE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = 0.2)+
-scale_color_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
-scale_fill_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
-labs(	x="Masse (g)", 
-	y="Probabilité de survie",
-	title="Probabilité de survie de (?) en fonction de la\nmasse, pour les individus mâles et femelles")+
+geom_line(data = predictions.masse.sexe, 
+          aes(x = x, y = predicted, color = group), 
+          show.legend = TRUE, 
+          linewidth = 1.1)+
+geom_ribbon(data = predictions.masse.sexe, 
+            show.legend = TRUE, 
+            aes(x = x, y = predicted, fill = group, ymin = conf.low, ymax = conf.high), 
+            alpha = 0.2)+
+scale_color_manual(name = "Sexe", 
+                   labels = c("Femelle", "Mâles"), 
+                   values = c("0" = "#D28D32", "1" = "darkblue"))+
+scale_fill_manual(name = "Sexe", 
+                  labels = c("Femelle", "Mâles"), 
+                  values = c("0" = "#D28D32", "1" = "darkblue"))+
+labs(x = "Masse (g)", 
+     y = "Probabilité de survie",
+     title = "Probabilité de survie de (?) en fonction de la\nmasse, pour les individus mâles et femelles")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
-scale_y_continuous(labels = scales::percent, limits = c(-0.02, 1.02))
+theme(panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(), 
+      plot.title = element_text(hjust = 0.5))+
+scale_y_continuous(labels = scales::percent, 
+                   limits = c(-0.02, 1.02))
 
 plot.masse.sexe
 
@@ -790,17 +898,32 @@ Sinon, il traite `sex` comme étant une variable continue (ce qu'elle est), et o
 ```{r}
 
 plot.masse.sexe <- ggplot()+
-geom_line(data = predictions.masse.sexe, aes(x=x, y=predicted, color=group), show.legend = TRUE, linewidth=1.1)+
-scale_color_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
-geom_ribbon(data = predictions.masse.sexe, show.legend = TRUE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = 0.2)+
-scale_fill_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
-geom_point(data=surv, aes(x=masse, y=survie, col=sex), alpha = .4, position = position_jitter(0.1, height = 0.01))+
-labs(	x="Masse (g)", 
-	y="Probabilité de survie",
-	title="Probabilité de survie de (?) en fonction de la\nmasse, pour les individus mâles et femelles")+
+geom_line(data = predictions.masse.sexe, 
+          aes(x = x, y = predicted, color = group), 
+          show.legend = TRUE, 
+          linewidth = 1.1)+
+scale_color_manual(name = "Sexe", 
+                   labels = c("Femelle", "Mâles"), 
+                   values = c("0" = "#D28D32", "1" = "darkblue"))+
+geom_ribbon(data = predictions.masse.sexe, 
+            show.legend = TRUE, 
+            aes(x = x, y = predicted, fill = group, ymin = conf.low, ymax = conf.high), 
+            alpha = 0.2)+
+scale_fill_manual(name = "Sexe", 
+                  labels = c("Femelle", "Mâles"), 
+                  values = c("0" = "#D28D32", "1" = "darkblue"))+
+geom_point(data = surv, aes(x = masse, y = survie, col = sex), 
+           alpha = .4, 
+           position = position_jitter(0.1, height = 0.01))+
+labs(x = "Masse (g)", 
+     y = "Probabilité de survie",
+     title = "Probabilité de survie de (?) en fonction de la\nmasse, pour les individus mâles et femelles")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
-scale_y_continuous(labels = scales::percent, limits = c(-0.02, 1.02))+
+theme(panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(), 
+      plot.title = element_text(hjust = 0.5))+
+scale_y_continuous(labels = scales::percent, 
+                   limits = c(-0.02, 1.02))+
 scale_x_continuous(breaks = seq(96, 106, by = 2))
 
 plot.masse.sexe
@@ -833,7 +956,7 @@ Ok, cette variable n'est pas significative non plus. Mais encore une fois, essay
 On débute avec le calcul des prédictions, en ajoutant la variable `age`:
 
 ```{r}
-predictions.masse.sexe.age<-ggpredict(modele.masse.sexe.age, c("masse","sex","age"))
+predictions.masse.sexe.age <- ggpredict(modele.masse.sexe.age, c("masse","sex","age"))
 
 predictions.masse.sexe.age
 ```
@@ -858,7 +981,10 @@ Dans ce cas, on ajoute l'`aes()` `linetype` à `geom_line` assigné à `facet`:
 
 ```{r}
 plot.masse.sexe.age1 <- ggplot()+
-geom_line(data = predictions.masse.sexe.age, aes(x=x, y=predicted, color=group, linetype=facet), show.legend = TRUE, linewidth=1.1)
+geom_line(data = predictions.masse.sexe.age, 
+          aes(x = x, y = predicted, color = group, linetype = facet), 
+          show.legend = TRUE, 
+          linewidth=1.1)
 
 plot.masse.sexe.age1
 ```
@@ -870,8 +996,11 @@ La deuxième option serait d'utiliser des facettes. Ceci crée des graphiques c�
 ```{r}
 
 plot.masse.sexe.age2 <- ggplot()+
-geom_line(data = predictions.masse.sexe.age, aes(x=x, y=predicted, color=group), show.legend = TRUE, linewidth=1.1)+
-facet_wrap(~facet)
+geom_line(data = predictions.masse.sexe.age, 
+          aes(x = x, y = predicted, color = group), 
+          show.legend = TRUE, 
+          linewidth = 1.1)+
+facet_wrap(~ facet)
 
 plot.masse.sexe.age2
 
@@ -882,19 +1011,35 @@ On peut terminer ce graphique, avec le même code que les précédents. J'ajoute
 ```{r}
 
 plot.masse.sexe.age2 <- ggplot()+
-geom_line(data = predictions.masse.sexe.age, aes(x=x, y=predicted, color=group), show.legend = TRUE, linewidth=1.1)+
-scale_color_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
-geom_ribbon(data = predictions.masse.sexe, show.legend = TRUE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = 0.2)+
-scale_fill_manual(name = "Sexe", labels = c("Femelle", "Mâles"), values = c("0" = "darkblue", "1" = "#D28D32"))+
-geom_point(data=surv, aes(x=masse, y=survie, col=sex), alpha = .4, position = position_jitter(0.1, height = 0.01))+
-labs(	x="Masse (g)", 
-	y="Probabilité de survie",
-	title="Probabilité de survie de (?) en fonction de la\nmasse et de l'âge, pour les individus mâles et femelles")+
+geom_line(data = predictions.masse.sexe.age, 
+          aes(x = x, y = predicted, color = group), 
+          show.legend = TRUE, 
+          linewidth = 1.1)+
+scale_color_manual(name = "Sexe", 
+                   labels = c("Femelle", "Mâles"), 
+                   values = c("0" = "#D28D32", "1" = "darkblue"))+
+geom_ribbon(data = predictions.masse.sexe, 
+            show.legend = TRUE, 
+            aes(x = x, y = predicted, fill = group, ymin = conf.low, ymax = conf.high), 
+            alpha = 0.2)+
+scale_fill_manual(name = "Sexe", 
+                  labels = c("Femelle", "Mâles"), 
+                  values = c("0" = "#D28D32", "1" = "darkblue"))+
+geom_point(data = surv, 
+           aes(x = masse, y = survie, col = sex), 
+           alpha = .4, 
+           position = position_jitter(0.1, height = 0.01))+
+labs(x = "Masse (g)", 
+     y = "Probabilité de survie", 
+     title = "Probabilité de survie de (?) en fonction de la\nmasse et de l'âge, pour les individus mâles et femelles")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
-scale_y_continuous(labels = scales::percent, limits = c(-0.02, 1.02))+
+theme(panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(), 
+      plot.title = element_text(hjust = 0.5))+
+scale_y_continuous(labels = scales::percent, 
+                   limits = c(-0.02, 1.02))+
 scale_x_continuous(breaks = seq(96, 106, by = 2))+
-facet_wrap(~facet, labeller = labeller(facet = c( "57.64" = "58 jours", "59.98" = "60 jours",  "62.32" = "62 jours"))) 
+facet_wrap(~ facet, labeller = labeller(facet = c( "57.64" = "58 jours", "59.98" = "60 jours",  "62.32" = "62 jours"))) 
 
 plot.masse.sexe.age2
 ```
@@ -938,9 +1083,10 @@ On peut commencer par spécifier les `aes()` **du jeu de données brutes** direc
 
 
 ```{r}
-plot.regr.SL <- ggplot(data=iris, aes(x=Petal.Length, y=Sepal.Length))+
+plot.regr.SL <- ggplot(data = iris, aes(x = Petal.Length, y = Sepal.Length))+
 geom_point()+
-geom_smooth(method = lm, se = TRUE)
+geom_smooth(method = lm, 
+            se = TRUE)
 
 plot.regr.SL
 
@@ -950,14 +1096,19 @@ On peut embellir notre graphique:
 
 
 ```{r}
-plot.regr.SL <- ggplot(data=iris, aes(x=Petal.Length, y=Sepal.Length))+
-geom_point(col="#8F1E5F")+
-geom_smooth(method = lm, se = TRUE, col = "#2B091D", fill = "#7997D1")+
-labs(	x="Longueur du pétale (cm)", 
-	y="Longueur du sépale (mm)",
-	title="Longueur du pétale en fonction de la longueur du sépale chez les iris")+
+plot.regr.SL <- ggplot(data = iris, aes(x = Petal.Length, y = Sepal.Length))+
+geom_point(col = "#8F1E5F")+
+geom_smooth(method = lm, 
+            se = TRUE, 
+            col = "#2B091D", 
+            fill = "#591130")+
+labs(x = "Longueur du pétale (cm)", 
+     y = "Longueur du sépale (mm)",
+     title = "Longueur du pétale en fonction de la longueur du sépale chez les iris")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))
+theme(panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(), 
+      plot.title = element_text(hjust = 0.5))
 
 plot.regr.SL
 ```
@@ -973,15 +1124,20 @@ Et on l'ajoute au graphique:
 
 ```{r}
 
-plot.regr.SL <- ggplot(data=iris, aes(x=Petal.Length, y=Sepal.Length))+
+plot.regr.SL <- ggplot(data = iris, aes(x = Petal.Length, y = Sepal.Length))+
 geom_point(col="#8F1E5F")+
-geom_smooth(method = lm, se = FALSE, col = "#2B091D", fill = "#591130")+
-labs(	x="Longueur du pétale (cm)", 
-	y="Longueur du sépale (mm)",
-	title="Longueur du pétale en fonction de la longueur du sépale chez les iris")+
+geom_smooth(method = lm, 
+            se = TRUE, col = "#2B091D", fill = "#591130")+
+labs(x = "Longueur du pétale (cm)", 
+     y = "Longueur du sépale (mm)",
+     title = "Longueur du pétale en fonction de la longueur du sépale chez les iris")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
-annotate("text", x = 2.5, y = 7.75, label = "R2 = 0.76, F(1, 148) = 468.6, p = < 0.001")
+theme(panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(), 
+      plot.title = element_text(hjust = 0.5))+
+annotate("text", 
+         x = 2.5, y = 7.75, 
+         label = "R2 = 0.76, F(1, 148) = 468.6, p = < 0.001")
 
 plot.regr.SL
 
@@ -993,7 +1149,7 @@ L'intervalle de confiance s'affiche avec `geom_smooth(se = TRUE)`. Pour ce qui e
 
 ```{r}
 
-int.pred<- predict(regr.SL, interval="prediction")
+int.pred <- predict(regr.SL, interval = "prediction")
 iris.int.pred <- cbind(iris, int.pred)
 head(iris.int.pred)
 
@@ -1004,16 +1160,25 @@ Dans `geom_ribbon(aes(ymin = lwr, ymax = upr)`, les `aes()` permettent d'assigne
 
 ```{r}
 
-plot.regr.SL <- ggplot(data=iris.int.pred, aes(x=Petal.Length, y=Sepal.Length))+
-geom_point(col="#8F1E5F")+
-geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = .2, fill = "#591130")+
-geom_smooth(method = lm, se = TRUE, col = "#2B091D", fill = "#591130")+
-labs(	x="Longueur du pétale (cm)", 
-	y="Longueur du sépale (mm)",
-	title="Longueur du pétale en fonction de la longueur du sépale chez les iris")+
+plot.regr.SL <- ggplot(data = iris.int.pred, aes(x = Petal.Length, y = Sepal.Length))+
+geom_point(col = "#8F1E5F")+
+geom_ribbon(aes(ymin = lwr, ymax = upr), 
+            alpha = .2, 
+            fill = "#591130")+
+geom_smooth(method = lm, 
+            se = TRUE, 
+            col = "#2B091D", 
+            fill = "#591130")+
+labs(x = "Longueur du pétale (cm)", 
+     y = "Longueur du sépale (mm)",
+     title = "Longueur du pétale en fonction de la longueur du sépale chez les iris")+
 theme_bw()+
-theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
-annotate("text", x = 2.5, y = 7.75, label = "R2 = 0.76, F(1, 148) = 468.6, p = < 0.001")
+theme(panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(), 
+      plot.title = element_text(hjust = 0.5))+
+annotate("text", 
+         x = 2.5, y = 7.75, 
+         label = "R2 = 0.76, F(1, 148) = 468.6, p = < 0.001")
 
 plot.regr.SL
 
