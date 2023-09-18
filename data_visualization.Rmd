@@ -1,6 +1,6 @@
 ---
 title: "Visualisation des résultats : tableaux et graphiques"
-author: "Laurie Auclair & Jocelyn Lauzon"
+author: "Laurie Auclair, Jocelyn Lauzon & Sabrina Brisson"
 date: "10/09/2023"
 output: html_document
 ---
@@ -130,7 +130,6 @@ Les données ou les figures qui ne contribuent pas directement à l'histoire pri
 
 # Coder des graphiques avec ggplot
 
-## Observer la stucture des données univariées
 ```{r}
 summary(iris)
 ```
@@ -381,7 +380,7 @@ scale_x_discrete(labels = c("I. setosa", "I. versicolor", "I. virginica"))
 ```
 
 
-
+<br>
 
 
 # GLM
@@ -667,6 +666,7 @@ plot.masse
 
 ```
 
+<br>
 
 Dans le jeu de données, on retrouve aussi la variable `sexe`:
 
@@ -932,8 +932,7 @@ plot.masse.sexe
 
 ```
 
-
-
+<br>
 
 Si on avait une troisième variable dans notre modèle, par exemple l'âge:
 
@@ -1052,7 +1051,7 @@ Vous pouvez vous pratiquer en complétant la première option!
 plot.masse.sexe.age1
 ```
 
-
+<br>
 
 # Régression linéaire simple
 
@@ -1190,6 +1189,18 @@ plot.regr.SL
 Wow!
 
 
+<br>
+
+# *Cheat sheet* `ggplot()`
+
+Maintenant que vous êtes plus familiers avec `ggplot()`, voici un lien pour une *cheat sheet* pour `ggplot()`:
+
+https://rstudio.github.io/cheatsheets/html/data-visualization.html
+
+Elle contient toute l'information sur les différents `aes()`, `geom_*()`, `scale_*`, ainsi que sur les thèmes, les ajustements de position, et les légendes, par exemple. 
+
+<br>
+
 # À considérer lors de la création de figures
 
 Comme mentionné plus tôt, il faut être judicieux dans le choix de notre symbologie. 
@@ -1214,7 +1225,7 @@ Voici un exemple:
 
 `ggsave(path = "votre_chemin_comme_dans_setwd()", "titre_de_votre_figures.jpeg", width = 6, height = 6, dpi=700)`
 
-
+<br>
 
 # Ordinations
 
