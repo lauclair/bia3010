@@ -1187,6 +1187,34 @@ plot.regr.SL
 ```
 
 
+Wow!
+
+
+# À considérer lors de la création de figures
+
+Comme mentionné plus tôt, il faut être judicieux dans le choix de notre symbologie. 
+En effet, les couleurs et les symboles ont souvent un sens qui nous est intuitif, et représentent ainsi de l'information - quelles couleurs choisiriez-vous pour illustrer une température chaude? Froide?
+
+Ces choix de couleur contribuent à donner un sens à vos figures. Il existe des palettes de couleurs conçue pour illustrer des données, par exemple, d'élévation, ou de température. Certaines sont conçues pour maximiser le contraste entre les extrêmes des valeurs d'une variable.
+![](palettes.png)
+Il existe même une palette, "Okabe-Ito", contenant des couleurs qui sont plus accessibles pour les gens ayant une variété de problèmes visuels. D'autres palettes sont simplement esthétiques. 
+
+On doit aussi penser au type de variable que nous souhaitons illustrer. Par exemple, il serait moins approprié d'utiliser la valeur (donc de pâle à foncé) d'une même couleur pour colorer des variables catégoriques qui ne sont pas ordonnées (pensez aux boxplots des espèces d'iris), puisque celle-ci traduit la notion d’ordre et de progression. Une palette avec des couleurs aléatoires comme celle que nous avons utilisée est mieux dans ce cas. La valeur serait toutefois appropriée pour des données de concentration, par exemple. 
+
+Toutefois, certaines publications scientifiques n'acceptent que les figures en noir et blanc; dans ce cas, on peut utiliser des symboles, des textures (par exemple, le grain peut être utilisé au lieu de la valeur), ou différentes lignes pointillées, par exemple.
+
+![](valeur.png)
+
+De plus, assurez-vous que vos axes sont représentatifs de vos données.
+
+
+Pour terminer, utilisez une fonction pour exporter vos figures. "Copier-coller" ne suffit pas, car la résolution ne sera pas assez bonne. 
+
+Voici un exemple:
+
+`ggsave(path = "votre_chemin_comme_dans_setwd()", "titre_de_votre_figures.jpeg", width = 6, height = 6, dpi=700)`
+
+
 
 # Ordinations
 
