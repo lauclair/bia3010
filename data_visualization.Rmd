@@ -130,14 +130,26 @@ Les données ou les figures qui ne contribuent pas directement à l'histoire pri
 
 # Coder des graphiques avec ggplot
 
+Avant de commencer, identifiez vos variables dépendantes et indépendantes. Puis, déterminez quels sont les types de ces variables avec lesquelles vous allez travailler.
+
+Sont-elles **catégoriques** (et **Nominales** ou **ordinales**), ou bien **numériques** (et **continues** ou **discrètes**)?
+
+C'est ce qui déterminera le choix de type de figure pour représenter vos données - un histogramme, un scatterplot, un boxplot, un barplot ? Autre?
+
+Consultez ce lien pour mieux comprendre:
+
+https://statisticsbyjim.com/basics/data-types/
+
+<br>
+
 ```{r}
 summary(iris)
 ```
 
 # ANOVA
-La fonction de base `plot()` peut être utile pour visualiser rapidement un jeu de données, par exemple avec un histogramme. Par contre, vous verrez que son utilisation peut devenir  limitée lorsqu'il s'agit de réaliser des figures plus complexes ou simplement modifier certains paramètres graphiques. 
+La fonction de base `plot()` permet de visualiser rapidement un jeu de données, par exemple avec un histogramme. Par contre, vous verrez que son utilisation peut devenir limitée lorsqu'il s'agit de réaliser des figures plus complexes ou simplement modifier certains paramètres graphiques. 
 
-C'est pour cela que nous suggérons d'utiliser la fonction `ggplot()`, du package "ggplot2". Cette fonction permet de réaliser des graphiques de façon plus intuitive et permet de les mettre en page plus facilement qu'avec la fonction `plot()`. Elle est aussi mieux documentée, il est donc plus facile de comprendre et utiliser les différents aspects de la fonction. Google est d'ailleurs votre meilleur allié pour la réalisation de vos figures!
+C'est pour cela que nous suggérons d'utiliser la fonction `ggplot()`, du package `ggplot2`. Cette fonction permet de réaliser des graphiques de façon plus intuitive et permet de les mettre en page plus facilement qu'avec la fonction `plot()`. Elle est aussi mieux documentée, il est donc plus facile de comprendre et utiliser les différents aspects de la fonction. Google est d'ailleurs votre meilleur allié pour la réalisation de vos figures!
 
 Contrairement à la fonction `plot()`, `ggplot()` fonctionne par couches. 
 Une figure `ggplot()` commence avec la fonction `ggplot()`. Elle sert à "préparer" la figure: on spécifie le jeu de données à utiliser, puis on choisit les variables qui formeront nos axes. 
@@ -584,7 +596,7 @@ plot.masse <- ggplot()+
 geom_line(data = predictions.masse, 
           aes(x = x, y = predicted, color = group), 
           show.legend = FALSE)+
-scale_color_manual(values = c("#7CAC36"))+
+scale_color_manual(values = c("#D28D32"))+
 geom_ribbon(data = predictions.masse, 
             show.legend = FALSE, 
             aes(x = x, y = predicted, fill = group, ymin = conf.low, ymax = conf.high), 
