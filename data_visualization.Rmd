@@ -339,7 +339,7 @@ annotate("text", x = 3, y = 4.5, label = "ANOVA, F(2)=49.16, p<0.001")+
 scale_x_discrete(labels=c("I. setosa", "I. versicolor", "I. virginica"))
 ```
 
-# Régression linéaire (Sabrina)
+
 
 
 
@@ -848,6 +848,115 @@ Vous pouvez vous pratiquer en complétant la première option!
 plot.masse.sexe.age1
 ```
 
+
+
+# Régression linéaire simple
+
+
+Maintenant qu'on a fait un exemple plus compliqué, essayons d'illustrer un modèle linéaire simple.
+
+Reprenons les données `iris()`
+
+```{r}
+head(iris)
+```
+
+On peut créer un modèle linéaire pour prédire `Sepal.Length` en fonction de `Petal.Length`:
+
+**Encore une fois, ce n'est qu'un exemple pour s'exercer avec `ggplot()`. Il ne faut pas oublier les étapes préliminaires, que je saute ici, avant de se lancer dans un modèle.**
+
+
+```{r}
+
+regr.SL <- lm(Sepal.Length ~ Petal.Length, data = iris)
+summary(regr.SL)
+
+```
+
+Enfin quelque chose de significatif! Super, nous pouvons représenter cettre relation.
+
+Avec une régression linéaire simple, évidemment, nous n'avons pas besoin d'une fonction comme `ggpredict` pour calculer y.
+
+On peut commencer par spécifier les `aes()` **du jeu de données brutes** directement dans `ggplot()`; ensuite, nous visualisons ces données avec `geom_point`; puis, `geom_smooth(method = lm)` (calcule, puis) ajoute la courbe de la régression. 
+
+
+```{r}
+plot.regr.SL <- ggplot(data=iris, aes(x=Petal.Length, y=Sepal.Length))+
+geom_point()+
+geom_smooth(method = lm, se = TRUE)
+plot.regr.SL
+
+```
+
+On peut embellir notre graphique:
+
+
+```{r}
+plot.regr.SL <- ggplot(data=iris, aes(x=Petal.Length, y=Sepal.Length))+
+geom_point(col="#8F1E5F")+
+geom_smooth(method = lm, se = TRUE, col = "#2B091D", fill = "#7997D1")+
+labs(	x="Longueur du pétale (cm)", 
+	y="Longueur du sépale (mm)",
+	title="Longueur du pétale en fonction de la longueur du sépale chez les iris")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))
+plot.regr.SL
+```
+
+On retourne voir le résumé de notre modèle pour ajouter la statistique:
+
+```{r}
+summary(regr.SL)
+
+```
+
+Et on l'ajoute au graphique:
+
+```{r}
+
+plot.regr.SL <- ggplot(data=iris, aes(x=Petal.Length, y=Sepal.Length))+
+geom_point(col="#8F1E5F")+
+geom_smooth(method = lm, se = FALSE, col = "#2B091D", fill = "#591130")+
+labs(	x="Longueur du pétale (cm)", 
+	y="Longueur du sépale (mm)",
+	title="Longueur du pétale en fonction de la longueur du sépale chez les iris")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
+annotate("text", x = 2.5, y = 7.75, label = "R2 = 0.76, F(1, 148) = 468.6, p = < 0.001")
+plot.regr.SL
+
+
+```
+
+C'est important d'ajouter un intervalle de confiance, ainsi qu'un intervalle de prédiction:
+L'intervalle de confiance s'affiche avec `geom_smooth(se = TRUE)`. Pour ce qui est de l'intervalle de prédiction, la fonction `predict()` calcule ces valeurs, puis colle ce nouveau dataframe à `iris` pour créer `iris.int.pred`. Nous utiliserons maintenant cette nouvelle table pour notre régression.
+
+```{r}
+
+int.pred<- predict(regr.SL, interval="prediction")
+iris.int.pred <- cbind(iris, int.pred)
+head(iris.int.pred)
+
+```
+
+Dans `geom_ribbon(aes(ymin = lwr, ymax = upr)`, les `aes()` permettent d'assigner les bornes supérieures et inférieures (en y) du ruban aux variables `lwr` et `upr` que nous venons de calculer et ajouter à notre table.
+
+
+```{r}
+
+plot.regr.SL <- ggplot(data=iris.int.pred, aes(x=Petal.Length, y=Sepal.Length))+
+geom_point(col="#8F1E5F")+
+geom_ribbon(aes(ymin = lwr, ymax = upr), alpha = .2, fill = "#591130")+
+geom_smooth(method = lm, se = TRUE, col = "#2B091D", fill = "#591130")+
+labs(	x="Longueur du pétale (cm)", 
+	y="Longueur du sépale (mm)",
+	title="Longueur du pétale en fonction de la longueur du sépale chez les iris")+
+theme_bw()+
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
+annotate("text", x = 2.5, y = 7.75, label = "R2 = 0.76, F(1, 148) = 468.6, p = < 0.001")
+plot.regr.SL
+
+```
 
 
 
