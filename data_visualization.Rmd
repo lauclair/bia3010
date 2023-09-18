@@ -1410,8 +1410,11 @@ pca.plot +
   coord_fixed() + # ajout des vecteurs de envfit
   geom_segment(data = vect,
                aes(x = 0, xend = PC1, y = 0, yend = PC2),
-               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
-  geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = variable.env, size = 3), show.legend = FALSE)
+               arrow = arrow(length = unit(0.5, "cm")),
+               colour = "darkgrey") +
+  geom_text_repel(data = vect, 
+                  aes(x = PC1, y = PC2, label = variable.env, size = 3), 
+                  show.legend = FALSE)
 ```
 
 Maintenant, on va ajouter des ellipses autour des sites appartenant à des groupes similaires. La fonction `ggord` est à même de calculer ces ellipses avec intervalle de confiance spécifiée. On va aussi revenir à des symboles au lieu du nom des sites et changer la couleur du texte des espèces. 
@@ -1436,9 +1439,11 @@ pca.plot +
     coord_fixed() +
     geom_segment(data = vect,
                aes(x = 0, xend = PC1, y = 0, yend = PC2),
-               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
-    geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = variable.env, size = 3), show.legend = FALSE)
-
+               arrow = arrow(length = unit(0.5, "cm")), 
+               colour = "darkgrey") +
+    geom_text_repel(data = vect, 
+               aes(x = PC1, y = PC2, label = variable.env, size = 3), 
+               show.legend = FALSE)
 ```
 
 Voici une légende indiquant quels symboles sont associées aux différentes valeurs numériques de la couche `scale_shape_manual`.
@@ -1475,8 +1480,11 @@ pca.plot <- pca.plot + # ici j'enregistre l'ensemble des arguments précédents 
     coord_fixed() +
     geom_segment(data = vect,
                aes(x = 0, xend = PC1, y = 0, yend = PC2),
-               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
-    geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = variable.env, size = 3), show.legend = FALSE)+
+               arrow = arrow(length = unit(0.5, "cm")), 
+               colour = "darkgrey") +
+    geom_text_repel(data = vect, 
+                    aes(x = PC1, y = PC2, label = variable.env, size = 3), 
+                    show.legend = FALSE)+
     theme(legend.position = 'top') # mettre la légende en haut
 pca.plot
 ```
@@ -1502,7 +1510,8 @@ pca.plot + super_theme
 
 On va rajouter du texte!
 ```{r}
-pca.plot + annotate("text", x = 1.1, y = 0.7, label = "PERMANOVA\nR2=30%\n p=0.007") +
+pca.plot + 
+    annotate("text", x = 1.1, y = 0.7, label = "PERMANOVA\nR2=30%\n p=0.007") +
     super_theme
 ```
 
@@ -1510,7 +1519,8 @@ pca.plot + annotate("text", x = 1.1, y = 0.7, label = "PERMANOVA\nR2=30%\n p=0.0
 
 Satisfait? On sauvegarde l'image en png. Par défaut, ggplot enregistre le dernier graphique créé. Ici on copie-colle le code du graphique ci haut, puis sauvegarde ce graphique avec la fonction `ggsave` dans un dossier qu'on a créé (figures/).
 ```{r}
-pca.plot + annotate("text", x = 1.1, y = 0.7, label = "PERMANOVA\nR2=30%\n p=0.007") +
+pca.plot + 
+    annotate("text", x = 1.1, y = 0.7, label = "PERMANOVA\nR2=30%\n p=0.007") +
     super_theme
 ggsave("pca.png", path="./figures/")
 ```
@@ -1542,7 +1552,7 @@ envfit
 Pour incorporer les vecteurs résultant de ce test, il faut d'abord les extraire et les mettre dans un dataframe.
 ```{r}
 vect.ca.env <- data.frame(ca.envfit[["vectors"]][["arrows"]])
-vect.ca.env$variable.env<-rownames(vect.ca.env)
+vect.ca.env$variable.env <- rownames(vect.ca.env)
 vect.ca.env
 ```
 
@@ -1588,10 +1598,15 @@ ordiellipse(ca.dune, dune.env$Management, display = "sites", kind = "sd", label 
 On commence le graphique ggplot. On peut faire un graphique qui ressemble à celui fait par `plot` en ajoutant "à la main" les sites et les espèces (en fonction de leurs scores extraits).
 ```{r}
 ca.plot <- 
-  ggplot(data = site.scores.ca, aes(x = CA1, y = CA2)) +
+  ggplot(data = site.scores.ca, 
+         aes(x = CA1, y = CA2)) +
   expand_limits(x=c(-4,4), y=c(-1,3)) + # sert à modifier l'échelle numérique du graphique
-  geom_text(data = site.scores.dune.ca, aes(x = CA1, y = CA2, label= rownames(site.scores.dune.ca)), color = "black") + # ajout du texte des sites
-  geom_text(data = sp.scores.dune.ca, aes(x = CA1, y = CA2, label= rownames(sp.scores.dune.ca)), color = "red") + # ajout du texte des espèces
+  geom_text(data = site.scores.dune.ca, 
+            aes(x = CA1, y = CA2, label= rownames(site.scores.dune.ca)), 
+            color = "black") + # ajout du texte des sites
+  geom_text(data = sp.scores.dune.ca, 
+            aes(x = CA1, y = CA2, label= rownames(sp.scores.dune.ca)), 
+            color = "red") + # ajout du texte des espèces
   xlab("CA1 (25.34%)") + ylab("CA2 (18.92%)") # contrairement avec la fonction ggord, on écrit la variation expliqué par les axes soi même
 ca.plot
 ```
