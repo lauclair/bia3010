@@ -165,7 +165,6 @@ modele.SW<-lm(Sepal.Width~Species,data=iris)
 anova(modele.SW)
 summary(modele.SW)
 
-# [[[ Commentaire anova ]]]
 ```
 
 Ensuite, on effectue le test post-hoc Tukey:
@@ -175,7 +174,7 @@ compSW<-aov(Sepal.Width~Species,data=iris)
 TukeyHSD(compSW)
 summary(compSW)
 
-# [[[ Commentaire Tukey ]]]
+
 ```
 
 On peut ensuite construire notre figure.
@@ -464,6 +463,7 @@ labs(	x="Masse (g)",
 	title="Probabilité de survie de (?) en fonction de la masse")+
 theme_bw()+
 theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))
+
 plot.masse
 
 ```
@@ -481,6 +481,7 @@ labs(	x="Masse (g)",
 theme_bw()+
 theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
 scale_y_continuous(labels = scales::percent, limits = c(0, 1))
+
 plot.masse
 
 ```
@@ -499,6 +500,7 @@ labs(	x="Masse (g)",
 theme_bw()+
 theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
 scale_y_continuous(labels = scales::percent, limits = c(0, 1), breaks = seq(0, 1, by = 0.5))
+
 plot.masse
 
 ```
@@ -522,6 +524,7 @@ labs(	x="Masse (g)",
 theme_bw()+
 theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
 scale_y_continuous(labels = scales::percent, limits = c(0, 1), breaks = seq(0, 1, by = 0.5))
+
 plot.masse
 
 ```
@@ -536,6 +539,7 @@ scale_color_manual(values=c("#D28D32"))+
 geom_ribbon(data = predictions.masse, show.legend = FALSE, aes(x=x, y=predicted, color=group, ymin = conf.low, ymax = conf.high), alpha = .2)+
 theme_bw()+
 theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))
+
 plot.masse
 
 ```
@@ -559,6 +563,7 @@ labs(	x="Masse (g)",
 theme_bw()+
 theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
 scale_y_continuous(labels = scales::percent, limits = c(-0.02, 1.02))
+
 plot.masse
 
 
@@ -606,6 +611,7 @@ plot.masse.sexe.test <- ggplot()+
 geom_line(data = predictions.masse.sexe.test, aes(x=x, y=predicted, color=group), show.legend = FALSE, linewidth=1.1)+
 labs(title="Probabilité de survie ajustée pour sexe = 0.5")+
 theme(plot.title = element_text(hjust = 0.5))
+
 plot.masse.sexe.test
 
 ```
@@ -630,6 +636,7 @@ Dans le précédent modèle, nous avions défini l'`aes(color=group)`, pour colo
 
 plot.masse.sexe <- ggplot()+
 geom_line(data = predictions.masse.sexe, aes(x=x, y=predicted, color=group), show.legend = TRUE, linewidth=1.1)
+
 plot.masse.sexe
 
 ```
@@ -642,6 +649,7 @@ On doit ajouter nos intervalles de confiance:
 plot.masse.sexe <- ggplot()+
 geom_line(data = predictions.masse.sexe, aes(x=x, y=predicted, color=group), show.legend = TRUE)+
 geom_ribbon(data = predictions.masse.sexe, show.legend = FALSE, aes(x=x, y=predicted, fill=group, ymin = conf.low, ymax = conf.high), alpha = 0.2)
+
 plot.masse.sexe
 
 
@@ -697,6 +705,7 @@ labs(	x="Masse (g)",
 theme_bw()+
 theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
 scale_y_continuous(labels = scales::percent, limits = c(-0.02, 1.02))
+
 plot.masse.sexe
 
 ```
@@ -718,6 +727,7 @@ labs(	x="Masse (g)",
 theme_bw()+
 theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
 scale_y_continuous(labels = scales::percent, limits = c(-0.02, 1.02))
+
 plot.masse.sexe
 
 ```
@@ -749,6 +759,7 @@ theme_bw()+
 theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
 scale_y_continuous(labels = scales::percent, limits = c(-0.02, 1.02))+
 scale_x_continuous(breaks = seq(96, 106, by = 2))
+
 plot.masse.sexe
 
 
@@ -805,6 +816,7 @@ Dans ce cas, on ajoute l'`aes()` `linetype` à `geom_line` assigné à `facet`:
 ```{r}
 plot.masse.sexe.age1 <- ggplot()+
 geom_line(data = predictions.masse.sexe.age, aes(x=x, y=predicted, color=group, linetype=facet), show.legend = TRUE, linewidth=1.1)
+
 plot.masse.sexe.age1
 ```
 
@@ -817,6 +829,7 @@ La deuxième option serait d'utiliser des facettes. Ceci crée des graphiques c�
 plot.masse.sexe.age2 <- ggplot()+
 geom_line(data = predictions.masse.sexe.age, aes(x=x, y=predicted, color=group), show.legend = TRUE, linewidth=1.1)+
 facet_wrap(~facet)
+
 plot.masse.sexe.age2
 
 ```
@@ -839,6 +852,7 @@ theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), pl
 scale_y_continuous(labels = scales::percent, limits = c(-0.02, 1.02))+
 scale_x_continuous(breaks = seq(96, 106, by = 2))+
 facet_wrap(~facet, labeller = labeller(facet = c( "57.64" = "58 jours", "59.98" = "60 jours",  "62.32" = "62 jours"))) 
+
 plot.masse.sexe.age2
 ```
 
@@ -884,6 +898,7 @@ On peut commencer par spécifier les `aes()` **du jeu de données brutes** direc
 plot.regr.SL <- ggplot(data=iris, aes(x=Petal.Length, y=Sepal.Length))+
 geom_point()+
 geom_smooth(method = lm, se = TRUE)
+
 plot.regr.SL
 
 ```
@@ -900,6 +915,7 @@ labs(	x="Longueur du pétale (cm)",
 	title="Longueur du pétale en fonction de la longueur du sépale chez les iris")+
 theme_bw()+
 theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))
+
 plot.regr.SL
 ```
 
@@ -923,6 +939,7 @@ labs(	x="Longueur du pétale (cm)",
 theme_bw()+
 theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
 annotate("text", x = 2.5, y = 7.75, label = "R2 = 0.76, F(1, 148) = 468.6, p = < 0.001")
+
 plot.regr.SL
 
 
@@ -954,6 +971,7 @@ labs(	x="Longueur du pétale (cm)",
 theme_bw()+
 theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), plot.title = element_text(hjust = 0.5))+
 annotate("text", x = 2.5, y = 7.75, label = "R2 = 0.76, F(1, 148) = 468.6, p = < 0.001")
+
 plot.regr.SL
 
 ```
