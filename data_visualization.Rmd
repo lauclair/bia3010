@@ -1391,7 +1391,8 @@ On va ajouter les résultats d'un `envfit`. D'abord, on fait le test, en s'assur
 Pour incorporer les vecteurs résultant de ce test, il faut d'abord les extraire et les mettre dans un dataframe.
 ```{r}
 vect <- data.frame(pca.envfit[["vectors"]][["arrows"]])
-vect$variable.env<-rownames(vect)
+vect$variable.env<-rownames(vect) # il mettre le rowname(la variable environnementale en colonne)
+vect
 ```
 
 ```{r}
@@ -1413,7 +1414,7 @@ pca.plot +
   geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = variable.env, size = 3), show.legend = FALSE)
 ```
 
-Maintenant, on va ajouter des ellipses autour des sites appartenant à des groupes similaires. On va aussi revenir à des symboles au lieu du nom des sites et changer la couleur du texte des espèces.
+Maintenant, on va ajouter des ellipses autour des sites appartenant à des groupes similaires. La fonction `ggord`est à même de calculer ces ellipses avec intervalle de confiance spécifiée. On va aussi revenir à des symboles au lieu du nom des sites et changer la couleur du texte des espèces. 
 ```{r}
 pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   axes=c(1,2),
@@ -1444,11 +1445,11 @@ Voici une légende indiquant quels symboles sont associées aux différentes val
 
 ![](ggplot_scale_shape-6.png)
 
-Changer les couleurs des groupes
+Changer les couleurs des groupes (types d'aménagement).
 On va extraire les codes des couleurs d'une palette de RColorBrewer avec la fonction `brewer.pal`
 ```{r}
 library(RColorBrewer)
-pca.colors <- brewer.pal(n = 4, name = "Dark2") # Hexadecimal color specification 
+pca.colors <- brewer.pal(n = 4, name = "Dark2") # Codes de couleur héxadécimaux
 ```
 
 On va incorporer ces codes de couleurs dans un argument. On déplace la légende vers le haut.
@@ -1469,7 +1470,7 @@ pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   ptslab=TRUE,
                   addcol="black",
                   alpha = 1)
-pca.plot <- pca.plot + # ici j'enregistre l'ensemble des arguments précédents et suivants dans mon objet pca.plot.
+pca.plot <- pca.plot + # ici j'enregistre l'ensemble des arguments précédents et suivants dans mon objet pca.plot
     scale_shape_manual('Groups', values = c(15,16,17,18)) + 
     coord_fixed() +
     geom_segment(data = vect,
@@ -1480,8 +1481,7 @@ pca.plot <- pca.plot + # ici j'enregistre l'ensemble des arguments précédents 
 pca.plot
 ```
 
-## Créer un thème custom pour ggplot.
-
+## Créer un thème custom pour ggplot. Allez explorer les options (liste des arguments dans le fichier help, lorsque vous rentrez ?theme dans la console de R).
 ```{r}
 super_theme <- theme(
         panel.background = element_blank(),
@@ -1515,7 +1515,7 @@ pca.plot + annotate("text", x = 1.1, y = 0.7, label = "PERMANOVA\nR2=30%\n p=0.0
 ggsave("pca.png", path="./figures/")
 ```
 
-Cet atelier n'est pas fait pour vous montrer à utiliser une esthétique particulière, mais bien pour vous familiariser avec les options (infinies...) permettant de personnaliser un graphique d'ordination. Vous allez voir des figures d'ordination dans la littérature. Essayez de reproduire l'esthétique qui vous semble la plus appropriée... ou, tout simplement, amusez-vous les artistes!!
+Cet atelier n'est pas fait pour vous montrer à utiliser une esthétique particulière, mais bien pour vous familiariser avec les options (presque infinies...) permettant de personnaliser un graphique d'ordination. Allez voir des figures d'ordination dans la littérature. Essayez de reproduire l'esthétique qui vous semble la plus appropriée... ou, tout simplement, amusez-vous les artistes!!
 
 # CA
 
