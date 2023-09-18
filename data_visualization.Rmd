@@ -474,7 +474,8 @@ Nous utiliserons comme source de données, la table de prédictions que nous ven
 ```{r}
 
 plot.masse <- ggplot()+
-geom_line(data=predictions.masse, aes(x=x, y=predicted))
+geom_line(data = predictions.masse, 
+          aes(x = x, y = predicted))
 
 plot.masse
 ```
