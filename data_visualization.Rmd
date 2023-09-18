@@ -1146,7 +1146,7 @@ plot.regr.SL
 
 ```
 
-C'est important d'ajouter un intervalle de confiance, ainsi qu'un intervalle de prédiction:
+C'est important d'ajouter un intervalle de confiance, ainsi qu'un intervalle de prédiction.
 L'intervalle de confiance s'affiche avec `geom_smooth(se = TRUE)`. Pour ce qui est de l'intervalle de prédiction, la fonction `predict()` calcule ces valeurs, puis colle ce nouveau dataframe à `iris` pour créer `iris.int.pred`. Nous utiliserons maintenant cette nouvelle table pour notre régression.
 
 ```{r}
