@@ -2,7 +2,10 @@
 title: "Visualisation des résultats : tableaux et graphiques"
 author: "Laurie Auclair, Jocelyn Lauzon & Sabrina Brisson"
 date: "10/09/2023"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
@@ -57,7 +60,7 @@ summary(iris)
 ```
 
 
-Pour oconnaître les niveaux d'une variable catégorique:
+Pour connaître les niveaux d'une variable catégorique:
 ```{r}
 levels(iris$Species)
 ```
@@ -69,8 +72,7 @@ levels(iris$Species)
 La fonction `plot()` est une fonction versatile qui permet de créer une grande
 variété de figures avec les données brutes. Dépendemment du type de donnée et des arguments fournis à la fonction, `plot()` peut générer plusieurs types de figures comme:
 
-Une seule matrice de *scatterplots* figure peut être créée avec toutes les variables 
-continues.
+Une seule matrice de *scatterplots* figure peut être créée avec toutes les variables.
 ```{r}
 plot(iris)
 ```
@@ -84,7 +86,7 @@ des pétales dans le jeu de données `iris`, on peut l'écrire ainsi:
 plot(iris$Sepal.Length~iris$Petal.Length)
 ```
 
-À l'aide de la fonction `boxplot()`, on peut visualiser la dispersion d'une variable selon dles groupes d'une variable catégorique. Ce type de figure permet aussi d'identifier rapidement des valeurs aberrantes ou des anomalies. 
+À l'aide de la fonction `boxplot()`, on peut visualiser la dispersion d'une variable selon les groupes d'une variable catégorique. Ce type de figure permet aussi d'identifier rapidement des valeurs aberrantes ou des anomalies. 
 
 ```{r}
 boxplot(iris$Petal.Length~iris$Species)
@@ -387,6 +389,8 @@ annotate("text", x = 3, y = 4.5, label = "ANOVA, F(2)=49.16, p<0.001")+
 scale_x_discrete(labels = c("I. setosa", "I. versicolor", "I. virginica"))
 ```
 
+
+# Régression linéaire
 
 <br>
 
@@ -1287,9 +1291,9 @@ On va créer un graphique pour présenter la PCA avec les différents types d'am
 Extraire les scores des sites et des espèces, à partir de l'objet créer par `prcomp`. Cela va nous permettre de mettre éventuellement seulement les espèces désirées sur le graphique.
 ```{r}
 site.scores<-pca.dune$x 
-site.scores.df <- data.frame(site.scores)
+(site.scores.df <- data.frame(site.scores))
 sp.scores<-pca.dune$rotation
-sp.scores.df <- data.frame(sp.scores)
+(sp.scores.df <- data.frame(sp.scores))
 ```
 
 Ouverture des librairies nécessaires à la création du graphique.
@@ -1304,21 +1308,24 @@ On va d'abord commencer le graphique avec la fonctions `ggord` du package du mê
 
 Le graphique créé par la fonction `ggord` est un objet ggplot. Cet objet (ici appelé pca.plot) peut être personnalisé à même la fonction `ggord`, et peut aussi servir de base sur laquelle ajouter des couches avec ggplot.
 ```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-1,1), ylims=c(-1,1)) # xlims et ylims définissent les limites dans l'affichage des axe (les valeurs entre parenthèses correspondent à l'échelle numérique des axes). On ajuste au fur et à mesure, au besoin.
+pca.plot <- ggord(pca.dune, 
+                  xlims=c(-1,1), ylims=c(-1,1)) # xlims et ylims définissent les limites dans l'affichage des axe (les valeurs entre parenthèses correspondent à l'échelle numérique des axes). On ajuste au fur et à mesure, au besoin.
 pca.plot # À la fin de chaque chunk, l'objet graphique est appelé pour qu'on visualise le rendu à chaque fois.
 ```
 On remarque que la fonction`ggord` inclut par défaut la **proportion de la variance expliquée par les axes**. C'est super!
 
 Par défaut, la fonction `ggord` va mettre en graphique les deux premiers axes de l'ordination. Mais si on s'intéresse à différents axes, on peut spécifier lesquels mettre en graphique.
 ```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-1,1), ylims=c(-1,1),
+pca.plot <- ggord(pca.dune, 
+                  xlims=c(-1,1), ylims=c(-1,1),
                   axes=c(1,3)) # Ici, on met en graphique les axes 1 et 3.
 pca.plot
 ```
 
 On revient aux deux premiers axes. Faisons quelques petits changements. Les changements sont marqués d'un "#" à côté de la ligne.
 ```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9), # ajustement des limites
+pca.plot <- ggord(pca.dune, 
+                  xlims=c(-1.2,1.4), ylims=c(-0.75,0.9), # ajustement des limites
                   axes=c(1,2), # retour aux axes 1 et 2
                   size=3, # diminution de la taille des points (sites)
                   arrow=NULL,# enlever les flèches (qui viennent par défaut) pour les espèces
@@ -1328,12 +1335,13 @@ pca.plot
 
 Faisons d'autres changements!
 ```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9), 
+pca.plot <- ggord(pca.dune, 
+                  xlims=c(-1.2,1.4), ylims=c(-0.75,0.9), 
                   axes=c(1,2), 
                   size=3, 
                   obslab=TRUE, # pour passer de points pour les sites (par défaut) à texte (nom des sites)
                   arrow=NULL,
-                  labcol="forestgreen") # changer la couleur du texte pour les espèces
+                  labcol="forestgreen")
 pca.plot
 ```
 
@@ -1341,17 +1349,19 @@ Il y a beaucoup d'espèces affichées au milieu et c'est illisible. En plus, les
 
 D'abord, on va créer un nouveau dataframe contenant seulement ces espèces, en utilisant quelques fonctions de la librairie **dplyr**.
 ```{r}
+library(dplyr)
 A <- top_n(sp.scores.df, 3, PC1) # sélectionne les 3 espèces dont le score est le plus élevé sur l'axe 1.
 B <- top_n(sp.scores.df, -3, PC1) # sélectionne les 3 espèces dont le score est le plus bas sur l'axe 1.
 C <- top_n(sp.scores.df, 3, PC2) # sélectionne les 3 espèces dont le score est le plus élevé sur l'axe 2.
 D <- top_n(sp.scores.df, -3, PC2) # sélectionne les 3 espèces dont le score est le plus bas sur l'axe 2.
 sp.scores.skim <- bind_rows(A,B,C,D) # merge les sub dataframe A, B, C et D.
-sp.scores.skim <- distinct(sp.scores.skim) # on ne garde que les rangées (espèces) qui sont uniques (pour éviter qu'une même espèce s'y retrouve en copies)
+(sp.scores.skim <- distinct(sp.scores.skim)) # on ne garde que les rangées (espèces) qui sont uniques (pour éviter qu'une même espèce s'y retrouve en copies)
 ```
 
 Mise en graphique de ces espèces seulement
 ```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9), 
+pca.plot <- ggord(pca.dune, 
+                  xlims=c(-1.2,1.4), ylims=c(-0.75,0.9), 
                   axes=c(1,2), 
                   size=3, 
                   obslab=TRUE,
@@ -1363,8 +1373,10 @@ pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   # on enlève l'argument labcol
 pca.plot
 ```
+
 ```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9), 
+pca.plot <- ggord(pca.dune, 
+                  xlims=c(-1.2,1.4), ylims=c(-0.75,0.9), 
                   axes=c(1,2), 
                   size=3, 
                   obslab=TRUE,
@@ -1377,7 +1389,7 @@ pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
 pca.plot
 ```
 
-On va ajouter les résultats d'un `envfit`. D'abord, on fait le test.
+On va ajouter les résultats d'un `envfit`. D'abord, on fait le test, en s'assurant qu'on calcule la régression sur les deux axes qu'on a choisit de mettre en graphique (par défaut, 1 et 2).
 ```{r}
 (pca.envfit <- envfit(pca.dune, dune.env))
 ```
@@ -1385,11 +1397,13 @@ On va ajouter les résultats d'un `envfit`. D'abord, on fait le test.
 Pour incorporer les vecteurs résultant de ce test, il faut d'abord les extraire et les mettre dans un dataframe.
 ```{r}
 vect <- data.frame(pca.envfit[["vectors"]][["arrows"]])
-vect$variable.env<-rownames(vect)
+vect$variable.env<-rownames(vect) # il mettre le rowname(la variable environnementale en colonne)
+vect
 ```
 
 ```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9), 
+pca.plot <- ggord(pca.dune, 
+                  xlims=c(-1.2,1.4), ylims=c(-0.75,0.9), 
                   axes=c(1,2), 
                   size=3, 
                   obslab=TRUE,
@@ -1403,13 +1417,17 @@ pca.plot +
   coord_fixed() + # ajout des vecteurs de envfit
   geom_segment(data = vect,
                aes(x = 0, xend = PC1, y = 0, yend = PC2),
-               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
-  geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = variable.env, size = 3), show.legend = FALSE)
+               arrow = arrow(length = unit(0.5, "cm")),
+               colour = "darkgrey") +
+  geom_text_repel(data = vect, 
+                  aes(x = PC1, y = PC2, label = variable.env, size = 3), 
+                  show.legend = FALSE)
 ```
 
-Maintenant, on va ajouter des ellipses autour des sites appartenant à des groupes similaires. On va aussi revenir à des symboles au lieu du nom des sites et changer la couleur du texte des espèces.
+Maintenant, on va ajouter des ellipses autour des sites appartenant à des groupes similaires. La fonction `ggord` est à même de calculer ces ellipses avec intervalle de confiance spécifiée. On va aussi revenir à des symboles au lieu du nom des sites et changer la couleur du texte des espèces. 
 ```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
+pca.plot <- ggord(pca.dune, 
+                  xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   axes=c(1,2),
                   grp_in=dune.env$Management, # ajout des ellipses en fonction du type de Management
                   grp_title = "Management",
@@ -1429,25 +1447,28 @@ pca.plot +
     coord_fixed() +
     geom_segment(data = vect,
                aes(x = 0, xend = PC1, y = 0, yend = PC2),
-               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
-    geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = variable.env, size = 3), show.legend = FALSE)
-
+               arrow = arrow(length = unit(0.5, "cm")), 
+               colour = "darkgrey") +
+    geom_text_repel(data = vect, 
+               aes(x = PC1, y = PC2, label = variable.env, size = 3), 
+               show.legend = FALSE)
 ```
 
 Voici une légende indiquant quels symboles sont associées aux différentes valeurs numériques de la couche `scale_shape_manual`.
 
 ![](ggplot_scale_shape-6.png)
 
-Changer les couleurs des groupes
+Changer les couleurs des groupes (types d'aménagement).
 On va extraire les codes des couleurs d'une palette de RColorBrewer avec la fonction `brewer.pal`
 ```{r}
 library(RColorBrewer)
-pca.colors <- brewer.pal(n = 4, name = "Dark2") # Hexadecimal color specification 
+pca.colors <- brewer.pal(n = 4, name = "Dark2") # Codes de couleur héxadécimaux
 ```
 
 On va incorporer ces codes de couleurs dans un argument. On déplace la légende vers le haut.
 ```{r}
-pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
+pca.plot <- ggord(pca.dune, 
+                  xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   axes=c(1,2),
                   grp_in=dune.env$Management, 
                   grp_title = "Management",
@@ -1463,27 +1484,29 @@ pca.plot <- ggord(pca.dune, xlims=c(-1.2,1.4), ylims=c(-0.75,0.9),
                   ptslab=TRUE,
                   addcol="black",
                   alpha = 1)
-pca.plot <- pca.plot + # ici j'enregistre l'ensemble des arguments précédents et suivants dans mon objet pca.plot.
+pca.plot <- pca.plot + # ici j'enregistre l'ensemble des arguments précédents et suivants dans mon objet pca.plot
     scale_shape_manual('Groups', values = c(15,16,17,18)) + 
     coord_fixed() +
     geom_segment(data = vect,
                aes(x = 0, xend = PC1, y = 0, yend = PC2),
-               arrow = arrow(length = unit(0.5, "cm")), colour = "darkgrey") +
-    geom_text_repel(data = vect, aes(x = PC1, y = PC2, label = variable.env, size = 3), show.legend = FALSE)+
+               arrow = arrow(length = unit(0.5, "cm")), 
+               colour = "darkgrey") +
+    geom_text_repel(data = vect, 
+                    aes(x = PC1, y = PC2, label = variable.env, size = 3), 
+                    show.legend = FALSE) +
     theme(legend.position = 'top') # mettre la légende en haut
 pca.plot
 ```
 
-Créer un thème custom pour ggplot.
+## Créer un thème custom pour ggplot. Allez explorer les options (liste des arguments dans le fichier help, lorsque vous rentrez ?theme dans la console de R).
 ```{r}
 super_theme <- theme(
         panel.background = element_blank(),
-        #panel.border = element_blank(),
-        panel.grid = element_blank(),
-        axis.line = element_line("gray25"),
+        panel.grid = element_blank(), # grillage, ici aucun, mais on aurait pu mettre par ex.  element_line("black"),
+        axis.line = element_line("black"),
         text = element_text(size = 12),
-        axis.text = element_text(size = 10, colour = "gray25"),
-        axis.title = element_text(size = 14, colour = "gray25"),
+        axis.text = element_text(size = 10, colour = "gray25"), # taille des valeurs des axes
+        axis.title = element_text(size = 14, colour = "gray25"), # taille des titres des axes
         legend.title = element_text(size = 14),
         legend.text = element_text(size = 14),
         legend.key = element_blank())
@@ -1496,18 +1519,22 @@ pca.plot + super_theme
 
 On va rajouter du texte!
 ```{r}
-pca.plot + annotate("text", x = 1.1, y = 0.7, label = "PERMANOVA\nR2=30%\n p=0.007") +
+pca.plot + 
+    annotate("text", x = 1.1, y = 0.7, label = "PERMANOVA\nR2=30%\n p=0.007") +
     super_theme
 ```
 
+## Sauvegarder
+
 Satisfait? On sauvegarde l'image en png. Par défaut, ggplot enregistre le dernier graphique créé. Ici on copie-colle le code du graphique ci haut, puis sauvegarde ce graphique avec la fonction `ggsave` dans un dossier qu'on a créé (figures/).
 ```{r}
-pca.plot + annotate("text", x = 1.1, y = 0.7, label = "PERMANOVA\nR2=30%\n p=0.007") +
+pca.plot + 
+    annotate("text", x = 1.1, y = 0.7, label = "PERMANOVA\nR2=30%\n p=0.007") +
     super_theme
 ggsave("pca.png", path="./figures/")
 ```
 
-Cet atelier n'est pas fait pour vous montrer à utiliser une esthétique particulière, mais bien pour vous familiariser avec les options (infinies...) permettant de personnaliser un graphique d'ordination. Vous allez voir des figures d'ordination dans la littérature. Essayez de reproduire l'esthétique qui vous semble la plus appropriée... ou, tout simplement, amusez-vous les artistes!!
+Cet atelier n'est pas fait pour vous montrer à utiliser une esthétique particulière, mais bien pour vous familiariser avec les options (presque infinies...) permettant de personnaliser un graphique d'ordination. Allez voir des figures d'ordination dans la littérature. Essayez de reproduire l'esthétique qui vous semble la plus appropriée... ou, tout simplement, amusez-vous les artistes!!
 
 # CA
 
@@ -1522,8 +1549,8 @@ summary(ca.dune)
 
 Extraction de la proportion de la variance expliquée par les deux premiers axes (pour s'y référer plus rapidement).
 ```{r}
-prop.expl.ca1 <- ca.summary$cont$importance[2, "CA1"]
-prop.expl.ca2 <- ca.summary$cont$importance[2, "CA2"]
+(prop.expl.ca1 <- ca.summary$cont$importance[2, "CA1"])
+(prop.expl.ca2 <- ca.summary$cont$importance[2, "CA2"])
 ```
 
 envfit
@@ -1534,7 +1561,8 @@ envfit
 Pour incorporer les vecteurs résultant de ce test, il faut d'abord les extraire et les mettre dans un dataframe.
 ```{r}
 vect.ca.env <- data.frame(ca.envfit[["vectors"]][["arrows"]])
-vect.ca.env$variable.env<-rownames(vect.ca.env)
+vect.ca.env$variable.env <- rownames(vect.ca.env)
+vect.ca.env
 ```
 
 PERMANOVA. On va tester si la composition végétale diffère entre différents type d'aménagement (facteur; variable quantitative) des sites.
@@ -1546,16 +1574,16 @@ permanova.dune.ca <- adonis2(dune.dist.chi2 ~ Management, data = dune.env)
 permanova.dune.ca
 ```
 
-Ici, le résultat du test de dispersion indique que la différence dans la composition végétale entre les types d'aménagement qui est "perçue" par la PERMANOVA pourrait être du à la différence dans la variance interne en composition des groupes.
+Ici, le résultat du test de dispersion indique que la différence dans la composition végétale entre les types d'aménagement qui est calculée par la PERMANOVA pourrait être du à la différence dans la variance interne en composition des groupes (les groupes ont une dispersion hétérogène).
 
-Extraire les scores de CA avec la fonction `scores`
+Extraire les scores de CA avec la fonction `scores`. Pour spécifier à ggplot quels sont les "points" ou le "texte" à mettre en graphique.
 ```{r}
 site.scores.dune.ca <- scores(ca.dune, display="sites", choices=c(1,2)) # ici on garde que les scores des axes 1 et 2 mais on aurait pu extraire tous les scores aussi.
 site.scores.dune.ca <- data.frame(site.scores.dune.ca)
 Management <- dune.env$Management
-site.scores.ca <- cbind(site.scores.dune.ca, Management)
+(site.scores.ca <- cbind(site.scores.dune.ca, Management)) # incorporer variable Management dans les scores (pour aider plus loin dans ggplot à changer l'aspect visuel des points des sites en fonction de leur Management)
 sp.scores.dune.ca <- scores(ca.dune, display="species", choices=c(1,2)) # idem scores axes 1 et 2 seulement
-sp.scores.dune.ca <- data.frame(sp.scores.dune.ca)
+(sp.scores.dune.ca <- data.frame(sp.scores.dune.ca))
 ```
 
 Comme on a fait acvec les scores des espèces de la PCA, on ne garde que les plus hautes valeurs absolues.
@@ -1565,7 +1593,7 @@ B.ca <- top_n(sp.scores.dune.ca, -3, CA1)
 C.ca <- top_n(sp.scores.dune.ca, 3, CA2)
 D.ca <- top_n(sp.scores.dune.ca, -3, CA2)
 sp.scores.skim.ca <- bind_rows(A.ca,B.ca,C.ca,D.ca)
-sp.scores.skim.ca <- distinct(sp.scores.skim.ca)
+(sp.scores.skim.ca <- distinct(sp.scores.skim.ca))
 ```
 
 Graphique simple avec les fonctions `plot` et `ordiplot`.
@@ -1579,41 +1607,70 @@ ordiellipse(ca.dune, dune.env$Management, display = "sites", kind = "sd", label 
 On commence le graphique ggplot. On peut faire un graphique qui ressemble à celui fait par `plot` en ajoutant "à la main" les sites et les espèces (en fonction de leurs scores extraits).
 ```{r}
 ca.plot <- 
-  ggplot(data = site.scores.ca, aes(x = CA1, y = CA2)) +
+  ggplot(data = site.scores.ca, 
+         aes(x = CA1, y = CA2)) +
   expand_limits(x=c(-4,4), y=c(-1,3)) + # sert à modifier l'échelle numérique du graphique
-  geom_text(data = site.scores.dune.ca, aes(x = CA1, y = CA2, label= rownames(site.scores.dune.ca)), color = "black") + # ajout du texte des sites
-  geom_text(data = sp.scores.dune.ca, aes(x = CA1, y = CA2, label= rownames(sp.scores.dune.ca)), color = "red") + # ajout du texte des espèces
-  xlab("CA1 (25.34%)") + ylab("CA2 (18.92%)") # contrairement avec la fonction ggord, on écrit la variation expliqué par les axes soi même
+  geom_text(data = site.scores.dune.ca, 
+            aes(x = CA1, y = CA2, label= rownames(site.scores.dune.ca)), 
+            color = "black") + # ajout du texte des sites
+  geom_text(data = sp.scores.dune.ca, 
+            aes(x = CA1, y = CA2, label= rownames(sp.scores.dune.ca)), 
+            color = "red") + # ajout du texte des espèces
+  xlab("CA1 (25.34%)") + 
+  ylab("CA2 (18.92%)") # contrairement avec la fonction ggord, on écrit la variation expliqué par les axes soi même
 ca.plot
 ```
 
 On peut rajouter les vecteurs de note envfit.
 ```{r}
 ca.plot <- 
-  ggplot(data = site.scores.ca, aes(x = CA1, y = CA2)) +
+  ggplot(data = site.scores.ca, 
+         aes(x = CA1, y = CA2)) +
   expand_limits(x=c(-2,2.5), y=c(-1,3)) + # on zoom in sur l'échelle
-  geom_text(data = site.scores.dune.ca, aes(x = CA1, y = CA2, label= rownames(site.scores.dune.ca)), color = "black") +
-  geom_text(data = sp.scores.dune.ca, aes(x = CA1, y = CA2, label= rownames(sp.scores.dune.ca)), color = "red") + 
-  xlab("CA1 (25.34%)") + ylab("CA2 (18.92%)") +
+  geom_text(data = site.scores.dune.ca, 
+            aes(x = CA1, y = CA2, label= rownames(site.scores.dune.ca)), 
+            color = "black") +
+  geom_text(data = sp.scores.dune.ca, 
+            aes(x = CA1, y = CA2, label= rownames(sp.scores.dune.ca)), 
+            color = "red") + 
+  xlab("CA1 (25.34%)") + 
+  ylab("CA2 (18.92%)") +
   geom_segment(data = vect.ca.env, # ajout des vecteurs envfit
                aes(x = 0, xend = CA1, y = 0, yend = CA2),
-               arrow = arrow(length = unit(0.75, "cm")), color = "black") +
-  geom_text_repel(data = vect.ca.env, aes(x = CA1, y = CA2, label = variable.env, size = 3), color = "firebrick1", fontface = "bold", show.legend = FALSE)
+               arrow = arrow(length = unit(0.75, "cm")), 
+               color = "black") +
+  geom_text_repel(data = vect.ca.env, 
+                  aes(x = CA1, y = CA2, label = variable.env, size = 3), 
+                  color = "firebrick1", 
+                  fontface = "bold", 
+                  show.legend = FALSE)
 ca.plot
 ```
 
 On va mettre des points pour les sites et changer leurs couleurs et leurs symboles en fonction de leur type d'aménagement. On va aussi mettre en graphique uniquement les espèces aux plus grands scores.
 ```{r}
 ca.plot <- 
-  ggplot(data = site.scores.ca, aes(x = CA1, y = CA2), color = Management) + # on ajoute ici arg "color"
+  ggplot(data = site.scores.ca, 
+         aes(x = CA1, y = CA2), 
+         color = Management) + # on ajoute ici arg "color"
   expand_limits(x=c(-2,2.5), y=c(-1,3)) +
-  geom_point(aes(shape = Management, color = Management), size=3) + # on change de geom_text à geom_point pour les sites
-  xlab("CA1 (25.34%)") + ylab("CA2 (18.92%)") +
-  geom_text_repel(data = sp.scores.skim.ca, aes(x = CA1, y = CA2), label=rownames(sp.scores.skim.ca), color = "black") + # on garde geom_text pour les espèces mais on change de dataframe
-  geom_segment(data = vect.ca.env, # ajout des vecteurs envfit
+  geom_point(aes(shape = Management, color = Management), 
+             size=3) + # on change de geom_text à geom_point pour les sites
+  xlab("CA1 (25.34%)") + 
+  ylab("CA2 (18.92%)") +
+  geom_text_repel(data = sp.scores.skim.ca, 
+                  aes(x = CA1, y = CA2), 
+                  label=rownames(sp.scores.skim.ca), 
+                  color = "black") + # on garde geom_text pour les espèces mais on change de dataframe
+  geom_segment(data = vect.ca.env,
                aes(x = 0, xend = CA1, y = 0, yend = CA2),
-               arrow = arrow(length = unit(0.75, "cm")), color = "black") +
-  geom_text_repel(data = vect.ca.env, aes(x = CA1, y = CA2, label = variable.env, size = 3), color = "firebrick1", fontface = "bold", show.legend = FALSE) +
+               arrow = arrow(length = unit(0.75, "cm")), 
+               color = "black") +
+  geom_text_repel(data = vect.ca.env, 
+                  aes(x = CA1, y = CA2, label = variable.env, size = 3), 
+                  color = "firebrick1", 
+                  fontface = "bold", 
+                  show.legend = FALSE) +
   scale_shape_manual(values = c(15,16,17,18)) # on décide des symboles à utiliser (se référer à la charte plus haut)
 ca.plot
 ```
@@ -1624,22 +1681,37 @@ library(ggordiplots)
 ca.ggordiplot <- gg_ordiplot(ca.dune, groups = dune.env$Management, kind = "sd", conf = 0.95, pt.size = 3) # on spécifie l'intervalle de confiance des ellipses
 names(ca.ggordiplot)
 ca.ellipses <- ca.ggordiplot$df_ellipse # extraction des valeurs des ellipses
+head(ca.ellipses)
 ```
 
 On prend les valeurs des ellipses qu'on vient d'extraire pour mettre en graphique dans ggplot ces ellipses. Om change aussi les couleurs de nos groupes.
 ```{r}
 ca.plot <- 
-  ggplot(data = site.scores.ca, aes(x = CA1, y = CA2), color = Management) + 
+  ggplot(data = site.scores.ca, 
+         aes(x = CA1, y = CA2), 
+         color = Management) + 
   expand_limits(x=c(-2,2.5), y=c(-1,3)) +
-  geom_point(aes(shape = Management, color = Management), size=3) +
-  xlab("CA1 (25.34%)") + ylab("CA2 (18.92%)") +
-  geom_text_repel(data = sp.scores.skim.ca, aes(x = CA1, y = CA2), label=rownames(sp.scores.skim.ca), color = "black") +
-  geom_segment(data = vect.ca.env, # ajout des vecteurs envfit
+  geom_point(aes(shape = Management, color = Management), 
+             size=3) +
+  xlab("CA1 (25.34%)") + 
+  ylab("CA2 (18.92%)") +
+  geom_text_repel(data = sp.scores.skim.ca, 
+                  aes(x = CA1, y = CA2), 
+                  label=rownames(sp.scores.skim.ca), 
+                  color = "black") +
+  geom_segment(data = vect.ca.env,
                aes(x = 0, xend = CA1, y = 0, yend = CA2),
-               arrow = arrow(length = unit(0.75, "cm")), color = "black") +
-  geom_text_repel(data = vect.ca.env, aes(x = CA1, y = CA2, label = variable.env, size = 3), color = "firebrick1", fontface = "bold", show.legend = FALSE) +
+               arrow = arrow(length = unit(0.75, "cm")),
+               color = "black") +
+  geom_text_repel(data = vect.ca.env, 
+                  aes(x = CA1, y = CA2, label = variable.env, size = 3), 
+                  color = "firebrick1", 
+                  fontface = "bold", 
+                  show.legend = FALSE) +
   scale_shape_manual(values = c(15,16,17,18)) +
-  geom_path(data = ca.ellipses, aes(x = x, y = y, color = Group), show.legend = FALSE) + # ajout des ellipses
+  geom_path(data = ca.ellipses, 
+            aes(x = x, y = y, color = Group), 
+            show.legend = FALSE) + # ajout des ellipses
   scale_color_brewer(palette="Dark2") # changement des couleurs des ellipses et des sites
 ca.plot
 ```
@@ -1657,7 +1729,6 @@ ca.plot + theme_bw()
 ggsave("ca.png", path="./figures/")
 ```
 
-
 # PCoA
 
 ## Préparation des données
@@ -1673,6 +1744,18 @@ pcoa.dune <- cmdscale(dune.bray, k =(nrow(dune) - 1), eig = TRUE)
 summary(pcoa.dune)
 ```
 
+Dans cet exemple, on va s'intéresser aux axes 1 et 3, pour faire changement!
+
+Extraire les proportions expliquées par les axes d'intérêt (1 et 3).
+```{r}
+pcoa.eig2 <- eigenvals(pcoa.dune) # extraction des eigenvalues
+pcoa.eig2 <- abs(pcoa.eig2) # calcul de leurs valeurs absolues
+sum.pcoa.eig2 <- sum(pcoa.eig2) # total des eigenvalues
+pcoa.prop.exp <- pcoa.eig2/sum.pcoa.eig2 # proportion expliquée par chacun des axes
+(pcoa.axis1 <- pcoa.prop.exp[1])
+(pcoa.axis3 <- pcoa.prop.exp[3])
+```
+
 Extraire les scores de la PCoA.
 ```{r}
 site.scores.pcoa <- scores(pcoa.dune) # site scores
@@ -1683,14 +1766,14 @@ Management <- dune.env$Management
 site.scores.pcoa <- cbind(site.scores.pcoa, Management)
 ```
 
-Comme on a fait acec les scores des espèces de la PCA et de la CA, on ne garde que les plus hautes valeurs absolues, mais cette fois ci, des axes 1 et 3 (pour le plaisir)!.
+Comme on a fait acec les scores des espèces de la PCA et de la CA, on ne garde que les plus hautes valeurs absolues, mais cette fois ci, des axes 1 et 3!.
 ```{r}
 A.pcoa <- top_n(sp.scores.pcoa, 3, X1)
 B.pcoa <- top_n(sp.scores.pcoa, -3, X1)
 C.pcoa<- top_n(sp.scores.pcoa, 3, X3)
 D.pcoa <- top_n(sp.scores.pcoa, -3, X3)
 sp.scores.skim.pcoa <- bind_rows(A.pcoa,B.pcoa,C.pcoa,D.pcoa)
-sp.scores.skim.pcoa <- distinct(sp.scores.skim.pcoa)
+(sp.scores.skim.pcoa <- distinct(sp.scores.skim.pcoa))
 ```
 
 envfit SUR LES AXES 1 ET 3 (on n'oublie pas!)
@@ -1702,6 +1785,7 @@ Pour incorporer les vecteurs résultant de ce test, il faut d'abord les extraire
 ```{r}
 vect.pcoa.env <- data.frame(pcoa.envfit[["vectors"]][["arrows"]])
 vect.pcoa.env$variable.env <- rownames(vect.pcoa.env)
+vect
 ```
 
 PERMANOVA. On va tester si la composition végétale diffère entre différents type d'aménagement (facteur; variable quantitative) des sites.
@@ -1724,22 +1808,33 @@ pcoa.ellipses <- pcoa.ggordiplot$df_ellipse
 ## ggplot
 ```{r}
 pcoa.plot <- 
-  ggplot(data = site.scores.pcoa, aes(x = Dim1, y = Dim3), color = Management) + 
+  ggplot(data = site.scores.pcoa, 
+         aes(x = Dim1, y = Dim3), 
+         color = Management) + 
   expand_limits(x=c(-0.35,0.6), y=c(-0.35,0.35)) +
-  geom_point(aes(shape = Management, color = Management), size=3) +
-  xlab("PCoA1 (X%)") + ylab("PCoA3 (X%)") +
-  geom_text_repel(data = sp.scores.skim.pcoa, aes(x = X1, y = X3), label=rownames(sp.scores.skim.pcoa), color = "black") +
+  geom_point(aes(shape = Management, color = Management), 
+             size=3) +
+  xlab("PCoA1 (35.10%)") + 
+  ylab("PCoA3 (9.44%)") +
+  geom_text_repel(data = sp.scores.skim.pcoa, 
+                  aes(x = X1, y = X3), 
+                  label=rownames(sp.scores.skim.pcoa), 
+                  color = "black") +
   geom_segment(data = vect.pcoa.env, 
                aes(x = 0, xend = Dim1, y = 0, yend = Dim3),
-               arrow = arrow(length = unit(0.75, "cm")), color = "black") +
-  geom_text_repel(data = vect.pcoa.env, aes(x = Dim1, y = Dim3, label = variable.env, size = 3), color = "firebrick1", fontface = "bold", show.legend = FALSE) +
+               arrow = arrow(length = unit(0.75, "cm")), 
+               color = "black") +
+  geom_text_repel(data = vect.pcoa.env, 
+                  aes(x = Dim1, y = Dim3, label = variable.env, size = 3), 
+                  color = "firebrick1", 
+                  fontface = "bold", 
+                  show.legend = FALSE) +
   scale_shape_manual(values = c(15,16,17,18)) +
-  geom_path(data = pcoa.ellipses, aes(x = x, y = y, color = Group), show.legend = FALSE) + 
-  scale_color_brewer(palette="Dark2")
+  geom_path(data = pcoa.ellipses, 
+            aes(x = x, y = y, color = Group), 
+            show.legend = FALSE) + 
+  scale_color_brewer(palette="Dark2") +
+  super_theme
 pcoa.plot
 ggsave("pcoa.png", path="./figures/")
 ```
-
-AJOUTER % VARIATION DES AXES DE LA PCOA!
-
-- FIN - 
